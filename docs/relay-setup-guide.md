@@ -2,13 +2,13 @@
 
 ## Overview
 
-This guide walks you through setting up the mail relay system for `domain3.com` where emails sent to addresses on `mailer.domain3.com` are automatically relayed to corresponding addresses on the main domain through Gmail SMTP.
+This guide walks you through setting up the mail relay system for `domain1.com` where emails sent to addresses on `mailer.domain1.com` are automatically relayed to corresponding addresses on the main domain through Gmail SMTP.
 
 ## Prerequisites
 
-- Domain: `domain3.com`
-- Subdomain: `mailer.domain3.com`
-- Gmail account: `mail-relay@domain3.com`
+- Domain: `domain1.com`
+- Subdomain: `mailer.domain1.com`
+- Gmail account: `mail-relay@domain1.com`
 - Server/VPS to run the mailer application
 - DNS access to configure records
 
@@ -16,35 +16,35 @@ This guide walks you through setting up the mail relay system for `domain3.com` 
 
 ### 1.1 Main Domain Records
 
-Add these records to your `domain3.com` DNS:
+Add these records to your `domain1.com` DNS:
 
 ```dns
 # A record for your website
-domain3.com.          IN A      YOUR_WEBSITE_IP
+domain1.com.          IN A      YOUR_WEBSITE_IP
 
 # MX record for receiving emails
-domain3.com.          IN MX 10  mail.domain3.com.
+domain1.com.          IN MX 10  mail.domain1.com.
 
 # SPF record for email authentication
-domain3.com.          IN TXT    "v=spf1 include:_spf.google.com ~all"
+domain1.com.          IN TXT    "v=spf1 include:_spf.google.com ~all"
 
 # DMARC record for email policy
-_dmarc.domain3.com.   IN TXT    "v=DMARC1; p=quarantine; rua=mailto:dmarc@domain3.com"
+_dmarc.domain1.com.   IN TXT    "v=DMARC1; p=quarantine; rua=mailto:dmarc@domain1.com"
 ```
 
 ### 1.2 Mailer Subdomain Records
 
-Add these records for `mailer.domain3.com`:
+Add these records for `mailer.domain1.com`:
 
 ```dns
 # A record pointing to your mailer server
-mailer.domain3.com.   IN A      YOUR_MAILER_SERVER_IP
+mailer.domain1.com.   IN A      YOUR_MAILER_SERVER_IP
 
 # MX record for the mailer
-mailer.domain3.com.   IN MX 10  mailer.domain3.com.
+mailer.domain1.com.   IN MX 10  mailer.domain1.com.
 
 # SPF record for the mailer
-mailer.domain3.com.   IN TXT    "v=spf1 ip4:YOUR_MAILER_SERVER_IP ~all"
+mailer.domain1.com.   IN TXT    "v=spf1 ip4:YOUR_MAILER_SERVER_IP ~all"
 ```
 
 ### 1.3 Reverse DNS (PTR)
@@ -52,7 +52,7 @@ mailer.domain3.com.   IN TXT    "v=spf1 ip4:YOUR_MAILER_SERVER_IP ~all"
 Contact your hosting provider to set up reverse DNS:
 
 ```
-YOUR_MAILER_SERVER_IP      IN PTR    mailer.domain3.com.
+YOUR_MAILER_SERVER_IP      IN PTR    mailer.domain1.com.
 ```
 
 ## Step 2: Gmail Setup
@@ -107,8 +107,8 @@ Create `/etc/ssmtp-mailer/ssmtp-mailer.conf`:
 
 ```ini
 [global]
-default_hostname = mailer.domain3.com
-default_from = noreply@mailer.domain3.com
+default_hostname = mailer.domain1.com
+default_from = noreply@mailer.domain1.com
 config_dir = /etc/ssmtp-mailer
 domains_dir = /etc/ssmtp-mailer/domains
 users_dir = /etc/ssmtp-mailer/users
@@ -125,47 +125,47 @@ rate_limit_per_minute = 100
 
 ### 4.2 Domain Configuration
 
-Create `/etc/ssmtp-mailer/domains/domain3.com.conf`:
+Create `/etc/ssmtp-mailer/domains/domain1.com.conf`:
 
 ```ini
-[domain:domain3.com]
+[domain:domain1.com]
 enabled = true
 smtp_server = smtp.gmail.com
 smtp_port = 587
 auth_method = LOGIN
-relay_account = mail-relay@domain3.com
-username = mail-relay@domain3.com
+relay_account = mail-relay@domain1.com
+username = mail-relay@domain1.com
 password = YOUR_GMAIL_APP_PASSWORD_HERE
 use_ssl = false
 use_starttls = true
 ```
 
-Create `/etc/ssmtp-mailer/domains/mailer.domain3.com.conf`:
+Create `/etc/ssmtp-mailer/domains/mailer.domain1.com.conf`:
 
 ```ini
-[domain:mailer.domain3.com]
+[domain:mailer.domain1.com]
 enabled = true
 smtp_server = localhost
 smtp_port = 25
 auth_method = NONE
-relay_account = mail-relay@mailer.domain3.com
+relay_account = mail-relay@mailer.domain1.com
 use_ssl = false
 use_starttls = false
 ```
 
 ### 4.3 User Configuration
 
-Create `/etc/ssmtp-mailer/users/mail-relay@domain3.com.conf`:
+Create `/etc/ssmtp-mailer/users/mail-relay@domain1.com.conf`:
 
 ```ini
-[user:mail-relay@domain3.com]
+[user:mail-relay@domain1.com]
 enabled = true
-domain = domain3.com
+domain = domain1.com
 can_send_from = true
 can_send_to = true
 template_address = false
-allowed_recipients = *@domain3.com
-allowed_domains = domain3.com
+allowed_recipients = *@domain1.com
+allowed_domains = domain1.com
 ```
 
 ### 4.4 Address Mappings
@@ -174,34 +174,34 @@ Create `/etc/ssmtp-mailer/mappings/relay-mappings.conf`:
 
 ```ini
 [mapping:contact-general]
-from_pattern = contact-general@mailer.domain3.com
-to_pattern = contact-general@domain3.com
-smtp_account = mail-relay@domain3.com
-domain = domain3.com
+from_pattern = contact-general@mailer.domain1.com
+to_pattern = contact-general@domain1.com
+smtp_account = mail-relay@domain1.com
+domain = domain1.com
 
 [mapping:contact-legal]
-from_pattern = contact-legal@mailer.domain3.com
-to_pattern = contact-legal@domain3.com
-smtp_account = mail-relay@domain3.com
-domain = domain3.com
+from_pattern = contact-legal@mailer.domain1.com
+to_pattern = contact-legal@domain1.com
+smtp_account = mail-relay@domain1.com
+domain = domain1.com
 
 [mapping:contact-privacy]
-from_pattern = contact-privacy@mailer.domain3.com
-to_pattern = contact-privacy@domain3.com
-smtp_account = mail-relay@domain3.com
-domain = domain3.com
+from_pattern = contact-privacy@mailer.domain1.com
+to_pattern = contact-privacy@domain1.com
+smtp_account = mail-relay@domain1.com
+domain = domain1.com
 
 [mapping:contact-support]
-from_pattern = contact-support@mailer.domain3.com
-to_pattern = contact-support@domain3.com
-smtp_account = mail-relay@domain3.com
-domain = domain3.com
+from_pattern = contact-support@mailer.domain1.com
+to_pattern = contact-support@blburns.com
+smtp_account = mail-relay@domain1.com
+domain = domain1.com
 
 [mapping:contact-sales]
-from_pattern = contact-sales@mailer.domain3.com
-to_pattern = contact-sales@domain3.com
-smtp_account = mail-relay@domain3.com
-domain = domain3.com
+from_pattern = contact-sales@mailer.domain1.com
+to_pattern = contact-sales@domain1.com
+smtp_account = mail-relay@domain1.com
+domain = domain1.com
 ```
 
 ## Step 5: Testing
@@ -234,7 +234,7 @@ ssmtp-mailer test
 ```bash
 # Send a test email
 ssmtp-mailer send \
-  --from contact-general@mailer.domain3.com \
+  --from contact-general@mailer.domain1.com \
   --to test@example.com \
   --subject "Test Email from Relay" \
   --body "This is a test email sent through the relay system."
@@ -353,7 +353,7 @@ sudo journalctl -u ssmtp-mailer -f
 
 ```bash
 # Test DNS resolution
-nslookup mailer.domain3.com
+nslookup mailer.domain1.com
 nslookup smtp.gmail.com
 
 # Test SMTP manually

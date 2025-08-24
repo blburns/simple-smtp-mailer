@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the mail relay architecture for `domain3.com` where a local mailer server acts as a relay, forwarding emails from local aliases to the main domain through Gmail SMTP.
+This document describes the mail relay architecture for `domain1.com` where a local mailer server acts as a relay, forwarding emails from local aliases to the main domain through Gmail SMTP.
 
 ## Architecture Diagram
 
@@ -14,34 +14,34 @@ This document describes the mail relay architecture for `domain3.com` where a lo
                       ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │              DNS Resolution                                     │
-│  contact-general@mailer.domain3.com                      │
-│  contact-legal@mailer.domain3.com                        │
-│  contact-privacy@mailer.domain3.com                      │
-│  contact-support@mailer.domain3.com                      │
-│  contact-sales@mailer.domain3.com                        │
+│  contact-general@mailer.domain1.com                      │
+│  contact-legal@mailer.domain1.com                        │
+│  contact-privacy@mailer.domain1.com                      │
+│  contact-support@mailer.domain1.com                      │
+│  contact-sales@mailer.domain1.com                        │
 └─────────────────────┬───────────────────────────────────────────┘
                       │
                       ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │              Local Mailer Server                                │
-│              mailer.domain3.com                           │
+│              mailer.domain1.com                           │
 │                                                                 │
 │  ┌─────────────────────────────────────────────────────────┐   │
 │  │              Address Mapping                             │   │
-│  │  contact-general@mailer.domain3.com               │   │
-│  │  └─→ contact-general@domain3.com                 │   │
+│  │  contact-general@mailer.domain1.com               │   │
+│  │  └─→ contact-general@domain1.com                 │   │
 │  │                                                         │   │
-│  │  contact-legal@mailer.domain3.com                 │   │
-│  │  └─→ contact-legal@domain3.com                   │   │
+│  │  contact-legal@mailer.domain1.com                 │   │
+│  │  └─→ contact-legal@domain1.com                   │   │
 │  │                                                         │   │
-│  │  contact-privacy@mailer.domain3.com               │   │
-│  │  └─→ contact-privacy@domain3.com                 │   │
+│  │  contact-privacy@mailer.domain1.com               │   │
+│  │  └─→ contact-privacy@domain1.com                 │   │
 │  │                                                         │   │
-│  │  contact-support@mailer.domain3.com               │   │
-│  │  └─→ contact-support@domain3.com                 │   │
+│  │  contact-support@mailer.domain1.com               │   │
+│  │  └─→ contact-support@blburns.com                 │   │
 │  │                                                         │   │
-│  │  contact-sales@mailer.domain3.com                 │   │
-│  │  └─→ contact-sales@domain3.com                   │   │
+│  │  contact-sales@mailer.domain1.com                 │   │
+│  │  └─→ contact-sales@domain1.com                   │   │
 │  └─────────────────────────────────────────────────────────┘   │
 └─────────────────────┬───────────────────────────────────────────┘
                       │
@@ -49,13 +49,13 @@ This document describes the mail relay architecture for `domain3.com` where a lo
 ┌─────────────────────────────────────────────────────────────────┐
 │              Gmail SMTP Relay                                   │
 │              smtp.gmail.com:587                                │
-│              (via mail-relay@domain3.com)                │
+│              (via mail-relay@domain1.com)                │
 └─────────────────────┬───────────────────────────────────────────┘
                       │
                       ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │              Final Recipients                                   │
-│              @domain3.com                                │
+│              @domain1.com                                │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -63,50 +63,50 @@ This document describes the mail relay architecture for `domain3.com` where a lo
 
 ### Required DNS Records
 
-#### 1. Main Domain Records (domain3.com)
+#### 1. Main Domain Records (domain1.com)
 
 ```dns
 # A record for the main website
-domain3.com.          IN A      YOUR_WEBSITE_IP
+domain1.com.          IN A      YOUR_WEBSITE_IP
 
 # MX record for receiving emails (if needed)
-domain3.com.          IN MX 10  mail.domain3.com.
+domain1.com.          IN MX 10  mail.domain1.com.
 
 # SPF record for email authentication
-domain3.com.          IN TXT    "v=spf1 include:_spf.google.com ~all"
+domain1.com.          IN TXT    "v=spf1 include:_spf.google.com ~all"
 
 # DKIM record (if using Gmail with custom domain)
-google._domainkey.domain3.com. IN TXT "v=DKIM1; k=rsa; p=YOUR_DKIM_KEY"
+google._domainkey.domain1.com. IN TXT "v=DKIM1; k=rsa; p=YOUR_DKIM_KEY"
 
 # DMARC record for email policy
-_dmarc.domain3.com.   IN TXT    "v=DMARC1; p=quarantine; rua=mailto:dmarc@domain3.com"
+_dmarc.domain1.com.   IN TXT    "v=DMARC1; p=quarantine; rua=mailto:dmarc@domain1.com"
 ```
 
-#### 2. Mailer Subdomain Records (mailer.domain3.com)
+#### 2. Mailer Subdomain Records (mailer.domain1.com)
 
 ```dns
 # A record pointing to your mailer server
-mailer.domain3.com.   IN A      YOUR_MAILER_SERVER_IP
+mailer.domain1.com.   IN A      YOUR_MAILER_SERVER_IP
 
 # MX record for the mailer subdomain
-mailer.domain3.com.   IN MX 10  mailer.domain3.com.
+mailer.domain1.com.   IN MX 10  mailer.domain1.com.
 
 # SPF record for the mailer subdomain
-mailer.domain3.com.   IN TXT    "v=spf1 ip4:YOUR_MAILER_SERVER_IP ~all"
+mailer.domain1.com.   IN TXT    "v=spf1 ip4:YOUR_MAILER_SERVER_IP ~all"
 
 # Reverse DNS (PTR) record (important for email deliverability)
-YOUR_MAILER_SERVER_IP      IN PTR    mailer.domain3.com.
+YOUR_MAILER_SERVER_IP      IN PTR    mailer.domain1.com.
 ```
 
 #### 3. SMTP Relay Records
 
 ```dns
 # CNAME record for SMTP relay (optional, for convenience)
-smtp.domain3.com.     IN CNAME  smtp.gmail.com.
+smtp.domain1.com.     IN CNAME  smtp.gmail.com.
 
 # Alternative: Direct A record to Gmail (more reliable)
-smtp.domain3.com.     IN A      173.194.76.108
-smtp.domain3.com.     IN A      173.194.76.109
+smtp.domain1.com.     IN A      173.194.76.108
+smtp.domain1.com.     IN A      173.194.76.109
 ```
 
 ### DNS Provider Setup
@@ -136,10 +136,10 @@ smtp.domain3.com.     IN A      173.194.76.109
 ```ini
 [global]
 # Default hostname for SMTP connections
-default_hostname = mailer.domain3.com
+default_hostname = mailer.domain1.com
 
 # Default from address when none specified
-default_from = noreply@mailer.domain3.com
+default_from = noreply@mailer.domain1.com
 
 # Configuration directory paths
 config_dir = /etc/ssmtp-mailer
@@ -163,30 +163,30 @@ enable_rate_limiting = true
 rate_limit_per_minute = 100
 ```
 
-### 2. Domain Configuration (`domains/domain3.com.conf`)
+### 2. Domain Configuration (`domains/domain1.com.conf`)
 
 ```ini
-[domain:domain3.com]
+[domain:domain1.com]
 enabled = true
 smtp_server = smtp.gmail.com
 smtp_port = 587
 auth_method = LOGIN
-relay_account = mail-relay@domain3.com
-username = mail-relay@domain3.com
+relay_account = mail-relay@domain1.com
+username = mail-relay@domain1.com
 password = your_gmail_app_password_here
 use_ssl = false
 use_starttls = true
 ```
 
-### 3. Local Domain Configuration (`domains/mailer.domain3.com.conf`)
+### 3. Local Domain Configuration (`domains/mailer.domain1.com.conf`)
 
 ```ini
-[domain:mailer.domain3.com]
+[domain:mailer.domain1.com]
 enabled = true
 smtp_server = localhost
 smtp_port = 25
 auth_method = NONE
-relay_account = mail-relay@mailer.domain3.com
+relay_account = mail-relay@mailer.domain1.com
 use_ssl = false
 use_starttls = false
 ```
@@ -195,46 +195,46 @@ use_starttls = false
 
 ```ini
 [mapping:contact-general]
-from_pattern = contact-general@mailer.domain3.com
-to_pattern = contact-general@domain3.com
-smtp_account = mail-relay@domain3.com
-domain = domain3.com
+from_pattern = contact-general@mailer.domain1.com
+to_pattern = contact-general@domain1.com
+smtp_account = mail-relay@domain1.com
+domain = domain1.com
 
 [mapping:contact-legal]
-from_pattern = contact-legal@mailer.domain3.com
-to_pattern = contact-legal@domain3.com
-smtp_account = mail-relay@domain3.com
-domain = domain3.com
+from_pattern = contact-legal@mailer.domain1.com
+to_pattern = contact-legal@domain1.com
+smtp_account = mail-relay@domain1.com
+domain = domain1.com
 
 [mapping:contact-privacy]
-from_pattern = contact-privacy@mailer.domain3.com
-to_pattern = contact-privacy@domain3.com
-smtp_account = mail-relay@domain3.com
-domain = domain3.com
+from_pattern = contact-privacy@mailer.domain1.com
+to_pattern = contact-privacy@domain1.com
+smtp_account = mail-relay@domain1.com
+domain = domain1.com
 
 [mapping:contact-support]
-from_pattern = contact-support@mailer.domain3.com
-to_pattern = contact-support@domain3.com
-smtp_account = mail-relay@domain3.com
-domain = domain3.com
+from_pattern = contact-support@mailer.domain1.com
+to_pattern = contact-support@blburns.com
+smtp_account = mail-relay@domain1.com
+domain = domain1.com
 
 [mapping:contact-sales]
-from_pattern = contact-sales@mailer.domain3.com
-to_pattern = contact-sales@domain3.com
-smtp_account = mail-relay@domain3.com
-domain = domain3.com
+from_pattern = contact-sales@mailer.domain1.com
+to_pattern = contact-sales@domain1.com
+smtp_account = mail-relay@domain1.com
+domain = domain1.com
 ```
 
-### 5. User Configuration (`users/mail-relay@domain3.com.conf`)
+### 5. User Configuration (`users/mail-relay@domain1.com.conf`)
 
 ```ini
-[user:mail-relay@domain3.com]
+[user:mail-relay@domain1.com]
 enabled = true
-domain = mailer.domain3.com
+domain = mailer.domain1.com
 can_send_from = true
 can_send_to = true
 template_address = false
-allowed_domains = domain3.com
+allowed_domains = domain1.com
 ```
 
 ## Gmail Setup
@@ -263,16 +263,16 @@ allowed_domains = domain3.com
 ### 1. Test DNS Resolution
 ```bash
 # Test A records
-nslookup mailer.domain3.com
-nslookup smtp.domain3.com
+nslookup mailer.domain1.com
+nslookup smtp.domain1.com
 
 # Test MX records
-nslookup -type=mx mailer.domain3.com
-nslookup -type=mx domain3.com
+nslookup -type=mx mailer.domain1.com
+nslookup -type=mx domain1.com
 
 # Test SPF records
-nslookup -type=txt domain3.com
-nslookup -type=txt mailer.domain3.com
+nslookup -type=txt domain1.com
+nslookup -type=txt mailer.domain1.com
 ```
 
 ### 2. Test SMTP Connection
@@ -281,7 +281,7 @@ nslookup -type=txt mailer.domain3.com
 telnet smtp.gmail.com 587
 
 # Test local mailer
-telnet mailer.domain3.com 25
+telnet mailer.domain1.com 25
 ```
 
 ### 3. Test Email Relay
@@ -291,7 +291,7 @@ ssmtp-mailer test
 
 # Send a test email
 ssmtp-mailer send \
-  --from contact-general@mailer.domain3.com \
+  --from contact-general@mailer.domain1.com \
   --to test@example.com \
   --subject "Test Email" \
   --body "This is a test email from the relay system"
@@ -380,8 +380,8 @@ ssmtp-mailer test
 tail -f /var/log/ssmtp-mailer.log
 
 # Check DNS
-dig mailer.domain3.com
-dig smtp.domain3.com
+dig mailer.domain1.com
+dig smtp.domain1.com
 
 # Test SMTP manually
 telnet smtp.gmail.com 587

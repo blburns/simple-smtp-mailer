@@ -3,43 +3,43 @@
 
 # General Contact
 [mapping:contact-general]
-from_pattern = contact-general@mailer.domain3.com
-to_pattern = contact-general@domain3.com
-smtp_account = mail-relay@domain3.com
-domain = domain3.com
+from_pattern = contact-general@mailer.domain1.com
+to_pattern = contact-general@domain1.com
+smtp_account = mail-relay@domain1.com
+domain = domain1.com
 
 # Legal Contact
 [mapping:contact-legal]
-from_pattern = contact-legal@mailer.domain3.com
-to_pattern = contact-legal@domain3.com
-smtp_account = mail-relay@domain3.com
-domain = domain3.com
+from_pattern = contact-legal@mailer.domain1.com
+to_pattern = contact-legal@domain1.com
+smtp_account = mail-relay@domain1.com
+domain = domain1.com
 
 # Privacy Contact
 [mapping:contact-privacy]
-from_pattern = contact-privacy@mailer.domain3.com
-to_pattern = contact-privacy@domain3.com
-smtp_account = mail-relay@domain3.com
-domain = domain3.com
+from_pattern = contact-privacy@mailer.domain1.com
+to_pattern = contact-privacy@domain1.com
+smtp_account = mail-relay@domain1.com
+domain = domain1.com
 
 # Support Contact
 [mapping:contact-support]
-from_pattern = contact-support@mailer.domain3.com
-to_pattern = contact-support@domain3.com
-smtp_account = mail-relay@domain3.com
-domain = domain3.com
+from_pattern = contact-support@mailer.domain1.com
+to_pattern = contact-support@blburns.com
+smtp_account = mail-relay@domain1.com
+domain = domain1.com
 
 # Sales Contact
 [mapping:contact-sales]
-from_pattern = contact-sales@mailer.domain3.com
-to_pattern = contact-sales@domain3.com
-smtp_account = mail-relay@domain3.com
-domain = domain3.com
+from_pattern = contact-sales@mailer.domain1.com
+to_pattern = contact-sales@domain1.com
+smtp_account = mail-relay@domain1.com
+domain = domain1.com
 
 # Wildcard mapping for any other addresses
 [mapping:catch-all]
-from_pattern = *@mailer.domain3.com
-to_pattern = noreply@domain3.com
-smtp_account = mail-relay@domain3.com
-domain = domain3.com
-allowed_recipients = noreply@domain3.com
+from_pattern = *@mailer.domain1.com
+to_pattern = noreply@domain1.com
+smtp_account = mail-relay@domain1.com
+domain = domain1.com
+allowed_recipients = noreply@domain1.com

@@ -2,47 +2,47 @@
 
 ## Required DNS Records
 
-### Main Domain (domain3.com)
+### Main Domain (domain1.com)
 
 ```dns
 # A record for website
-domain3.com.          IN A      YOUR_WEBSITE_IP
+domain1.com.          IN A      YOUR_WEBSITE_IP
 
 # MX record
-domain3.com.          IN MX 10  mail.domain3.com.
+domain1.com.          IN MX 10  mail.domain1.com.
 
 # SPF record
-domain3.com.          IN TXT    "v=spf1 include:_spf.google.com ~all"
+domain1.com.          IN TXT    "v=spf1 include:_spf.google.com ~all"
 
 # DMARC record
-_dmarc.domain3.com.   IN TXT    "v=DMARC1; p=quarantine; rua=mailto:dmarc@domain3.com"
+_dmarc.domain1.com.   IN TXT    "v=DMARC1; p=quarantine; rua=mailto:dmarc@domain1.com"
 ```
 
-### Mailer Subdomain (mailer.domain3.com)
+### Mailer Subdomain (mailer.domain1.com)
 
 ```dns
 # A record pointing to your mailer server
-mailer.domain3.com.   IN A      YOUR_MAILER_SERVER_IP
+mailer.domain1.com.   IN A      YOUR_MAILER_SERVER_IP
 
 # MX record for the mailer
-mailer.domain3.com.   IN MX 10  mailer.domain3.com.
+mailer.domain1.com.   IN MX 10  mailer.domain1.com.
 
 # SPF record for mailer
-mailer.domain3.com.   IN TXT    "v=spf1 ip4:YOUR_MAILER_SERVER_IP ~all"
+mailer.domain1.com.   IN TXT    "v=spf1 ip4:YOUR_MAILER_SERVER_IP ~all"
 
 # Reverse DNS (PTR) - important for deliverability
-YOUR_MAILER_SERVER_IP      IN PTR    mailer.domain3.com.
+YOUR_MAILER_SERVER_IP      IN PTR    mailer.domain1.com.
 ```
 
 ### SMTP Relay (Optional)
 
 ```dns
 # CNAME to Gmail (for convenience)
-smtp.domain3.com.     IN CNAME  smtp.gmail.com.
+smtp.domain1.com.     IN CNAME  smtp.gmail.com.
 
 # Or direct A records to Gmail (more reliable)
-smtp.domain3.com.     IN A      173.194.76.108
-smtp.domain3.com.     IN A      173.194.76.109
+smtp.domain1.com.     IN A      173.194.76.108
+smtp.domain1.com.     IN A      173.194.76.109
 ```
 
 ## DNS Provider Setup
@@ -64,14 +64,14 @@ smtp.domain3.com.     IN A      173.194.76.109
 
 ```bash
 # Test A records
-nslookup mailer.domain3.com
-nslookup smtp.domain3.com
+nslookup mailer.domain1.com
+nslookup smtp.domain1.com
 
 # Test MX records
-nslookup -type=mx mailer.domain3.com
+nslookup -type=mx mailer.domain1.com
 
 # Test SPF records
-nslookup -type=txt domain3.com
+nslookup -type=txt domain1.com
 ```
 
 ## Gmail Setup
@@ -84,14 +84,14 @@ nslookup -type=txt domain3.com
 
 ## Configuration Files
 
-### Domain Config (domains/domain3.com.conf)
+### Domain Config (domains/domain1.com.conf)
 ```ini
-[domain:domain3.com]
+[domain:domain1.com]
 enabled = true
 smtp_server = smtp.gmail.com
 smtp_port = 587
 auth_method = LOGIN
-username = mail-relay@domain3.com
+username = mail-relay@domain1.com
 password = your_gmail_app_password
 use_starttls = true
 ```
@@ -99,10 +99,10 @@ use_starttls = true
 ### Address Mappings (mappings/relay-mappings.conf)
 ```ini
 [mapping:contact-general]
-from_pattern = contact-general@mailer.domain3.com
-to_pattern = contact-general@domain3.com
-smtp_account = mail-relay@domain3.com
-domain = domain3.com
+from_pattern = contact-general@mailer.domain1.com
+to_pattern = contact-general@domain1.com
+smtp_account = mail-relay@domain1.com
+domain = domain1.com
 ```
 
 ## Testing
@@ -116,7 +116,7 @@ ssmtp-mailer test
 
 # Send test email
 ssmtp-mailer send \
-  --from contact-general@mailer.domain3.com \
+  --from contact-general@mailer.domain1.com \
   --to test@example.com \
   --subject "Test" \
   --body "Test email"

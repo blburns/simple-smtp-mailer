@@ -175,12 +175,12 @@ relay_account = mail-service@another-domain.com
 User account definitions:
 
 ```ini
-[user:contact-legal@domain3.com]
-domain = domain3.com
+[user:contact-legal@domain1.com]
+domain = domain1.com
 enabled = true
 can_send_from = true
 can_send_to = true
-allowed_recipients = ["*@domain3.com", "customers@*"]
+allowed_recipients = ["*@domain1.com", "customers@*"]
 
 [user:contact-{type}@domain4.com]
 domain = domain4.com
@@ -197,10 +197,10 @@ allowed_recipients = ["*@domain4.com", "partners@*"]
 Routing rules in the `mappings/` directory:
 
 ```ini
-[route:contact-legal@domain3.com]
-from_addresses = ["contact-legal@domain3.com"]
-to_domains = ["domain3.com", "customers.*"]
-smtp_account = mailer@postal.domain3.com
+[route:contact-legal@domain1.com]
+from_addresses = ["contact-legal@domain1.com"]
+to_domains = ["domain1.com", "customers.*"]
+smtp_account = mailer@postal.domain1.com
 ```
 
 ## Usage
@@ -209,7 +209,7 @@ smtp_account = mailer@postal.domain3.com
 
 ```bash
 # Send a simple email
-ssmtp-mailer --from "contact-support@domain3.com" \
+ssmtp-mailer --from "contact-support@blburns.com" \
              --to "customer@example.com" \
              --subject "Support Request" \
              --body "Thank you for contacting support."
@@ -236,7 +236,7 @@ int main() {
     ssmtp_mailer::Mailer mailer;
     
     ssmtp_mailer::Email email;
-    email.from = "contact-support@domain3.com";
+    email.from = "contact-support@blburns.com";
     email.to = {"customer@example.com"};
     email.subject = "Support Request";
     email.body = "Thank you for contacting support.";
