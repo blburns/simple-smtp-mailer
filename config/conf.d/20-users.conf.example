@@ -1,0 +1,85 @@
+# ssmtp-mailer Users Configuration
+# This file defines user account configurations and permissions
+
+[user:contact@mailer.domain1.com]
+domain = domain1.com
+enabled = true
+can_send_from = true
+can_send_to = true
+template_address = false
+allowed_recipients = ["*@domain1.com", "customers@*"]
+allowed_domains = ["domain1.com", "customers.*"]
+
+[user:mailer@domain2.com]
+domain = domain2.com
+enabled = true
+can_send_from = true
+can_send_to = true
+template_address = false
+allowed_recipients = ["*@domain2.com", "partners@*"]
+allowed_domains = ["domain2.com", "partners.*"]
+
+[user:mailer@postal.domain3.com]
+domain = domain3.com
+enabled = true
+can_send_from = true
+can_send_to = true
+template_address = false
+allowed_recipients = ["*@domain3.com", "customers@*"]
+allowed_domains = ["domain3.com", "customers.*"]
+
+[user:contact-legal@domain3.com]
+domain = domain3.com
+enabled = true
+can_send_from = true
+can_send_to = true
+template_address = false
+allowed_recipients = ["*@domain3.com", "legal@*", "customers@*"]
+allowed_domains = ["domain3.com", "legal.*", "customers.*"]
+
+[user:contact-privacy@domain3.com]
+domain = domain3.com
+enabled = true
+can_send_from = true
+can_send_to = true
+template_address = false
+allowed_recipients = ["*@domain3.com", "privacy@*", "customers@*"]
+allowed_domains = ["domain3.com", "privacy.*", "customers.*"]
+
+[user:contact-general@domain3.com]
+domain = domain3.com
+enabled = true
+can_send_from = true
+can_send_to = true
+template_address = false
+allowed_recipients = ["*@domain3.com", "general@*", "customers@*"]
+allowed_domains = ["domain3.com", "general.*", "customers.*"]
+
+[user:contact-support@domain3.com]
+domain = domain3.com
+enabled = true
+can_send_from = true
+can_send_to = true
+template_address = false
+allowed_recipients = ["*@domain3.com", "support@*", "customers@*"]
+allowed_domains = ["domain3.com", "support.*", "customers.*"]
+
+[user:contact-sales@domain3.com]
+domain = domain3.com
+enabled = true
+can_send_from = true
+can_send_to = true
+template_address = false
+allowed_recipients = ["*@domain3.com", "sales@*", "customers@*"]
+allowed_domains = ["domain3.com", "sales.*", "customers.*"]
+
+# Template address example for domain4.com
+[user:contact-{type}@domain4.com]
+domain = domain4.com
+enabled = true
+can_send_from = true
+can_send_to = true
+template_address = true
+allowed_types = ["legal", "privacy", "general", "support", "sales"]
+allowed_recipients = ["*@domain4.com", "partners@*"]
+allowed_domains = ["domain4.com", "partners.*"]

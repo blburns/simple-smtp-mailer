@@ -1,0 +1,41 @@
+# ssmtp-mailer Domains Configuration
+# This file defines domain-specific SMTP server configurations
+
+[domain:domain1.com]
+enabled = true
+smtp_server = smtp.gmail.com
+smtp_port = 587
+auth_method = oauth2
+service_account = noreply@domain1.com
+relay_account = mail-relay@domain1.com
+username = noreply@domain1.com
+password = 
+oauth2_token = 
+use_ssl = false
+use_starttls = true
+
+[domain:domain2.com]
+enabled = true
+smtp_server = smtp.gmail.com
+smtp_port = 587
+auth_method = oauth2
+service_account = mailer@domain2.com
+relay_account = mailer@domain2.com
+username = mailer@domain2.com
+password = 
+oauth2_token = 
+use_ssl = false
+use_starttls = true
+
+[domain:domain3.com]
+enabled = true
+smtp_server = smtp.office365.com
+smtp_port = 587
+auth_method = username_password
+service_account = mailer@postal.domain3.com
+relay_account = mailer@postal.domain3.com
+username = mailer@postal.domain3.com
+password = your_password_here
+oauth2_token = 
+use_ssl = false
+use_starttls = true
