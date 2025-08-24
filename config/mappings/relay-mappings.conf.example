@@ -1,0 +1,45 @@
+# Address Mapping Configuration for Mail Relay
+# This file maps local addresses to remote addresses for relay operations
+
+# General Contact
+[mapping:contact-general]
+from_pattern = contact-general@mailer.domain3.com
+to_pattern = contact-general@domain3.com
+smtp_account = mail-relay@domain3.com
+domain = domain3.com
+
+# Legal Contact
+[mapping:contact-legal]
+from_pattern = contact-legal@mailer.domain3.com
+to_pattern = contact-legal@domain3.com
+smtp_account = mail-relay@domain3.com
+domain = domain3.com
+
+# Privacy Contact
+[mapping:contact-privacy]
+from_pattern = contact-privacy@mailer.domain3.com
+to_pattern = contact-privacy@domain3.com
+smtp_account = mail-relay@domain3.com
+domain = domain3.com
+
+# Support Contact
+[mapping:contact-support]
+from_pattern = contact-support@mailer.domain3.com
+to_pattern = contact-support@domain3.com
+smtp_account = mail-relay@domain3.com
+domain = domain3.com
+
+# Sales Contact
+[mapping:contact-sales]
+from_pattern = contact-sales@mailer.domain3.com
+to_pattern = contact-sales@domain3.com
+smtp_account = mail-relay@domain3.com
+domain = domain3.com
+
+# Wildcard mapping for any other addresses
+[mapping:catch-all]
+from_pattern = *@mailer.domain3.com
+to_pattern = noreply@domain3.com
+smtp_account = mail-relay@domain3.com
+domain = domain3.com
+allowed_recipients = noreply@domain3.com

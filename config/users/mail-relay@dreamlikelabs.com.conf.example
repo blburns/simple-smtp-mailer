@@ -1,0 +1,29 @@
+# User Configuration for Mail Relay User
+# This user handles relay operations from local addresses to remote addresses
+
+[user:mail-relay@domain3.com]
+# Enable/disable this user
+enabled = true
+
+# Domain this user belongs to
+domain = domain3.com
+
+# Permissions
+can_send_from = true
+can_send_to = true
+
+# This is a relay user, not a template address
+template_address = false
+
+# Allowed email types (all types allowed for relay)
+# allowed_types = notification, marketing, system
+
+# Allowed recipients (all domain3.com addresses allowed)
+allowed_recipients = *@domain3.com
+
+# Allowed domains to send to (only the main domain)
+allowed_domains = domain3.com
+
+# Rate limiting for relay operations
+# This user can send more emails than regular users
+# The actual rate limit is controlled by the global configuration
