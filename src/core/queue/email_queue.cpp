@@ -1,6 +1,6 @@
 #include "core/queue/email_queue.hpp"
 #include "core/logging/logger.hpp"
-#include "ssmtp-mailer/mailer.hpp"
+#include "simple-smtp-mailer/mailer.hpp"
 #include <algorithm>
 #include <chrono>
 #include <cmath>

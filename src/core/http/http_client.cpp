@@ -1,4 +1,4 @@
-#include "ssmtp-mailer/http_client.hpp"
+#include "simple-smtp-mailer/http_client.hpp"
 #include <curl/curl.h>
 #include <sstream>
 #include <iostream>

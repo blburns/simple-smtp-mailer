@@ -1,6 +1,6 @@
-#include "ssmtp-mailer/api_client.hpp"
-#include "ssmtp-mailer/http_client.hpp"
-#include "ssmtp-mailer/mailer.hpp"
+#include "simple-smtp-mailer/api_client.hpp"
+#include "simple-smtp-mailer/http_client.hpp"
+#include "simple-smtp-mailer/mailer.hpp"
 #include <sstream>
 #include <json/json.h>
 

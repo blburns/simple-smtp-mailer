@@ -1,0 +1,10 @@
+[Service]
+Type=ownprocess
+Start=auto
+DisplayName=Simple SMTP Mailer
+Description=High-performance SMTP mailer with queue management and OAuth2 support
+Executable=C:\Program Files\simple-smtp-mailer\bin\simple-smtp-mailer.exe
+Arguments=--daemon
+WorkingDirectory=C:\Program Files\simple-smtp-mailer
+Environment=CONFIG_FILE=C:\Program Files\simple-smtp-mailer\etc\simple-smtp-mailer.conf
+Environment=LOG_LEVEL=INFO

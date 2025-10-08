@@ -1,4 +1,4 @@
-#include "ssmtp-mailer/api_client.hpp"
+#include "simple-smtp-mailer/api_client.hpp"
 #include <memory>
 #include <stdexcept>
 
