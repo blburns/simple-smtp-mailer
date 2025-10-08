@@ -321,6 +321,9 @@ make release
 # Build with tests
 make build && make test
 
+# Run comprehensive test suite (58 tests)
+cd build && ./tests/simple-smtp-mailer-tests
+
 # Build specific architecture (macOS)
 make build-intel      # Intel only
 make build-arm64      # Apple Silicon only
@@ -340,6 +343,10 @@ make analyze
 
 # Run tests
 make test
+
+# Run specific test suites
+cd build && ./tests/simple-smtp-mailer-tests --gtest_filter="BasicFunctionalityTest.*"
+cd build && ./tests/simple-smtp-mailer-tests --gtest_filter="*IntegrationTest.*"
 
 # Build documentation
 make docs
@@ -361,7 +368,7 @@ simple-smtp-mailer/
 ├── include/                # Header files
 ├── scripts/                # Build and installation scripts
 ├── docs/                   # Documentation
-├── tests/                  # Test suite
+├── tests/                  # Google Test framework (58 tests, 7 suites)
 ├── CMakeLists.txt          # CMake configuration
 └── Makefile                # Build automation
 ```
@@ -425,7 +432,38 @@ We welcome contributions! Here's how you can help:
 - **Comments**: Document complex logic and public APIs
 - **Error Handling**: Use proper error codes and logging
 
-### Testing Requirements
+### Testing Framework
+The project uses **Google Test (gtest)** for comprehensive testing:
+
+#### **Test Suite Overview**
+- **58 tests** across **7 test suites**
+- **BasicFunctionalityTest**: Core data structures and validation (12 tests)
+- **APIClientTest**: API client factory and configuration (7 tests)
+- **ProviderIntegrationTest**: Multi-provider testing (8 tests)
+- **HTTPClientTest**: HTTP client functionality (8 tests)
+- **MailgunIntegrationTest**: Mailgun API integration (7 tests)
+- **AmazonSESIntegrationTest**: Amazon SES API integration (8 tests)
+- **SendGridIntegrationTest**: SendGrid API integration (8 tests)
+
+#### **Running Tests**
+```bash
+# Run all tests
+cd build && ./tests/simple-smtp-mailer-tests
+
+# Run specific test suite
+cd build && ./tests/simple-smtp-mailer-tests --gtest_filter="BasicFunctionalityTest.*"
+
+# Run with verbose output
+cd build && ./tests/simple-smtp-mailer-tests --gtest_verbose
+```
+
+#### **Test Coverage**
+- **Unit Tests**: Individual component testing with mocks
+- **Integration Tests**: Multi-component interaction testing
+- **API Provider Tests**: Provider-specific functionality testing
+- **Error Handling Tests**: Comprehensive error scenario coverage
+
+#### **Testing Requirements**
 - **Unit Tests**: Required for all new functionality
 - **Integration Tests**: For complex features
 - **Performance Tests**: For performance-critical code

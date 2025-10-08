@@ -1,18 +1,34 @@
 # Tests CMakeLists.txt for simple-smtp-mailer
+# Using Google Test framework for comprehensive testing
 
-# Add test executable
-add_executable(simple-smtp-mailer-tests
+# Find Google Test
+find_package(GTest REQUIRED)
+find_package(PkgConfig REQUIRED)
+
+# Include directories
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../src)
+
+# Test source files
+set(TEST_SOURCES
     test_main.cpp
+    test_basic.cpp
     test_api_client.cpp
     test_all_providers.cpp
-    # Add more test source files here when they exist
-    # test_smtp.cpp
-    # test_config.cpp
+    test_http_client.cpp
+    test_mailgun_integration.cpp
+    test_amazon_ses_integration.cpp
+    test_sendgrid_integration.cpp
 )
 
-# Link test executable with main library
+# Create test executable
+add_executable(simple-smtp-mailer-tests ${TEST_SOURCES})
+
+# Link with main library and Google Test
 target_link_libraries(simple-smtp-mailer-tests
     simple-smtp-mailer-lib
+    GTest::GTest
+    GTest::Main
     Threads::Threads
 )
 
@@ -50,3 +66,7 @@ set_tests_properties(simple-smtp-mailer-tests PROPERTIES
     TIMEOUT 300
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
+
+# Enable test discovery
+include(GoogleTest)
+gtest_discover_tests(simple-smtp-mailer-tests)
