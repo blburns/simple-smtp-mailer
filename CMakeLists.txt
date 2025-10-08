@@ -178,7 +178,7 @@ endif()
 # Tests
 if(ENABLE_TESTS)
     enable_testing()
-    add_subdirectory(src/tests)
+    add_subdirectory(tests)
 endif()
 
 # Package generation

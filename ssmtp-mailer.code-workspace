@@ -3,9 +3,6 @@
 		{
 			"name": "[Root] simple-smtp-mailer",
 			"path": "."
-		},
-		{
-			"path": "../../SimpleDaemons/projects/STANDARDIZATION_TEMPLATES"
 		}
 	],
 	"settings": {

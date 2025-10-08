@@ -7,6 +7,7 @@
 #include <functional>
 #include "simple-smtp-mailer/mailer.hpp"
 #include "simple-smtp-mailer/queue_types.hpp"
+#include "simple-smtp-mailer/http_client.hpp"
 
 namespace ssmtp_mailer {
 
@@ -48,7 +49,7 @@ struct APIRequestConfig {
     std::map<std::string, std::string> custom_headers;
     int timeout_seconds;
     bool verify_ssl;
-    
+
     APIRequestConfig() : timeout_seconds(30), verify_ssl(true) {}
 };
 
@@ -64,7 +65,7 @@ struct APIAuthConfig {
     std::string username;
     std::string password;
     std::map<std::string, std::string> custom_headers;
-    
+
     APIAuthConfig() : method(APIAuthMethod::API_KEY) {}
 };
 
@@ -79,7 +80,7 @@ struct APIClientConfig {
     std::string sender_name;
     bool enable_tracking;
     std::string webhook_url;
-    
+
     APIClientConfig() : provider(APIProvider::SENDGRID), enable_tracking(false) {}
 };
 
@@ -93,7 +94,7 @@ struct APIResponse {
     std::string error_message;
     std::map<std::string, std::string> headers;
     std::string raw_response;
-    
+
     APIResponse() : success(false), http_code(0) {}
 };
 
@@ -103,33 +104,33 @@ struct APIResponse {
 class BaseAPIClient {
 public:
     virtual ~BaseAPIClient() = default;
-    
+
     /**
      * @brief Send an email via API
      * @param email Email to send
      * @return APIResponse with operation result
      */
     virtual APIResponse sendEmail(const Email& email) = 0;
-    
+
     /**
      * @brief Send multiple emails in batch
      * @param emails Vector of emails to send
      * @return Vector of APIResponse results
      */
     virtual std::vector<APIResponse> sendBatch(const std::vector<Email>& emails) = 0;
-    
+
     /**
      * @brief Test API connection
      * @return true if successful, false otherwise
      */
     virtual bool testConnection() = 0;
-    
+
     /**
      * @brief Get provider name
      * @return Provider name string
      */
     virtual std::string getProviderName() const = 0;
-    
+
     /**
      * @brief Check if client is properly configured
      * @return true if valid, false otherwise
@@ -143,7 +144,7 @@ public:
 class SendGridAPIClient : public BaseAPIClient {
 public:
     explicit SendGridAPIClient(const APIClientConfig& config);
-    
+
     APIResponse sendEmail(const Email& email) override;
     std::vector<APIResponse> sendBatch(const std::vector<Email>& emails) override;
     bool testConnection() override;
@@ -162,7 +163,7 @@ private:
 class MailgunAPIClient : public BaseAPIClient {
 public:
     explicit MailgunAPIClient(const APIClientConfig& config);
-    
+
     APIResponse sendEmail(const Email& email) override;
     std::vector<APIResponse> sendBatch(const std::vector<Email>& emails) override;
     bool testConnection() override;
@@ -177,6 +178,7 @@ private:
     std::string extractMessageId(const std::string& response_body);
     std::string urlEncode(const std::string& str);
     std::string base64Encode(const std::string& str);
+    std::string parseMailgunError(const HTTPResponse& response);
 };
 
 /**
@@ -185,7 +187,7 @@ private:
 class AmazonSESAPIClient : public BaseAPIClient {
 public:
     explicit AmazonSESAPIClient(const APIClientConfig& config);
-    
+
     APIResponse sendEmail(const Email& email) override;
     std::vector<APIResponse> sendBatch(const std::vector<Email>& emails) override;
     bool testConnection() override;
@@ -200,6 +202,7 @@ private:
     std::string getConfigurationSetFromConfig() const;
     std::string extractMessageId(const std::string& response_body);
     std::string escapeJson(const std::string& str);
+    std::string parseAmazonSESError(const HTTPResponse& response);
 };
 
 /**
@@ -208,7 +211,7 @@ private:
 class ProtonMailAPIClient : public BaseAPIClient {
 public:
     explicit ProtonMailAPIClient(const APIClientConfig& config);
-    
+
     APIResponse sendEmail(const Email& email) override;
     std::vector<APIResponse> sendBatch(const std::vector<Email>& emails) override;
     bool testConnection() override;
@@ -227,7 +230,7 @@ private:
 class ZohoMailAPIClient : public BaseAPIClient {
 public:
     explicit ZohoMailAPIClient(const APIClientConfig& config);
-    
+
     APIResponse sendEmail(const Email& email) override;
     std::vector<APIResponse> sendBatch(const std::vector<Email>& emails) override;
     bool testConnection() override;
@@ -246,7 +249,7 @@ private:
 class FastmailAPIClient : public BaseAPIClient {
 public:
     explicit FastmailAPIClient(const APIClientConfig& config);
-    
+
     APIResponse sendEmail(const Email& email) override;
     std::vector<APIResponse> sendBatch(const std::vector<Email>& emails) override;
     bool testConnection() override;
@@ -270,13 +273,13 @@ public:
      * @return Shared pointer to API client
      */
     static std::shared_ptr<BaseAPIClient> createClient(const APIClientConfig& config);
-    
+
     /**
      * @brief Get list of supported providers
      * @return Vector of provider names
      */
     static std::vector<std::string> getSupportedProviders();
-    
+
     /**
      * @brief Check if provider is supported
      * @param provider Provider to check
