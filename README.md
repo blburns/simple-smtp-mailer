@@ -50,6 +50,14 @@
 - **Input Sanitization**: Protection against injection attacks
 - **Logging & Monitoring**: Comprehensive audit trails
 
+### 📊 **Advanced Logging**
+- **JSON Logging**: Structured, machine-readable log output
+- **Event-Specific Logging**: Email events, API requests, SMTP operations
+- **Configurable Fields**: Choose which fields to include in logs
+- **Custom Metadata**: Add application-specific fields to all log entries
+- **Integration Ready**: Compatible with ELK Stack, Splunk, Grafana
+- **Performance Optimized**: Minimal overhead for production use
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -167,6 +175,12 @@ log_level = INFO
 log_file = /var/log/simple-smtp-mailer/simple-smtp-mailer.log
 max_log_size = 10
 max_log_files = 5
+
+# JSON Logging Configuration
+json_logging_enabled = true
+json_log_fields = timestamp,level,message,thread,component,event_type
+json_log_pretty_print = false
+json_log_timestamp_format = %Y-%m-%dT%H:%M:%S.%fZ
 
 [SMTP]
 default_server = smtp.gmail.com
@@ -286,6 +300,38 @@ email = ssmtp_mailer.Email(
 
 mailer = ssmtp_mailer.Mailer()
 mailer.send(email)
+```
+
+#### JSON Logging
+```cpp
+#include <simple-smtp-mailer/json_logger.hpp>
+
+// Configure JSON logging
+ssmtp_mailer::JsonLogConfig config;
+config.enabled = true;
+config.fields = "timestamp,level,message,thread,component,event_type";
+config.custom_fields["service"] = "simple-smtp-mailer";
+config.custom_fields["version"] = "0.2.0";
+
+// Initialize logger
+ssmtp_mailer::JsonLogger::initialize(config);
+ssmtp_mailer::JsonLogger& logger = ssmtp_mailer::JsonLogger::getInstance();
+
+// Log email events
+logger.logEmailEvent(ssmtp_mailer::LogLevel::INFO, "sender@example.com", 
+                    {"recipient@example.com"}, "Welcome Email", "sent", "msg-12345");
+
+// Log API requests
+logger.logApiRequest(ssmtp_mailer::LogLevel::INFO, "SendGrid", "/v3/mail/send", 
+                    "POST", 200, 150);
+
+// Structured logging
+std::map<std::string, std::string> data = {
+    {"component", "smtp_client"},
+    {"action", "connect"},
+    {"server", "smtp.example.com"}
+};
+logger.logStructured(ssmtp_mailer::LogLevel::DEBUG, data);
 ```
 
 ## 🛠️ Development
@@ -436,7 +482,7 @@ We welcome contributions! Here's how you can help:
 The project uses **Google Test (gtest)** for comprehensive testing:
 
 #### **Test Suite Overview**
-- **58 tests** across **7 test suites**
+- **68 tests** across **8 test suites**
 - **BasicFunctionalityTest**: Core data structures and validation (12 tests)
 - **APIClientTest**: API client factory and configuration (7 tests)
 - **ProviderIntegrationTest**: Multi-provider testing (8 tests)
@@ -444,6 +490,7 @@ The project uses **Google Test (gtest)** for comprehensive testing:
 - **MailgunIntegrationTest**: Mailgun API integration (7 tests)
 - **AmazonSESIntegrationTest**: Amazon SES API integration (8 tests)
 - **SendGridIntegrationTest**: SendGrid API integration (8 tests)
+- **JsonLoggingTest**: JSON logging functionality (10 tests)
 
 #### **Running Tests**
 ```bash

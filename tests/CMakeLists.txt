@@ -19,6 +19,7 @@ set(TEST_SOURCES
     test_mailgun_integration.cpp
     test_amazon_ses_integration.cpp
     test_sendgrid_integration.cpp
+    test_json_logging.cpp
 )
 
 # Create test executable
