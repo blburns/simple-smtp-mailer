@@ -1,0 +1,34 @@
+[Unit]
+Description=High-performance SMTP mailer with queue management and OAuth2 support
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=simple-smtp-mailer
+Group=simple-smtp-mailer
+ExecStart=/usr/local/bin/simple-smtp-mailer --daemon
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=simple-smtp-mailer
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/simple-smtp-mailer /var/log/simple-smtp-mailer
+
+# Resource limits
+LimitNOFILE=65536
+LimitNPROC=4096
+
+# Environment
+Environment=CONFIG_FILE=/etc/simple-smtp-mailer/simple-smtp-mailer.conf
+Environment=LOG_LEVEL=INFO
+
+[Install]
+WantedBy=multi-user.target

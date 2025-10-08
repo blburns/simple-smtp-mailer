@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.simple-smtp-mailer.simple-smtp-mailer</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/local/bin/simple-smtp-mailer</string>
+        <string>--daemon</string>
+    </array>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>KeepAlive</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>/var/log/simple-smtp-mailer/simple-smtp-mailer.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/var/log/simple-smtp-mailer/simple-smtp-mailer.error.log</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>CONFIG_FILE</key>
+        <string>/usr/local/etc/simple-smtp-mailer/simple-smtp-mailer.conf</string>
+        <key>LOG_LEVEL</key>
+        <string>INFO</string>
+    </dict>
+
+    <key>ProcessType</key>
+    <string>Background</string>
+
+    <key>ThrottleInterval</key>
+    <integer>10</integer>
+
+    <key>ExitTimeOut</key>
+    <integer>30</integer>
+
+    <key>SoftResourceLimits</key>
+    <dict>
+        <key>NumberOfFiles</key>
+        <integer>65536</integer>
+        <key>NumberOfProcesses</key>
+        <integer>4096</integer>
+    </dict>
+</dict>
+</plist>

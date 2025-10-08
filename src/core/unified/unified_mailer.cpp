@@ -1,6 +1,6 @@
-#include "ssmtp-mailer/unified_mailer.hpp"
+#include "simple-smtp-mailer/unified_mailer.hpp"
 #include "core/config/config_manager.hpp"
-#include "ssmtp-mailer/smtp_client.hpp"
+#include "simple-smtp-mailer/smtp_client.hpp"
 #include <algorithm>
 #include <iostream>
 #include <chrono>

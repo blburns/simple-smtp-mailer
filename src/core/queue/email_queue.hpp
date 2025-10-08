@@ -7,8 +7,8 @@
 #include <atomic>
 #include <chrono>
 #include <functional>
-#include "ssmtp-mailer/queue_types.hpp"
-#include "ssmtp-mailer/mailer.hpp"
+#include "simple-smtp-mailer/queue_types.hpp"
+#include "simple-smtp-mailer/mailer.hpp"
 
 namespace ssmtp_mailer {
 
