@@ -136,6 +136,31 @@ public:
     void setLogFormat(const std::string& format);
     
     /**
+     * @brief Enable/disable JSON logging format
+     * @param enable Whether to enable JSON format
+     */
+    void enableJsonFormat(bool enable);
+    
+    /**
+     * @brief Set JSON logging fields
+     * @param fields Comma-separated list of fields to include in JSON output
+     */
+    void setJsonFields(const std::string& fields);
+    
+    /**
+     * @brief Add custom field to JSON output
+     * @param key Field key
+     * @param value Field value
+     */
+    void addJsonField(const std::string& key, const std::string& value);
+    
+    /**
+     * @brief Remove custom field from JSON output
+     * @param key Field key to remove
+     */
+    void removeJsonField(const std::string& key);
+    
+    /**
      * @brief Flush log buffer
      */
     void flush();
@@ -183,6 +208,14 @@ private:
     std::string formatMessage(LogLevel level, const std::string& message) const;
     
     /**
+     * @brief Format log message as JSON
+     * @param level Log level
+     * @param message Message to format
+     * @return JSON formatted message
+     */
+    std::string formatJsonMessage(LogLevel level, const std::string& message) const;
+    
+    /**
      * @brief Get current timestamp string
      * @return Timestamp string
      */
@@ -228,9 +261,12 @@ private:
     bool timestamp_enabled_;
     bool log_level_enabled_;
     bool thread_id_enabled_;
+    bool json_format_enabled_;
     
     std::string log_format_;
     std::string default_format_;
+    std::string json_fields_;
+    std::map<std::string, std::string> custom_json_fields_;
     
     size_t max_log_size_;
     size_t max_log_files_;

@@ -1,6 +1,11 @@
 #include "core/logging/logger.hpp"
 #include <iostream>
 #include <mutex>
+#include <sstream>
+#include <iomanip>
+#include <ctime>
+#include <thread>
+#include <map>
 
 namespace ssmtp_mailer {
 
@@ -85,6 +90,27 @@ void Logger::log(LogLevel level, const std::string& message) {
         case LogLevel::ERROR: error(message); break;
         case LogLevel::CRITICAL: critical(message); break;
     }
+}
+
+void Logger::enableJsonFormat(bool enable) {
+    // Implementation will be added when we have a proper Logger class
+    (void)enable; // Suppress unused parameter warning
+}
+
+void Logger::setJsonFields(const std::string& fields) {
+    // Implementation will be added when we have a proper Logger class
+    (void)fields; // Suppress unused parameter warning
+}
+
+void Logger::addJsonField(const std::string& key, const std::string& value) {
+    // Implementation will be added when we have a proper Logger class
+    (void)key;   // Suppress unused parameter warning
+    (void)value; // Suppress unused parameter warning
+}
+
+void Logger::removeJsonField(const std::string& key) {
+    // Implementation will be added when we have a proper Logger class
+    (void)key; // Suppress unused parameter warning
 }
 
 } // namespace ssmtp_mailer
