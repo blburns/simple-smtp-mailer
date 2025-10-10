@@ -6,6 +6,7 @@
 #include <mutex>
 #include <chrono>
 #include <sstream>
+#include <map>
 
 namespace ssmtp_mailer {
 

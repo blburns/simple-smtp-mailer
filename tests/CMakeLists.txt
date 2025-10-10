@@ -2,7 +2,57 @@
 # Using Google Test framework for comprehensive testing
 
 # Find Google Test
-find_package(GTest REQUIRED)
+# First try to find GTest using the standard method
+find_package(GTest QUIET)
+
+# If not found, try to find it manually
+if(NOT GTest_FOUND)
+    # Look for GTest libraries in common locations
+    find_library(GTEST_LIBRARY
+        NAMES gtest
+        PATHS /usr/lib /usr/lib/x86_64-linux-gnu /usr/local/lib
+        NO_DEFAULT_PATH
+    )
+    
+    find_library(GTEST_MAIN_LIBRARY
+        NAMES gtest_main
+        PATHS /usr/lib /usr/lib/x86_64-linux-gnu /usr/local/lib
+        NO_DEFAULT_PATH
+    )
+    
+    # Look for GTest headers
+    find_path(GTEST_INCLUDE_DIR
+        NAMES gtest/gtest.h
+        PATHS /usr/include /usr/local/include
+        NO_DEFAULT_PATH
+    )
+    
+    # Check if we found all required components
+    if(GTEST_LIBRARY AND GTEST_MAIN_LIBRARY AND GTEST_INCLUDE_DIR)
+        set(GTest_FOUND TRUE)
+        set(GTEST_LIBRARIES ${GTEST_LIBRARY} ${GTEST_MAIN_LIBRARY})
+        set(GTEST_INCLUDE_DIRS ${GTEST_INCLUDE_DIR})
+        
+        # Create imported targets
+        add_library(GTest::GTest UNKNOWN IMPORTED)
+        set_target_properties(GTest::GTest PROPERTIES
+            IMPORTED_LOCATION ${GTEST_LIBRARY}
+            INTERFACE_INCLUDE_DIRECTORIES ${GTEST_INCLUDE_DIR}
+        )
+        
+        add_library(GTest::Main UNKNOWN IMPORTED)
+        set_target_properties(GTest::Main PROPERTIES
+            IMPORTED_LOCATION ${GTEST_MAIN_LIBRARY}
+            INTERFACE_INCLUDE_DIRECTORIES ${GTEST_INCLUDE_DIR}
+        )
+        
+        message(STATUS "Found GTest: ${GTEST_LIBRARIES}")
+        message(STATUS "GTest include dir: ${GTEST_INCLUDE_DIRS}")
+    else()
+        message(FATAL_ERROR "Could not find GTest libraries. Please install libgtest-dev package.")
+    endif()
+endif()
+
 find_package(PkgConfig REQUIRED)
 
 # Include directories
