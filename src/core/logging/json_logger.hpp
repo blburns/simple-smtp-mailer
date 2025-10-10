@@ -133,9 +133,9 @@ public:
                       int status_code, long response_time_ms,
                       const std::string& error_message = "");
 
-private:
+public:
     /**
-     * @brief Private constructor (singleton)
+     * @brief Constructor (public for make_unique, but singleton pattern enforced via static methods)
      */
     JsonLogger();
     
