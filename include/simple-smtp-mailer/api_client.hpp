@@ -303,6 +303,26 @@ private:
 };
 
 /**
+ * @brief Mailjet API client implementation
+ */
+class MailjetAPIClient : public BaseAPIClient {
+public:
+    explicit MailjetAPIClient(const APIClientConfig& config);
+
+    APIResponse sendEmail(const Email& email) override;
+    std::vector<APIResponse> sendBatch(const std::vector<Email>& emails) override;
+    bool testConnection() override;
+    std::string getProviderName() const override { return "Mailjet"; }
+    bool isValid() const override;
+
+private:
+    APIClientConfig config_;
+    std::string buildRequestBody(const Email& email);
+    std::map<std::string, std::string> buildHeaders();
+    void parseErrorResponse(const HTTPResponse& httpResponse, APIResponse& apiResponse);
+};
+
+/**
  * @brief Factory class for creating API clients
  */
 class APIClientFactory {
