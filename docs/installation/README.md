@@ -125,6 +125,23 @@ Choose the right installation method for your platform and get ssmtp-mailer up a
 
 ## 🔐 Post-Installation Setup
 
+### Daemon Mode (Recommended for Production)
+
+For production deployments, run ssmtp-mailer as a background daemon:
+
+```bash
+# Start daemon
+simple-smtp-mailer --daemon
+
+# Check status
+simple-smtp-mailer --status
+
+# Stop daemon
+simple-smtp-mailer --stop
+```
+
+For complete daemon documentation, see [Daemon Mode Guide](../features/daemon-mode.md).
+
 ### OAuth2 Configuration
 ```bash
 # List available providers
