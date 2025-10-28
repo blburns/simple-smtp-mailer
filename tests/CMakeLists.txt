@@ -70,6 +70,7 @@ set(TEST_SOURCES
     test_amazon_ses_integration.cpp
     test_sendgrid_integration.cpp
     test_postmark_integration.cpp
+    test_sparkpost_integration.cpp
     test_json_logging.cpp
 )
 
