@@ -1,5 +1,6 @@
 #include "simple-smtp-mailer/webhook_handler.hpp"
 #include <json/json.h>
+#include <iostream>
 #include <sstream>
 #include <openssl/hmac.h>
 #include <openssl/evp.h>
