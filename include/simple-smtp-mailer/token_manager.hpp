@@ -111,7 +111,7 @@ class TokenManager {
 private:
     std::shared_ptr<TokenStorage> storage_;
     std::map<std::string, TokenAccount> accounts_;
-    std::mutex accounts_mutex_;
+    mutable std::mutex accounts_mutex_;
     
     // Automatic token refresh settings
     bool auto_refresh_enabled_;
