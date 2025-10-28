@@ -380,6 +380,26 @@ Address templates support pattern matching with `{type}` placeholders:
 - `contact-{type}@domain.com` matches `contact-legal@domain.com`, `contact-support@domain.com`, etc.
 - `{department}@company.com` matches `sales@company.com`, `support@company.com`, etc.
 
+## Daemon Mode
+
+ssmtp-mailer can run as a background daemon for continuous email processing:
+
+```bash
+# Start daemon
+ssmtp-mailer --daemon
+
+# Check daemon status
+ssmtp-mailer --status
+
+# Stop daemon
+ssmtp-mailer --stop
+
+# Reload configuration
+ssmtp-mailer --reload
+```
+
+For complete daemon documentation, see [Daemon Mode Guide](../features/daemon-mode.md).
+
 ## Integration
 
 The CLI integrates seamlessly with the main ssmtp-mailer application. Once configured through the CLI, you can use the regular ssmtp-mailer commands:

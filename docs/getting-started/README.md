@@ -47,6 +47,7 @@ Build ssmtp-mailer from source code:
 - [ ] **Configure email relay** settings
 
 ### After Installation
+- [ ] **Start daemon mode** for production use (see [Daemon Mode Guide](../features/daemon-mode.md))
 - [ ] **Test email sending** with sample messages
 - [ ] **Configure SSL/TLS** for secure transmission
 - [ ] **Set up monitoring** and logging

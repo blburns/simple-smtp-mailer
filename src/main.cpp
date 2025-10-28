@@ -1,9 +1,16 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <memory>
+#include <thread>
+#include <chrono>
+#include <csignal>
 #include "simple-smtp-mailer/mailer.hpp"
 #include "simple-smtp-mailer/unified_mailer.hpp"
 #include "simple-smtp-mailer/cli_manager.hpp"
+#include "simple-smtp-mailer/daemon.hpp"
+#include "simple-smtp-mailer/queue_types.hpp"
+#include "core/queue/email_queue.hpp"
 #include "core/logging/logger.hpp"
 
 void printUsage() {
@@ -13,6 +20,11 @@ void printUsage() {
     std::cout << "  --version, -v        Show version information" << std::endl;
     std::cout << "  --config, -c FILE    Use specified configuration file" << std::endl;
     std::cout << "  --verbose, -V        Enable verbose logging" << std::endl;
+    std::cout << "  --daemon             Run in daemon mode (background)" << std::endl;
+    std::cout << "  --pid-file FILE      Specify PID file location" << std::endl;
+    std::cout << "  --stop               Stop running daemon" << std::endl;
+    std::cout << "  --reload             Reload daemon configuration" << std::endl;
+    std::cout << "  --status             Check daemon status" << std::endl;
     
     std::cout << "\nCommands:" << std::endl;
     std::cout << "  send                 Send an email" << std::endl;
@@ -154,6 +166,66 @@ bool parseSendAPICommand(const std::vector<std::string>& args, std::string& prov
     return !provider.empty() && !from.empty() && !to.empty() && !subject.empty() && !body.empty();
 }
 
+void runDaemonMode(const std::string& config_file, const std::string& pid_file, bool verbose) {
+    ssmtp_mailer::Logger& logger = ssmtp_mailer::Logger::getInstance();
+    
+    logger.info("Starting daemon mode");
+    
+    // Daemonize the process
+    std::string pid_file_path = pid_file.empty() ? ssmtp_mailer::Daemon::getDefaultPidFile() : pid_file;
+    std::string log_file = ssmtp_mailer::Daemon::getDefaultLogFile();
+    
+    if (!ssmtp_mailer::Daemon::daemonize(pid_file_path, log_file)) {
+        logger.error("Failed to daemonize process");
+        exit(1);
+    }
+    
+    logger.info("Daemon started successfully");
+    
+    // Initialize mailer
+    ssmtp_mailer::Mailer mailer(config_file);
+    
+    if (!mailer.isConfigured()) {
+        logger.error("Mailer not properly configured: " + mailer.getLastError());
+        exit(1);
+    }
+    
+    logger.info("Daemon mailer initialized successfully");
+    
+    // Initialize email queue
+    ssmtp_mailer::EmailQueue queue;
+    
+    // Set up send callback
+    queue.setSendCallback([&mailer](const ssmtp_mailer::Email* email) -> ssmtp_mailer::SMTPResult {
+        // Send the email using the mailer
+        std::string to_combined;
+        if (!email->to.empty()) {
+            to_combined = email->to[0];
+        }
+        return mailer.send(email->from, to_combined, email->subject, email->body);
+    });
+    
+    // Start the queue processing
+    queue.start();
+    logger.info("Email queue started");
+    
+    // Main daemon loop - process queue continuously
+    while (true) {
+        std::this_thread::sleep_for(std::chrono::seconds(10));
+        
+        // Log queue statistics periodically
+        if (queue.isRunning()) {
+            logger.info("Queue status - Size: " + std::to_string(queue.size()) + 
+                       ", Processed: " + std::to_string(queue.getTotalProcessed()) +
+                       ", Failed: " + std::to_string(queue.getTotalFailed()));
+        }
+    }
+    
+    // Clean up
+    queue.stop();
+    logger.info("Daemon stopped");
+}
+
 int main(int argc, char* argv[]) {
     std::vector<std::string> args;
     for (int i = 1; i < argc; ++i) {
@@ -162,7 +234,12 @@ int main(int argc, char* argv[]) {
     
     // Parse global options
     std::string config_file;
+    std::string pid_file;
     bool verbose = false;
+    bool daemon_mode = false;
+    bool stop_daemon = false;
+    bool reload_daemon = false;
+    bool status_daemon = false;
     
     for (size_t i = 0; i < args.size(); ++i) {
         if (args[i] == "--help" || args[i] == "-h") {
@@ -180,6 +257,56 @@ int main(int argc, char* argv[]) {
             }
         } else if (args[i] == "--verbose" || args[i] == "-V") {
             verbose = true;
+        } else if (args[i] == "--daemon") {
+            daemon_mode = true;
+        } else if (args[i] == "--pid-file") {
+            if (i + 1 < args.size()) {
+                pid_file = args[++i];
+            } else {
+                std::cerr << "Error: --pid-file requires a file path" << std::endl;
+                return 1;
+            }
+        } else if (args[i] == "--stop") {
+            stop_daemon = true;
+        } else if (args[i] == "--reload") {
+            reload_daemon = true;
+        } else if (args[i] == "--status") {
+            status_daemon = true;
+        }
+    }
+    
+    // Handle daemon control commands
+    if (stop_daemon) {
+        std::string pid_file_path = pid_file.empty() ? ssmtp_mailer::Daemon::getDefaultPidFile() : pid_file;
+        if (ssmtp_mailer::Daemon::stop(pid_file_path)) {
+            std::cout << "Daemon stopped successfully" << std::endl;
+            return 0;
+        } else {
+            std::cerr << "Failed to stop daemon" << std::endl;
+            return 1;
+        }
+    }
+    
+    if (reload_daemon) {
+        std::string pid_file_path = pid_file.empty() ? ssmtp_mailer::Daemon::getDefaultPidFile() : pid_file;
+        if (ssmtp_mailer::Daemon::reload(pid_file_path)) {
+            std::cout << "Daemon reload signal sent successfully" << std::endl;
+            return 0;
+        } else {
+            std::cerr << "Failed to reload daemon" << std::endl;
+            return 1;
+        }
+    }
+    
+    if (status_daemon) {
+        std::string pid_file_path = pid_file.empty() ? ssmtp_mailer::Daemon::getDefaultPidFile() : pid_file;
+        if (ssmtp_mailer::Daemon::isRunning(pid_file_path)) {
+            int pid = ssmtp_mailer::Daemon::getPid(pid_file_path);
+            std::cout << "Daemon is running (PID: " << pid << ")" << std::endl;
+            return 0;
+        } else {
+            std::cout << "Daemon is not running" << std::endl;
+            return 1;
         }
     }
     
@@ -197,9 +324,9 @@ int main(int argc, char* argv[]) {
     ssmtp_mailer::Logger& logger = ssmtp_mailer::Logger::getInstance();
     logger.info("simple-smtp-mailer v0.2.0 starting up");
     
-    // Check if we have a command
-    if (args.empty() || args[0].substr(0, 2) == "--") {
-        printUsage();
+    // If daemon mode is requested, run as daemon
+    if (daemon_mode) {
+        runDaemonMode(config_file, pid_file, verbose);
         return 0;
     }
     

@@ -58,6 +58,14 @@
 - **Integration Ready**: Compatible with ELK Stack, Splunk, Grafana
 - **Performance Optimized**: Minimal overhead for production use
 
+### 🔄 **Daemon Mode**
+- **Background Processing**: Run as a system daemon for continuous operation
+- **Queue Management**: Automatic email queue processing in the background
+- **System Integration**: Native systemd, launchd, and Windows Service support
+- **Signal Handling**: Graceful shutdown and configuration reload support
+- **Process Management**: PID file management and status checking
+- **Production Ready**: Optimized for 24/7 operation
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -239,6 +247,26 @@ simple-smtp-mailer send --to user@example.com --subject "Report" --body "See att
 # Send to multiple recipients
 simple-smtp-mailer send --to user1@example.com,user2@example.com --subject "Group message" --body "Hello everyone"
 ```
+
+#### Daemon Mode
+
+Run as a background daemon for continuous email processing:
+
+```bash
+# Start daemon
+simple-smtp-mailer --daemon
+
+# Check daemon status
+simple-smtp-mailer --status
+
+# Stop daemon
+simple-smtp-mailer --stop
+
+# Reload configuration
+simple-smtp-mailer --reload
+```
+
+For complete daemon documentation, see [Daemon Mode Guide](docs/features/daemon-mode.md).
 
 #### Queue Management
 ```bash

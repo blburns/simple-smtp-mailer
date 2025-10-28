@@ -37,6 +37,10 @@ Welcome to the comprehensive documentation for ssmtp-mailer, a powerful and secu
 - **[Build Scripts](development/build-scripts.md)** - Automated build processes
 - **[Building Guide](development/building.md)** - Manual build instructions
 
+### 🌟 **Features**
+- **[Daemon Mode](features/daemon-mode.md)** - Background process and continuous email processing
+- **[JSON Logging](features/json-logging.md)** - Structured logging for monitoring and analysis
+
 ### 📖 **API Reference**
 - **[API Overview](api/README.md)** - Programmatic interface documentation
 
@@ -63,6 +67,14 @@ python3 tools/oauth2-helper/oauth2-helper.py gmail
 
 ### 4. Configure Email Relay
 Follow the [relay setup guide](architecture/relay-setup.md) to configure your email relay system.
+
+### 5. Start Daemon Mode (Production)
+For production deployments, run as a background daemon:
+```bash
+simple-smtp-mailer --daemon
+simple-smtp-mailer --status
+```
+See the [Daemon Mode Guide](features/daemon-mode.md) for complete documentation.
 
 ## 🔧 Prerequisites
 
@@ -108,6 +120,7 @@ Follow the [relay setup guide](architecture/relay-setup.md) to configure your em
 | Configuration | ✅ Complete | 2025-01-15 |
 | Architecture | ✅ Complete | 2025-01-15 |
 | OAuth2 | ✅ Complete | 2025-01-15 |
+| Features | ✅ Complete | 2025-01-15 |
 | Development | ✅ Complete | 2025-01-15 |
 | API Reference | 🔄 In Progress | 2025-01-15 |
 
