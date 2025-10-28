@@ -1,5 +1,6 @@
 #include "simple-smtp-mailer/webhook_handler.hpp"
 #include "simple-smtp-mailer/http_client.hpp"
+#include <iostream>
 #include <algorithm>
 #include <iomanip>
 #include <sstream>
