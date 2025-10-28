@@ -105,10 +105,6 @@ bool PostmarkAPIClient::testConnection() {
     }
 }
 
-std::string PostmarkAPIClient::getProviderName() const {
-    return "Postmark";
-}
-
 bool PostmarkAPIClient::isValid() const {
     return !config_.auth.api_key.empty();
 }
