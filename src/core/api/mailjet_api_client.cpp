@@ -109,10 +109,6 @@ bool MailjetAPIClient::testConnection() {
     }
 }
 
-std::string MailjetAPIClient::getProviderName() const {
-    return "Mailjet";
-}
-
 bool MailjetAPIClient::isValid() const {
     return !config_.auth.api_key.empty() && !config_.auth.api_secret.empty();
 }

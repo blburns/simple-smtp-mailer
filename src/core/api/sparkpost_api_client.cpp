@@ -105,10 +105,6 @@ bool SparkPostAPIClient::testConnection() {
     }
 }
 
-std::string SparkPostAPIClient::getProviderName() const {
-    return "SparkPost";
-}
-
 bool SparkPostAPIClient::isValid() const {
     return !config_.auth.api_key.empty();
 }
