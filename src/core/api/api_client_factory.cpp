@@ -28,8 +28,10 @@ std::shared_ptr<BaseAPIClient> APIClientFactory::createClient(const APIClientCon
             return std::make_shared<PostmarkAPIClient>(config);
             
         case APIProvider::SPARKPOST:
+            return std::make_shared<SparkPostAPIClient>(config);
+            
         case APIProvider::MAILJET:
-            // These providers are not yet implemented
+            // This provider is not yet implemented
             throw std::runtime_error("Provider " + std::to_string(static_cast<int>(config.provider)) + " is not yet implemented");
             
         case APIProvider::CUSTOM:
@@ -49,7 +51,8 @@ std::vector<std::string> APIClientFactory::getSupportedProviders() {
         "ProtonMail",
         "Zoho Mail",
         "Fastmail",
-        "Postmark"
+        "Postmark",
+        "SparkPost"
         // Add more providers as they are implemented
     };
 }
@@ -63,9 +66,9 @@ bool APIClientFactory::isProviderSupported(APIProvider provider) {
         case APIProvider::ZOHO_MAIL:
         case APIProvider::FASTMAIL:
         case APIProvider::POSTMARK:
+        case APIProvider::SPARKPOST:
             return true;
             
-        case APIProvider::SPARKPOST:
         case APIProvider::MAILJET:
         case APIProvider::CUSTOM:
         default:
