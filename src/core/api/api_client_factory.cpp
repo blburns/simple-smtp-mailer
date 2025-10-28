@@ -25,6 +25,8 @@ std::shared_ptr<BaseAPIClient> APIClientFactory::createClient(const APIClientCon
             return std::make_shared<FastmailAPIClient>(config);
             
         case APIProvider::POSTMARK:
+            return std::make_shared<PostmarkAPIClient>(config);
+            
         case APIProvider::SPARKPOST:
         case APIProvider::MAILJET:
             // These providers are not yet implemented
@@ -46,7 +48,8 @@ std::vector<std::string> APIClientFactory::getSupportedProviders() {
         "Amazon SES",
         "ProtonMail",
         "Zoho Mail",
-        "Fastmail"
+        "Fastmail",
+        "Postmark"
         // Add more providers as they are implemented
     };
 }
@@ -59,9 +62,9 @@ bool APIClientFactory::isProviderSupported(APIProvider provider) {
         case APIProvider::PROTONMAIL:
         case APIProvider::ZOHO_MAIL:
         case APIProvider::FASTMAIL:
+        case APIProvider::POSTMARK:
             return true;
             
-        case APIProvider::POSTMARK:
         case APIProvider::SPARKPOST:
         case APIProvider::MAILJET:
         case APIProvider::CUSTOM:
