@@ -73,6 +73,7 @@ set(TEST_SOURCES
     test_sparkpost_integration.cpp
     test_mailjet_integration.cpp
     test_webhook_processing.cpp
+    test_template_management.cpp
     test_json_logging.cpp
 )
 
