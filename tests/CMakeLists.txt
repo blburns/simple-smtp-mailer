@@ -75,6 +75,7 @@ set(TEST_SOURCES
     test_webhook_processing.cpp
     test_json_logging.cpp
     test_token_manager.cpp
+    test_analytics_simple.cpp
 )
 
 # Create test executable
