@@ -74,6 +74,7 @@ set(TEST_SOURCES
     test_mailjet_integration.cpp
     test_webhook_processing.cpp
     test_json_logging.cpp
+    test_token_manager.cpp
 )
 
 # Create test executable
