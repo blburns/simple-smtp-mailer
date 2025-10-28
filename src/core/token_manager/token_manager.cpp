@@ -294,13 +294,7 @@ bool TokenManager::deleteAccount(const std::string& account_id) {
     return deleted;
 }
 
-void TokenManager::setAutoRefresh(bool enabled) {
-    auto_refresh_enabled_ = enabled;
-}
-
-void TokenManager::setRefreshBuffer(int minutes) {
-    refresh_buffer_minutes_ = minutes;
-}
+// setAutoRefresh and setRefreshBuffer are inline in the header
 
 int TokenManager::getTokenLifetime(const std::string& account_id) const {
     std::lock_guard<std::mutex> lock(accounts_mutex_);
