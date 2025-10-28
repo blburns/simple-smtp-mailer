@@ -72,6 +72,7 @@ set(TEST_SOURCES
     test_postmark_integration.cpp
     test_sparkpost_integration.cpp
     test_mailjet_integration.cpp
+    test_webhook_processing.cpp
     test_json_logging.cpp
 )
 
