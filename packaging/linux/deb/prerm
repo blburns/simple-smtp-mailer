@@ -1,0 +1,15 @@
+#!/bin/bash
+# Pre-removal script for simple-smtp-mailer
+
+set -e
+
+PROJECT_NAME="simple-smtp-mailer"
+
+if [ "$1" = "remove" ] || [ "$1" = "deconfigure" ]; then
+    # Stop service before removal
+    systemctl stop "$simple-smtp-mailer" 2>/dev/null || true
+    systemctl disable "$simple-smtp-mailer" 2>/dev/null || true
+fi
+
+exit 0
+

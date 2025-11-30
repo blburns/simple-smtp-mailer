@@ -3,22 +3,26 @@ build/
 dist/
 out/
 cmake-build-*/
-
-# Release artifacts and packages
-dist/releases/
-dist/packages/
-dist/artifacts/
-
-# Source code (allow all source files)
-# src/
+cmake-build/
 
 # CMake generated files
 CMakeCache.txt
 CMakeFiles/
+CMakeScripts/
+Testing/
 cmake_install.cmake
-# Makefile  # Allow our project Makefile
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps/
 *.cmake
-!CMakeLists.txt
+!cmake/*.cmake.in
+!cmake/*.cmake
+CMakeFiles/Makefile
+Makefile.cmake
+
+# Keep custom Makefile, ignore CMake-generated ones
+!Makefile
 
 # Compiled Object files
 *.slo
@@ -46,106 +50,187 @@ cmake_install.cmake
 *.out
 *.app
 
-# Package files
-*.rpm
-*.deb
-*.tar.gz
-*.zip
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+*.ilk
+*.exp
 
-# IDE and editor files
+# IDE files
 .vscode/
 .idea/
+.vs/
 *.swp
 *.swo
 *~
+*.sublime-*
+*.vcxproj.user
+*.vcxproj.filters
+# Allow standardized workspace files (they should be tracked)
+!simple-smtp-mailer.code-workspace
+*.code-workspace
+
+# OS generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+desktop.ini
+.fuse_hidden*
+.directory
+.Trash-*
 
 # Log files
 *.log
 logs/
+log/
+*.pid
 
 # Temporary files
 *.tmp
 *.temp
 *.bak
 *.backup
+*.orig
+*.rej
+temp/
+tmp/
 
-# Dependencies
-third_party/
-vendor/
+# Package files
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.zip
+*.deb
+*.rpm
+*.dmg
+*.pkg
+*.msi
+*.7z
+*.rar
 
 # Test coverage
-coverage/
 *.gcov
 *.gcda
 *.gcno
+coverage/
+lcov.info
 
 # Valgrind output
+valgrind-out.txt
 *.valgrind
+*.vglog
+*.massif
 
-# SSL certificates and keys (for security)
+# Configuration files (keep examples and templates)
+config/*.conf
+!config/*.conf.example
+!config/*.example
+!config/*.template
+!config/*.sample
+local.conf
+local.ini
+local.json
+
+# SSL certificates and keys
 *.pem
 *.key
 *.crt
 *.csr
 *.p12
 *.pfx
+config/ssl/
+config/certs/
 
-# Configuration files with sensitive data
-*.conf
-!*.conf.example
+# User data and uploads (if applicable)
+uploads/
+user_data/
+public/
 
 # Documentation build
 docs/_build/
 docs/html/
+docs/latex/
+docs/pdf/
+docs/.doctrees/
 
-# Python cache (if any build scripts use Python)
+# Dependencies
+vendor/
+third_party/
+external/
+vcpkg_installed/
+conan/
+vcpkg/
+packages/
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Cache files
+.cache/
+*.cache
+
+# Profiling
+*.prof
+gmon.out
+callgrind.out.*
+
+# Core dumps
+core
+core.*
+*.core
+*.dump
+
+# Network captures
+*.pcap
+*.cap
+
+# Backup and swap
+.#*
+#*#
+
+# Windows specific
+*.user
+*.aps
+*.ncb
+*.opendb
+*.opensdf
+*.sdf
+*.cachefile
+*.VC.db
+*.VC.VC.opendb
+
+# macOS specific
+*.dmg
+*.pkg
+
+# Clang/LLVM
+.clangd/
+.clang-format
+
+# Python cache (if any)
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
 
-
-
-
-# Prerequisites
-*.d
-
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Linker files
-*.ilk
-
-# Debugger Files
-*.pdb
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
-
-# debug information files
-*.dwo
+# Node modules (if any)
+node_modules/
+npm-debug.log*
+*.lock

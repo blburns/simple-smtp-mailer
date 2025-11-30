@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  simple-smtp-mailer:
+    build:
+      context: ../..
+      dockerfile: automation/docker/Dockerfile
+    image: simple-smtp-mailer:latest
+    container_name: simple-smtp-mailer
+    restart: unless-stopped
+    volumes:
+      - ../../config:/etc/simple-smtp-mailer:ro
+      - ../../logs:/var/log/simple-smtp-mailer
+    environment:
+      - LOG_LEVEL=INFO
+    networks:
+      - smtp-network
+
+networks:
+  smtp-network:
+    driver: bridge
+

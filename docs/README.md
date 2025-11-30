@@ -40,6 +40,7 @@ Welcome to the comprehensive documentation for ssmtp-mailer, a powerful and secu
 ### 🌟 **Features**
 - **[Daemon Mode](features/daemon-mode.md)** - Background process and continuous email processing
 - **[JSON Logging](features/json-logging.md)** - Structured logging for monitoring and analysis
+- **[Analytics & Reporting](features/analytics-reporting.md)** - Email metrics and performance tracking
 
 ### 📖 **API Reference**
 - **[API Overview](api/README.md)** - Programmatic interface documentation
