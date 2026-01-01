@@ -222,37 +222,17 @@
       when: create_packages | bool and ansible_facts['os_family'] == "RedHat"
 
     - name: Create TGZ package (all Linux)
-      command: cpack -G TGZ
-      args:
-        chdir: "{{ project_dir }}/build"
+      make:
+        chdir: "{{ project_dir }}"
+        target: package-tgz
       register: tgz_package_result
       failed_when: false
       when: create_packages | bool
 
-    - name: Extract version from CMakeLists.txt
-      shell: |
-        cd {{ project_dir }}
-        grep -E 'project\(.*VERSION' CMakeLists.txt | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 || echo "0.2.0"
-      register: version_extract
-      changed_when: false
-      failed_when: false
-      when: create_packages | bool
-
-    - name: Set project version
-      set_fact:
-        project_version: "{{ version_extract.stdout | default('0.2.0') | trim }}"
-      when: create_packages | bool
-
     - name: Create ZIP package (all Linux)
-      shell: |
-        cd {{ project_dir }}/build
-        PKG_NAME="simple-smtp-mailer-{{ project_version }}-{{ ansible_facts['distribution'] | lower }}-{{ ansible_facts['architecture'] }}"
-        mkdir -p "${PKG_NAME}"
-        cp simple-smtp-mailer "${PKG_NAME}/"
-        cp ../README.md "${PKG_NAME}/" 2>/dev/null || true
-        cp ../LICENSE "${PKG_NAME}/" 2>/dev/null || true
-        zip -r "${PKG_NAME}.zip" "${PKG_NAME}"
-        rm -rf "${PKG_NAME}"
+      make:
+        chdir: "{{ project_dir }}"
+        target: package-zip
       register: zip_package_result
       failed_when: false
       when: create_packages | bool
