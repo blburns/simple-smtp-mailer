@@ -716,15 +716,50 @@ else
 	@echo "EXE packages are only supported on Windows"
 endif
 
-package-dmg: build
+package-dmg: build package-pkg
 ifeq ($(PLATFORM),macos)
-	@echo "Building DMG package..."
+	@echo "Building DMG package with PKG installer..."
 	@mkdir -p $(DIST_DIR)
+	@echo "Step 1: Creating PKG package (if not already created)..."
+	@if [ ! -f $(DIST_DIR)/*.pkg ] && [ ! -f $(BUILD_DIR)/*.pkg ]; then \
+		cd $(BUILD_DIR) && cpack -G productbuild; \
+		if ls $(BUILD_DIR)/*.pkg 1> /dev/null 2>&1; then \
+			mv $(BUILD_DIR)/*.pkg $(DIST_DIR)/; \
+		fi; \
+	fi
+	@echo "Step 2: Creating DMG with application files..."
 	cd $(BUILD_DIR) && cpack -G DragNDrop
 	@if ls $(BUILD_DIR)/*.dmg 1> /dev/null 2>&1; then \
-		mv $(BUILD_DIR)/*.dmg $(DIST_DIR)/; \
-		echo "DMG package(s) moved to $(DIST_DIR)/"; \
-		ls -lh $(DIST_DIR)/*.dmg; \
+		DMG_FILE=$$(ls $(BUILD_DIR)/*.dmg | head -1); \
+		DMG_NAME=$$(basename "$$DMG_FILE" .dmg); \
+		echo "Step 3: Mounting DMG to add PKG, LICENSE, README, and docs..."; \
+		hdiutil attach "$$DMG_FILE" -mountpoint /tmp/$$DMG_NAME -quiet || true; \
+		if [ -d /tmp/$$DMG_NAME ]; then \
+			PKG_FILE=$$(ls $(DIST_DIR)/*.pkg $(BUILD_DIR)/*.pkg 2>/dev/null | head -1); \
+			if [ -f "$$PKG_FILE" ]; then \
+				cp "$$PKG_FILE" /tmp/$$DMG_NAME/; \
+				echo "  Added PKG installer: $$(basename $$PKG_FILE)"; \
+			fi; \
+			if [ -f README.md ]; then \
+				cp README.md /tmp/$$DMG_NAME/ 2>/dev/null || true; \
+				echo "  Added README.md"; \
+			fi; \
+			if [ -f LICENSE ]; then \
+				cp LICENSE /tmp/$$DMG_NAME/ 2>/dev/null || true; \
+				echo "  Added LICENSE"; \
+			fi; \
+			if [ -d docs ]; then \
+				cp -r docs /tmp/$$DMG_NAME/ 2>/dev/null || true; \
+				echo "  Added docs directory"; \
+			fi; \
+			hdiutil detach /tmp/$$DMG_NAME -quiet || true; \
+			mv "$$DMG_FILE" $(DIST_DIR)/; \
+			echo "DMG package created: $(DIST_DIR)/$$(basename $$DMG_FILE)"; \
+			ls -lh $(DIST_DIR)/*.dmg; \
+		else \
+			mv "$$DMG_FILE" $(DIST_DIR)/; \
+			echo "DMG package created (could not modify): $(DIST_DIR)/$$(basename $$DMG_FILE)"; \
+		fi; \
 	else \
 		echo "Warning: No DMG package found in $(BUILD_DIR)/"; \
 		echo "Checking for DMG packages with different naming..."; \

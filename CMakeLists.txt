@@ -269,17 +269,25 @@ install(DIRECTORY docs/
     PATTERN ".svn" EXCLUDE
 )
 
-# Install DMG installation script (macOS only)
+# Install files for DMG (macOS only)
+# These will be included in the DMG root directory
 if(APPLE)
-    install(FILES packaging/macos/dmg/install.sh
-        DESTINATION .
-        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-        COMPONENT applications
-    )
     install(FILES README.md LICENSE
         DESTINATION .
         COMPONENT applications
         OPTIONAL
+    )
+    # Install docs directory to DMG root (for easy access)
+    install(DIRECTORY docs/
+        DESTINATION docs
+        COMPONENT docs
+        FILES_MATCHING
+        PATTERN "*.md"
+        PATTERN "*.txt"
+        PATTERN "*.html"
+        PATTERN "*.pdf"
+        PATTERN "CVS" EXCLUDE
+        PATTERN ".svn" EXCLUDE
     )
 endif()
 
