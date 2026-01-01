@@ -136,7 +136,7 @@ fetch_packages() {
       loop: "{{ dist_packages.files | default([]) }}"
       when: 
         - dist_packages.files is defined
-        - item.path | regex_search('\.deb$') | bool
+        - (item.path | regex_search('\.deb$')) is not none
         
     - name: Fetch RPM packages from dist
       fetch:
@@ -146,7 +146,7 @@ fetch_packages() {
       loop: "{{ dist_packages.files | default([]) }}"
       when: 
         - dist_packages.files is defined
-        - item.path | regex_search('\.rpm$') | bool
+        - (item.path | regex_search('\.rpm$')) is not none
         
     - name: Fetch DMG packages from dist
       fetch:
@@ -156,7 +156,7 @@ fetch_packages() {
       loop: "{{ dist_packages.files | default([]) }}"
       when: 
         - dist_packages.files is defined
-        - item.path | regex_search('\.dmg$') | bool
+        - (item.path | regex_search('\.dmg$')) is not none
         
     - name: Fetch PKG packages from dist
       fetch:
@@ -166,7 +166,7 @@ fetch_packages() {
       loop: "{{ dist_packages.files | default([]) }}"
       when: 
         - dist_packages.files is defined
-        - item.path | regex_search('\.pkg$') | bool
+        - (item.path | regex_search('\.pkg$')) is not none
         
     - name: Fetch source packages from dist
       fetch:
@@ -176,8 +176,8 @@ fetch_packages() {
       loop: "{{ dist_packages.files | default([]) }}"
       when: 
         - dist_packages.files is defined
-        - item.path | regex_search('(-src\.(tar\.gz|zip)|\.(tar\.gz|zip)$)') | bool
-        - not (item.path | regex_search('\.(deb|rpm|dmg|pkg)$') | bool)
+        - (item.path | regex_search('-src\.(tar\.gz|zip)$')) is not none
+        - (item.path | regex_search('\.(deb|rpm|dmg|pkg)$')) is none
         
     - name: Fetch DEB packages from build (fallback)
       fetch:
@@ -187,7 +187,7 @@ fetch_packages() {
       loop: "{{ build_packages.files | default([]) }}"
       when: 
         - build_packages.files is defined
-        - item.path | regex_search('\.deb$') | bool
+        - (item.path | regex_search('\.deb$')) is not none
         - (dist_packages.files | default([]) | length) == 0
         
     - name: Fetch RPM packages from build (fallback)
@@ -198,7 +198,7 @@ fetch_packages() {
       loop: "{{ build_packages.files | default([]) }}"
       when: 
         - build_packages.files is defined
-        - item.path | regex_search('\.rpm$') | bool
+        - (item.path | regex_search('\.rpm$')) is not none
         - (dist_packages.files | default([]) | length) == 0
         
     - name: Fetch DMG packages from build (fallback)
@@ -209,7 +209,7 @@ fetch_packages() {
       loop: "{{ build_packages.files | default([]) }}"
       when: 
         - build_packages.files is defined
-        - item.path | regex_search('\.dmg$') | bool
+        - (item.path | regex_search('\.dmg$')) is not none
         - (dist_packages.files | default([]) | length) == 0
         
     - name: Fetch PKG packages from build (fallback)
@@ -220,7 +220,7 @@ fetch_packages() {
       loop: "{{ build_packages.files | default([]) }}"
       when: 
         - build_packages.files is defined
-        - item.path | regex_search('\.pkg$') | bool
+        - (item.path | regex_search('\.pkg$')) is not none
         - (dist_packages.files | default([]) | length) == 0
         
     - name: Fetch source packages from build (fallback)
@@ -231,8 +231,8 @@ fetch_packages() {
       loop: "{{ build_packages.files | default([]) }}"
       when: 
         - build_packages.files is defined
-        - item.path | regex_search('(-src\.(tar\.gz|zip)|\.(tar\.gz|zip)$)') | bool
-        - not (item.path | regex_search('\.(deb|rpm|dmg|pkg)$') | bool)
+        - (item.path | regex_search('-src\.(tar\.gz|zip)$')) is not none
+        - (item.path | regex_search('\.(deb|rpm|dmg|pkg)$')) is none
         - (dist_packages.files | default([]) | length) == 0
 PLAYBOOK_EOF
 
