@@ -142,6 +142,17 @@
       debug:
         msg: "Repository {{ 'updated' if git_result.changed else 'already up to date' }}"
 
+    - name: Display current git commit
+      command: git rev-parse HEAD
+      args:
+        chdir: "{{ project_dir }}"
+      register: git_commit
+      changed_when: false
+
+    - name: Show git commit info
+      debug:
+        msg: "Current commit: {{ git_commit.stdout }}"
+
     - name: Create build directory
       file:
         path: "{{ project_dir }}/build"
