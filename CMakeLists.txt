@@ -285,6 +285,11 @@ if(ENABLE_PACKAGING)
     set(CPACK_PACKAGE_HOMEPAGE_URL "https://github.com/blburns/simple-smtp-mailer")
 
     # Package files - set per platform to avoid conflicts
+    # Clear resource file variables first to prevent conflicts between platforms
+    unset(CPACK_RESOURCE_FILE_LICENSE)
+    unset(CPACK_RESOURCE_FILE_README)
+    unset(CPACK_RESOURCE_FILE_WELCOME)
+    
     # Platform-specific package settings
     if(WIN32)
         # Windows MSI and ZIP packages
@@ -322,18 +327,13 @@ if(ENABLE_PACKAGING)
         set(CPACK_PRODUCTBUILD_IDENTIFIER "com.blburns.${PROJECT_NAME}")
         set(CPACK_PRODUCTBUILD_PACKAGE_NAME "${PROJECT_NAME}")
         # macOS PKG resource files - productbuild requires .rtf, .html, or .txt extensions
-        # Don't set these variables at all if files don't exist (CPack handles missing files gracefully)
         # Only set if files with proper extensions exist
+        # Note: These are already cleared above, so we only set them if files exist
         if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/readme.html")
             set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/readme.html")
-        else()
-            # Explicitly unset to prevent using wrong file from earlier settings
-            unset(CPACK_RESOURCE_FILE_README CACHE)
         endif()
         if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/welcome.html")
             set(CPACK_RESOURCE_FILE_WELCOME "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/welcome.html")
-        else()
-            unset(CPACK_RESOURCE_FILE_WELCOME CACHE)
         endif()
         # Check for license file with proper extension in packaging/assets/licenses
         if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/licenses/LICENSE.txt")
@@ -342,8 +342,6 @@ if(ENABLE_PACKAGING)
             set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/licenses/LICENSE.html")
         elseif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/licenses/LICENSE.rtf")
             set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/licenses/LICENSE.rtf")
-        else()
-            unset(CPACK_RESOURCE_FILE_LICENSE CACHE)
         endif()
 
     else()
