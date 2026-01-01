@@ -1,0 +1,236 @@
+---
+- name: Build simple-smtp-mailer on remote VMs
+  hosts: build-vms
+  # Package installation tasks need sudo, but build tasks don't
+  # Individual tasks will set become: yes when needed
+  vars:
+    project_dir: /opt/simple-smtp-mailer
+    build_user: "{{ ansible_user }}"
+    build_group: "{{ ansible_user }}"
+    project_name: simple-smtp-mailer
+    git_repo_url: "https://github.com/blburns/simple-smtp-mailer.git"
+    git_branch: "{{ git_branch | default('main') }}"
+    build_type: "{{ build_type | default('Release') }}"
+    clean_build: "{{ clean_build | default(false) }}"
+    run_tests: "{{ run_tests | default(true) }}"
+    create_packages: "{{ create_packages | default(false) }}"
+    
+  tasks:
+    - name: Display build information
+      debug:
+        msg:
+          - "Building {{ project_name }} on {{ inventory_hostname }}"
+          - "Repository: {{ git_repo_url }}"
+          - "Branch: {{ git_branch }}"
+          - "Build type: {{ build_type }}"
+          - "Clean build: {{ clean_build }}"
+          - "Run tests: {{ run_tests }}"
+          - "Create packages: {{ create_packages }}"
+
+    - name: Gather OS facts
+      setup:
+        gather_subset:
+          - '!all'
+          - '!any'
+          - os_family
+      register: os_facts
+
+    - name: Update package cache (Debian/Ubuntu)
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      become: yes
+      when: ansible_facts['os_family'] == "Debian"
+      ignore_errors: yes
+
+    - name: Update package cache (RedHat/CentOS)
+      yum:
+        update_cache: yes
+      become: yes
+      when: ansible_facts['os_family'] == "RedHat"
+      ignore_errors: yes
+
+    - name: Install build dependencies (Ubuntu/Debian)
+      apt:
+        name:
+          - build-essential
+          - cmake
+          - git
+          - pkg-config
+          - libssl-dev
+          - libjsoncpp-dev
+          - libcurl4-openssl-dev
+          - libgtest-dev
+          - libgmock-dev
+          - python3
+          - python3-pip
+          - libyaml-cpp-dev
+        state: present
+      become: yes
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: Install build dependencies (CentOS/RHEL/Fedora)
+      yum:
+        name:
+          - gcc-c++
+          - cmake
+          - git
+          - pkgconfig
+          - openssl-devel
+          - jsoncpp-devel
+          - libcurl-devel
+          - gtest-devel
+          - gmock-devel
+          - python3
+          - python3-pip
+          - yaml-cpp-devel
+        state: present
+      become: yes
+      when: ansible_facts['os_family'] == "RedHat"
+
+    - name: Install Python requests package (Ubuntu/Debian via apt)
+      apt:
+        name: python3-requests
+        state: present
+      become: yes
+      when: ansible_facts['os_family'] == "Debian"
+      ignore_errors: yes
+
+    - name: Install Python requests package (CentOS/RHEL via pip with --break-system-packages)
+      pip:
+        name: requests
+        state: present
+        extra_args: --break-system-packages
+      become: yes
+      when: ansible_facts['os_family'] == "RedHat"
+      ignore_errors: yes
+
+    - name: Install Python requests package (Ubuntu/Debian fallback - user install)
+      pip:
+        name: requests
+        state: present
+        executable: pip3
+      become: false
+      when: ansible_facts['os_family'] == "Debian"
+      ignore_errors: yes
+
+    - name: Create project directory
+      file:
+        path: "{{ project_dir }}"
+        state: directory
+        owner: "{{ build_user }}"
+        group: "{{ build_group }}"
+        mode: '0755'
+      become: yes
+
+    - name: Clean build directory if requested
+      file:
+        path: "{{ project_dir }}/build"
+        state: absent
+      when: clean_build | bool
+
+    - name: Clone or update repository
+      git:
+        repo: "{{ git_repo_url }}"
+        dest: "{{ project_dir }}"
+        version: "{{ git_branch }}"
+        force: yes
+        update: yes
+      register: git_result
+
+    - name: Display git update status
+      debug:
+        msg: "Repository {{ 'updated' if git_result.changed else 'already up to date' }}"
+
+    - name: Create build directory
+      file:
+        path: "{{ project_dir }}/build"
+        state: directory
+        owner: "{{ build_user }}"
+        group: "{{ build_group }}"
+        mode: '0755'
+      become: yes
+
+    - name: Configure CMake
+      command: >
+        cmake ..
+        -DCMAKE_BUILD_TYPE={{ build_type }}
+        -DENABLE_TESTS={{ 'ON' if run_tests | bool else 'OFF' }}
+        -DENABLE_PACKAGING={{ 'ON' if create_packages | bool else 'OFF' }}
+        -DENABLE_SSL=ON
+        -DENABLE_JSON=ON
+        -DENABLE_CURL=ON
+      args:
+        chdir: "{{ project_dir }}/build"
+      register: cmake_result
+
+    - name: Display CMake configuration
+      debug:
+        var: cmake_result.stdout_lines
+
+    - name: Build project
+      make:
+        chdir: "{{ project_dir }}/build"
+        target: all
+      register: build_result
+
+    - name: Display build output
+      debug:
+        var: build_result.stdout_lines
+      when: build_result.stdout_lines is defined
+
+    - name: Run tests
+      command: make test
+      args:
+        chdir: "{{ project_dir }}/build"
+      register: test_result
+      failed_when: false
+      when: run_tests | bool
+
+    - name: Display test results
+      debug:
+        var: test_result.stdout_lines
+      when: run_tests | bool and test_result.stdout_lines is defined
+
+    - name: Create packages
+      command: make package
+      args:
+        chdir: "{{ project_dir }}/build"
+      register: package_result
+      failed_when: false
+      when: create_packages | bool
+
+    - name: Display package creation results
+      debug:
+        var: package_result.stdout_lines
+      when: create_packages | bool and package_result.stdout_lines is defined
+
+    - name: Get build artifacts info
+      stat:
+        path: "{{ item }}"
+      loop:
+        - "{{ project_dir }}/build/simple-smtp-mailer"
+        - "{{ project_dir }}/build/libsimple-smtp-mailer-lib.a"
+      register: artifacts
+
+    - name: Display build artifacts
+      debug:
+        msg: "{{ item.stat.path }} - Size: {{ item.stat.size | default('N/A') }} bytes, Exists: {{ item.stat.exists }}"
+      loop: "{{ artifacts.results }}"
+
+    - name: Copy build artifacts to local machine (optional)
+      fetch:
+        src: "{{ project_dir }}/build/simple-smtp-mailer"
+        dest: "{{ playbook_dir }}/../dist/{{ inventory_hostname }}-simple-smtp-mailer"
+        flat: yes
+      when: false  # Set to true if you want to fetch artifacts
+
+    - name: Build summary
+      debug:
+        msg:
+          - "=== Build Summary for {{ inventory_hostname }} ==="
+          - "Build completed successfully"
+          - "Binary location: {{ project_dir }}/build/simple-smtp-mailer"
+          - "Build type: {{ build_type }}"
+          - "Tests: {{ 'Passed' if (run_tests | bool and test_result.rc == 0) else 'Skipped or Failed' }}"
+

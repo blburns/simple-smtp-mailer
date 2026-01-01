@@ -5,6 +5,7 @@
 #include <memory>
 #include <chrono>
 #include <mutex>
+#include <vector>
 
 namespace ssmtp_mailer {
 
