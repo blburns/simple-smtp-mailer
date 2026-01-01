@@ -265,13 +265,23 @@
         var: build_result.stdout_lines
       when: build_result.stdout_lines is defined
 
-    - name: Run tests
+    - name: Run tests (macOS)
+      shell: make test
+      args:
+        chdir: "{{ project_dir }}/build"
+      environment:
+        PATH: "{{ ansible_env.PATH }}:/opt/homebrew/bin:/usr/local/bin"
+      register: test_result
+      failed_when: false
+      when: run_tests | bool and ansible_facts['os_family'] == "Darwin"
+      
+    - name: Run tests (Linux)
       command: make test
       args:
         chdir: "{{ project_dir }}/build"
       register: test_result
       failed_when: false
-      when: run_tests | bool
+      when: run_tests | bool and ansible_facts['os_family'] != "Darwin"
 
     - name: Display test results
       debug:
