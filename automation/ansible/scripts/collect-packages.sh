@@ -90,6 +90,7 @@ fetch_packages() {
     project_dir: "/opt/simple-smtp-mailer"
     remote_dist_dir: "/opt/simple-smtp-mailer/dist"
     remote_build_dir: "/opt/simple-smtp-mailer/build"
+    remote_centralized_dir: "/opt/simple-smtp-mailer/dist/centralized/v0.2.0"
     local_dist_dir: "$DIST_DIR"
     
   tasks:
