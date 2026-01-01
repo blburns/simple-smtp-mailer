@@ -70,10 +70,11 @@ create_dist_structure() {
 fetch_packages() {
     print_info "Fetching packages from remote VMs..."
     
+    # Ensure dist directory structure exists before Ansible runs
+    mkdir -p "$DIST_DIR/linux"/{deb,rpm,archive}
+    
     # Create a temporary playbook for fetching packages
     TEMP_PLAYBOOK=$(mktemp)
-    # Escape the dist directory path for use in the playbook
-    ESCAPED_DIST_DIR=$(printf '%s\n' "$DIST_DIR" | sed 's/[[\.*^$()+?{|]/\\&/g')
     cat > "$TEMP_PLAYBOOK" << PLAYBOOK_EOF
 ---
 - name: Collect packages from remote VMs
