@@ -229,42 +229,62 @@ if(ENABLE_STATIC_LINKING)
     endif()
 endif()
 
-# Install targets
+# Install targets with component assignment
 install(TARGETS ${PROJECT_NAME}
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin COMPONENT applications
+    LIBRARY DESTINATION lib COMPONENT applications
+    ARCHIVE DESTINATION lib COMPONENT applications
 )
 
 install(DIRECTORY include/
     DESTINATION include
     FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp"
+    COMPONENT development
 )
 
 # Install configuration files
 install(DIRECTORY config/
     DESTINATION etc/${PROJECT_NAME}
     FILES_MATCHING PATTERN "*.conf" PATTERN "*.example"
+    COMPONENT config
 )
 
 # Install OAuth2 helper tools
 install(DIRECTORY tools/oauth2-helper/
     DESTINATION share/${PROJECT_NAME}/oauth2-helper
+    COMPONENT tools
 )
 
 # Install documentation
 install(DIRECTORY docs/
     DESTINATION share/${PROJECT_NAME}/docs
+    COMPONENT docs
 )
+
+# Install DMG installation script (macOS only)
+if(APPLE)
+    install(FILES packaging/macos/dmg/install.sh
+        DESTINATION .
+        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+        COMPONENT applications
+    )
+    install(FILES README.md LICENSE
+        DESTINATION .
+        COMPONENT applications
+        OPTIONAL
+    )
+endif()
 
 # Install service files
 if(UNIX AND NOT APPLE)
     install(FILES deployment/systemd/${PROJECT_NAME}.service
         DESTINATION lib/systemd/system
+        COMPONENT service
     )
 elseif(APPLE)
     install(FILES deployment/launchd/com.${PROJECT_NAME}.${PROJECT_NAME}.plist
         DESTINATION /Library/LaunchDaemons
+        COMPONENT service
     )
 endif()
 
@@ -326,6 +346,8 @@ if(ENABLE_PACKAGING)
         # PKG settings
         set(CPACK_PRODUCTBUILD_IDENTIFIER "com.blburns.${PROJECT_NAME}")
         set(CPACK_PRODUCTBUILD_PACKAGE_NAME "${PROJECT_NAME}")
+        # PKG package title (shown in installer)
+        set(CPACK_PRODUCTBUILD_PACKAGE_TITLE "${PROJECT_NAME} ${PROJECT_VERSION}")
         # macOS PKG resource files - productbuild requires .rtf, .html, or .txt extensions
         # Only set if files with proper extensions exist
         # Note: These are already cleared above, so we only set them if files exist
