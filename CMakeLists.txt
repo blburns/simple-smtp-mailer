@@ -433,19 +433,24 @@ if(ENABLE_PACKAGING)
     set(CPACK_PACKAGE_INSTALL_DIRECTORY "${PROJECT_NAME}")
 
     # Component installation
-    set(CPACK_COMPONENT_APPLICATIONS_DISPLAY_NAME "Application")
+    # Define all components that will be packaged
+    set(CPACK_COMPONENTS_ALL applications development config service tools docs)
+    
+    # Component display names and descriptions
+    set(CPACK_COMPONENT_APPLICATIONS_DISPLAY_NAME "${PROJECT_NAME}")
     set(CPACK_COMPONENT_APPLICATIONS_DESCRIPTION "The ${PROJECT_NAME} executable and related files")
+    set(CPACK_COMPONENT_APPLICATIONS_REQUIRED TRUE)
 
-    set(CPACK_COMPONENT_DEVELOPMENT_DISPLAY_NAME "Development")
+    set(CPACK_COMPONENT_DEVELOPMENT_DISPLAY_NAME "Development Files")
     set(CPACK_COMPONENT_DEVELOPMENT_DESCRIPTION "Header files for developing with ${PROJECT_NAME}")
 
-    set(CPACK_COMPONENT_CONFIG_DISPLAY_NAME "Configuration")
+    set(CPACK_COMPONENT_CONFIG_DISPLAY_NAME "Configuration Files")
     set(CPACK_COMPONENT_CONFIG_DESCRIPTION "Configuration files and examples")
 
-    set(CPACK_COMPONENT_SERVICE_DISPLAY_NAME "Service")
+    set(CPACK_COMPONENT_SERVICE_DISPLAY_NAME "Service Files")
     set(CPACK_COMPONENT_SERVICE_DESCRIPTION "System service files")
 
-    set(CPACK_COMPONENT_TOOLS_DISPLAY_NAME "Tools")
+    set(CPACK_COMPONENT_TOOLS_DISPLAY_NAME "OAuth2 Tools")
     set(CPACK_COMPONENT_TOOLS_DESCRIPTION "OAuth2 helper tools and utilities")
 
     set(CPACK_COMPONENT_DOCS_DISPLAY_NAME "Documentation")
@@ -457,6 +462,12 @@ if(ENABLE_PACKAGING)
     set(CPACK_COMPONENT_SERVICE_DEPENDS applications)
     set(CPACK_COMPONENT_TOOLS_DEPENDS applications)
     set(CPACK_COMPONENT_DOCS_DEPENDS applications)
+    
+    # macOS PKG specific component settings
+    if(APPLE)
+        # Group all components into one package for simpler installation
+        set(CPACK_COMPONENTS_GROUPING ALL_COMPONENTS_IN_ONE)
+    endif()
 
     # Source package generation
     set(CPACK_SOURCE_GENERATOR "TGZ;ZIP")
