@@ -334,25 +334,48 @@ PLAYBOOK_EOF
 organize_packages() {
     print_info "Organizing packages..."
     
-    # Remove hostname prefix from package names
+    # Get version from Makefile
+    VERSION=$(grep '^VERSION =' "$PROJECT_ROOT/Makefile" 2>/dev/null | cut -d' ' -f3 || echo "0.2.0")
+    CENTRALIZED_DIR="$DIST_DIR/centralized/v$VERSION"
+    
+    # Create centralized directory structure
+    mkdir -p "$CENTRALIZED_DIR"
+    print_info "Created centralized directory: $CENTRALIZED_DIR"
+    
+    # Remove hostname prefix from package names and copy to centralized directory
+    local copied=0
     for dir in "$DIST_DIR/linux"/{deb,rpm} "$DIST_DIR/macos"/{dmg,pkg} "$DIST_DIR/source"; do
         if [ -d "$dir" ]; then
             cd "$dir"
+            shopt -s nullglob
             for file in *; do
-                if [ -f "$file" ] && [[ "$file" =~ ^(BUILD_DEB|BUILD_RPM|BUILD_MACOS)- ]]; then
-                    new_name="${file#BUILD_DEB-}"
-                    new_name="${new_name#BUILD_RPM-}"
-                    new_name="${new_name#BUILD_MACOS-}"
-                    if [ "$file" != "$new_name" ]; then
-                        mv "$file" "$new_name"
-                        print_info "Renamed: $file -> $new_name"
+                if [ -f "$file" ]; then
+                    # Remove hostname prefix if present
+                    if [[ "$file" =~ ^(BUILD_DEB|BUILD_RPM|BUILD_MACOS)- ]]; then
+                        new_name="${file#BUILD_DEB-}"
+                        new_name="${new_name#BUILD_RPM-}"
+                        new_name="${new_name#BUILD_MACOS-}"
+                        if [ "$file" != "$new_name" ]; then
+                            mv "$file" "$new_name"
+                            print_info "Renamed: $file -> $new_name"
+                            file="$new_name"
+                        fi
+                    fi
+                    
+                    # Copy to centralized directory (skip if already exists and is same or newer)
+                    local dest="$CENTRALIZED_DIR/$file"
+                    if [ ! -f "$dest" ] || [ "$file" -nt "$dest" ]; then
+                        cp "$file" "$dest"
+                        print_info "Copied to centralized: $file"
+                        ((copied++))
                     fi
                 fi
             done
+            shopt -u nullglob
         fi
     done
     
-    # Create symlinks or copies in main directories
+    # Create symlinks or copies in main directories (for backward compatibility)
     cd "$DIST_DIR/linux"
     shopt -s nullglob
     for file in deb/*.deb rpm/*.rpm; do
@@ -377,7 +400,11 @@ organize_packages() {
     done
     shopt -u nullglob
     
-    print_success "Packages organized"
+    if [ $copied -gt 0 ]; then
+        print_success "Packages organized: $copied package(s) copied to $CENTRALIZED_DIR"
+    else
+        print_info "Packages organized (no new packages to copy)"
+    fi
 }
 
 # Display summary
