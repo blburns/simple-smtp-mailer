@@ -50,6 +50,12 @@
       when: ansible_facts['os_family'] == "RedHat"
       ignore_errors: yes
 
+    - name: Update Homebrew (macOS)
+      homebrew:
+        update_homebrew: yes
+      when: ansible_facts['os_family'] == "Darwin"
+      ignore_errors: yes
+
     - name: Install build dependencies (Ubuntu/Debian)
       apt:
         name:
@@ -91,6 +97,24 @@
         state: present
       become: yes
       when: ansible_facts['os_family'] == "RedHat"
+
+    - name: Install build dependencies (macOS)
+      homebrew:
+        name:
+          - cmake
+          - openssl@3
+          - pkg-config
+          - git
+        state: present
+      when: ansible_facts['os_family'] == "Darwin"
+      ignore_errors: yes
+
+    - name: Install Xcode Command Line Tools (macOS)
+      command: xcode-select --install
+      args:
+        creates: /Library/Developer/CommandLineTools/usr/bin/clang
+      when: ansible_facts['os_family'] == "Darwin"
+      ignore_errors: yes
 
     - name: Install Python requests package (Ubuntu/Debian via apt)
       apt:
@@ -255,6 +279,22 @@
       failed_when: false
       when: create_packages | bool and ansible_facts['os_family'] == "Darwin"
 
+    - name: Create DMG package (macOS)
+      make:
+        chdir: "{{ project_dir }}"
+        target: package-dmg
+      register: dmg_package_result
+      failed_when: false
+      when: create_packages | bool and ansible_facts['os_family'] == "Darwin"
+
+    - name: Create PKG package (macOS)
+      make:
+        chdir: "{{ project_dir }}"
+        target: package-pkg
+      register: pkg_package_result
+      failed_when: false
+      when: create_packages | bool and ansible_facts['os_family'] == "Darwin"
+
     - name: Display DEB package creation results
       debug:
         var: deb_package_result.stdout_lines
@@ -283,6 +323,8 @@
           - "*.rpm"
           - "*.tar.gz"
           - "*.zip"
+          - "*.dmg"
+          - "*.pkg"
         excludes: "*.tar.Z"
       loop:
         - "{{ project_dir }}/build"
