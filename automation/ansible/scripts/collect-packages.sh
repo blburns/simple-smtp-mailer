@@ -218,7 +218,9 @@ organize_packages() {
     
     # Create symlinks or copies in main linux directory
     cd "$DIST_DIR/linux"
-    for file in deb/*.deb rpm/*.rpm archive/*.{tar.gz,zip} 2>/dev/null; do
+    # Use shopt to handle empty globs gracefully
+    shopt -s nullglob
+    for file in deb/*.deb rpm/*.rpm archive/*.tar.gz archive/*.zip; do
         if [ -f "$file" ]; then
             filename=$(basename "$file")
             if [ ! -f "$filename" ]; then
@@ -226,6 +228,7 @@ organize_packages() {
             fi
         fi
     done
+    shopt -u nullglob
     
     print_success "Packages organized"
 }
@@ -269,8 +272,11 @@ display_summary() {
     
     echo ""
     echo "Archive packages (TGZ, ZIP):"
-    if ls "$DIST_DIR/linux/archive"/*.{tar.gz,zip} 1> /dev/null 2>&1; then
-        for file in "$DIST_DIR/linux/archive"/*.{tar.gz,zip}; do
+    shopt -s nullglob
+    archive_files=("$DIST_DIR/linux/archive"/*.tar.gz "$DIST_DIR/linux/archive"/*.zip)
+    shopt -u nullglob
+    if [ ${#archive_files[@]} -gt 0 ] && [ -f "${archive_files[0]}" ]; then
+        for file in "${archive_files[@]}"; do
             if [ -f "$file" ]; then
                 size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null || echo "0")
                 echo "  $(basename "$file") ($(numfmt --to=iec-i --suffix=B "$size" 2>/dev/null || echo "${size}B"))"
