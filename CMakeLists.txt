@@ -322,10 +322,10 @@ if(ENABLE_PACKAGING)
         set(CPACK_PRODUCTBUILD_IDENTIFIER "com.blburns.${PROJECT_NAME}")
         set(CPACK_PRODUCTBUILD_PACKAGE_NAME "${PROJECT_NAME}")
         # macOS PKG resource files - productbuild requires .rtf, .html, or .txt extensions
-        # Unset any previously set values first
-        unset(CPACK_RESOURCE_FILE_LICENSE)
-        unset(CPACK_RESOURCE_FILE_README)
-        unset(CPACK_RESOURCE_FILE_WELCOME)
+        # Explicitly unset all resource file variables to avoid conflicts
+        set(CPACK_RESOURCE_FILE_LICENSE "")
+        set(CPACK_RESOURCE_FILE_README "")
+        set(CPACK_RESOURCE_FILE_WELCOME "")
         # Set only if files with proper extensions exist
         if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/readme.html")
             set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/readme.html")
