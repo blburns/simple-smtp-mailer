@@ -716,26 +716,36 @@ else
 	@echo "EXE packages are only supported on Windows"
 endif
 
-package-dmg: build package-pkg
+package-dmg: build
 ifeq ($(PLATFORM),macos)
 	@echo "Building DMG package with PKG installer..."
 	@mkdir -p $(DIST_DIR)
-	@echo "Step 1: Creating PKG package (if not already created)..."
-	@if [ ! -f $(DIST_DIR)/*.pkg ] && [ ! -f $(BUILD_DIR)/*.pkg ]; then \
-		cd $(BUILD_DIR) && cpack -G productbuild; \
-		if ls $(BUILD_DIR)/*.pkg 1> /dev/null 2>&1; then \
-			mv $(BUILD_DIR)/*.pkg $(DIST_DIR)/; \
+	@echo "Step 1: Creating PKG package first..."
+	@cd $(BUILD_DIR) && cpack -G productbuild
+	@if ls $(BUILD_DIR)/*.pkg 1> /dev/null 2>&1; then \
+		mv $(BUILD_DIR)/*.pkg $(DIST_DIR)/; \
+		echo "PKG package created and moved to $(DIST_DIR)/"; \
+		ls -lh $(DIST_DIR)/*.pkg; \
+	else \
+		echo "Warning: No PKG package found in $(BUILD_DIR)/"; \
+		find $(BUILD_DIR) -name "*.pkg" -exec mv {} $(DIST_DIR)/ \; 2>/dev/null || true; \
+		if ls $(DIST_DIR)/*.pkg 1> /dev/null 2>&1; then \
+			echo "PKG package found and moved:"; \
+			ls -lh $(DIST_DIR)/*.pkg; \
+		else \
+			echo "Error: No PKG package was created"; \
+			exit 1; \
 		fi; \
 	fi
 	@echo "Step 2: Creating DMG with application files..."
-	cd $(BUILD_DIR) && cpack -G DragNDrop
+	@cd $(BUILD_DIR) && cpack -G DragNDrop
 	@if ls $(BUILD_DIR)/*.dmg 1> /dev/null 2>&1; then \
 		DMG_FILE=$$(ls $(BUILD_DIR)/*.dmg | head -1); \
 		DMG_NAME=$$(basename "$$DMG_FILE" .dmg); \
 		echo "Step 3: Mounting DMG to add PKG, LICENSE, README, and docs..."; \
 		hdiutil attach "$$DMG_FILE" -mountpoint /tmp/$$DMG_NAME -quiet || true; \
 		if [ -d /tmp/$$DMG_NAME ]; then \
-			PKG_FILE=$$(ls $(DIST_DIR)/*.pkg $(BUILD_DIR)/*.pkg 2>/dev/null | head -1); \
+			PKG_FILE=$$(ls $(DIST_DIR)/*.pkg 2>/dev/null | head -1); \
 			if [ -f "$$PKG_FILE" ]; then \
 				cp "$$PKG_FILE" /tmp/$$DMG_NAME/; \
 				echo "  Added PKG installer: $$(basename $$PKG_FILE)"; \
