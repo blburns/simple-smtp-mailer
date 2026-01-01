@@ -72,7 +72,9 @@ fetch_packages() {
     
     # Create a temporary playbook for fetching packages
     TEMP_PLAYBOOK=$(mktemp)
-    cat > "$TEMP_PLAYBOOK" << 'PLAYBOOK_EOF'
+    # Escape the dist directory path for use in the playbook
+    ESCAPED_DIST_DIR=$(printf '%s\n' "$DIST_DIR" | sed 's/[[\.*^$()+?{|]/\\&/g')
+    cat > "$TEMP_PLAYBOOK" << PLAYBOOK_EOF
 ---
 - name: Collect packages from remote VMs
   hosts: build-vms
@@ -81,7 +83,7 @@ fetch_packages() {
     project_dir: "/opt/simple-smtp-mailer"
     remote_dist_dir: "/opt/simple-smtp-mailer/dist"
     remote_build_dir: "/opt/simple-smtp-mailer/build"
-    local_dist_dir: "{{ playbook_dir }}/../../dist"
+    local_dist_dir: "$DIST_DIR"
     
   tasks:
     - name: Check if dist directory exists on remote
