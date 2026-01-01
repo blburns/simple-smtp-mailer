@@ -60,8 +60,9 @@ check_prerequisites() {
 create_dist_structure() {
     print_info "Creating local dist directory structure..."
     
-    mkdir -p "$DIST_DIR"/{linux,source}
-    mkdir -p "$DIST_DIR/linux"/{deb,rpm,archive}
+    mkdir -p "$DIST_DIR"/{linux,source,macos}
+    mkdir -p "$DIST_DIR/linux"/{deb,rpm}
+    mkdir -p "$DIST_DIR/macos"/{dmg,pkg}
     
     print_success "Dist directory structure created: $DIST_DIR"
 }
@@ -71,7 +72,9 @@ fetch_packages() {
     print_info "Fetching packages from remote VMs..."
     
     # Ensure dist directory structure exists before Ansible runs
-    mkdir -p "$DIST_DIR/linux"/{deb,rpm,archive}
+    mkdir -p "$DIST_DIR/linux"/{deb,rpm}
+    mkdir -p "$DIST_DIR/macos"/{dmg,pkg}
+    mkdir -p "$DIST_DIR/source"
     
     # Create a temporary playbook for fetching packages
     TEMP_PLAYBOOK=$(mktemp)
@@ -103,8 +106,10 @@ fetch_packages() {
         patterns:
           - "*.deb"
           - "*.rpm"
-          - "*.tar.gz"
-          - "*.zip"
+          - "*.dmg"
+          - "*.pkg"
+          - "*-src.tar.gz"
+          - "*-src.zip"
         excludes: "*.tar.Z"
       register: dist_packages
       when: dist_dir_stat.stat.exists
@@ -115,8 +120,10 @@ fetch_packages() {
         patterns:
           - "*.deb"
           - "*.rpm"
-          - "*.tar.gz"
-          - "*.zip"
+          - "*.dmg"
+          - "*.pkg"
+          - "*-src.tar.gz"
+          - "*-src.zip"
         excludes: "*.tar.Z"
       register: build_packages
       when: build_dir_stat.stat.exists
@@ -141,15 +148,36 @@ fetch_packages() {
         - dist_packages.files is defined
         - item.path | regex_search('\.rpm$') | bool
         
-    - name: Fetch archive packages (TGZ, ZIP) from dist
+    - name: Fetch DMG packages from dist
       fetch:
         src: "{{ item.path }}"
-        dest: "{{ local_dist_dir }}/linux/archive/{{ inventory_hostname }}-{{ item.path | basename }}"
+        dest: "{{ local_dist_dir }}/macos/dmg/{{ inventory_hostname }}-{{ item.path | basename }}"
         flat: yes
       loop: "{{ dist_packages.files | default([]) }}"
       when: 
         - dist_packages.files is defined
-        - item.path | regex_search('\.(tar\.gz|zip)$') | bool
+        - item.path | regex_search('\.dmg$') | bool
+        
+    - name: Fetch PKG packages from dist
+      fetch:
+        src: "{{ item.path }}"
+        dest: "{{ local_dist_dir }}/macos/pkg/{{ inventory_hostname }}-{{ item.path | basename }}"
+        flat: yes
+      loop: "{{ dist_packages.files | default([]) }}"
+      when: 
+        - dist_packages.files is defined
+        - item.path | regex_search('\.pkg$') | bool
+        
+    - name: Fetch source packages from dist
+      fetch:
+        src: "{{ item.path }}"
+        dest: "{{ local_dist_dir }}/source/{{ inventory_hostname }}-{{ item.path | basename }}"
+        flat: yes
+      loop: "{{ dist_packages.files | default([]) }}"
+      when: 
+        - dist_packages.files is defined
+        - item.path | regex_search('(-src\.(tar\.gz|zip)|\.(tar\.gz|zip)$)') | bool
+        - not (item.path | regex_search('\.(deb|rpm|dmg|pkg)$') | bool)
         
     - name: Fetch DEB packages from build (fallback)
       fetch:
@@ -173,15 +201,38 @@ fetch_packages() {
         - item.path | regex_search('\.rpm$') | bool
         - (dist_packages.files | default([]) | length) == 0
         
-    - name: Fetch archive packages from build (fallback)
+    - name: Fetch DMG packages from build (fallback)
       fetch:
         src: "{{ item.path }}"
-        dest: "{{ local_dist_dir }}/linux/archive/{{ inventory_hostname }}-{{ item.path | basename }}"
+        dest: "{{ local_dist_dir }}/macos/dmg/{{ inventory_hostname }}-{{ item.path | basename }}"
         flat: yes
       loop: "{{ build_packages.files | default([]) }}"
       when: 
         - build_packages.files is defined
-        - item.path | regex_search('\.(tar\.gz|zip)$') | bool
+        - item.path | regex_search('\.dmg$') | bool
+        - (dist_packages.files | default([]) | length) == 0
+        
+    - name: Fetch PKG packages from build (fallback)
+      fetch:
+        src: "{{ item.path }}"
+        dest: "{{ local_dist_dir }}/macos/pkg/{{ inventory_hostname }}-{{ item.path | basename }}"
+        flat: yes
+      loop: "{{ build_packages.files | default([]) }}"
+      when: 
+        - build_packages.files is defined
+        - item.path | regex_search('\.pkg$') | bool
+        - (dist_packages.files | default([]) | length) == 0
+        
+    - name: Fetch source packages from build (fallback)
+      fetch:
+        src: "{{ item.path }}"
+        dest: "{{ local_dist_dir }}/source/{{ inventory_hostname }}-{{ item.path | basename }}"
+        flat: yes
+      loop: "{{ build_packages.files | default([]) }}"
+      when: 
+        - build_packages.files is defined
+        - item.path | regex_search('(-src\.(tar\.gz|zip)|\.(tar\.gz|zip)$)') | bool
+        - not (item.path | regex_search('\.(deb|rpm|dmg|pkg)$') | bool)
         - (dist_packages.files | default([]) | length) == 0
 PLAYBOOK_EOF
 
@@ -203,13 +254,14 @@ organize_packages() {
     print_info "Organizing packages..."
     
     # Remove hostname prefix from package names
-    for dir in "$DIST_DIR/linux"/{deb,rpm,archive}; do
+    for dir in "$DIST_DIR/linux"/{deb,rpm} "$DIST_DIR/macos"/{dmg,pkg} "$DIST_DIR/source"; do
         if [ -d "$dir" ]; then
             cd "$dir"
             for file in *; do
-                if [ -f "$file" ] && [[ "$file" =~ ^(BUILD_DEB|BUILD_RPM)- ]]; then
+                if [ -f "$file" ] && [[ "$file" =~ ^(BUILD_DEB|BUILD_RPM|BUILD_MACOS)- ]]; then
                     new_name="${file#BUILD_DEB-}"
                     new_name="${new_name#BUILD_RPM-}"
+                    new_name="${new_name#BUILD_MACOS-}"
                     if [ "$file" != "$new_name" ]; then
                         mv "$file" "$new_name"
                         print_info "Renamed: $file -> $new_name"
@@ -219,15 +271,26 @@ organize_packages() {
         fi
     done
     
-    # Create symlinks or copies in main linux directory
+    # Create symlinks or copies in main directories
     cd "$DIST_DIR/linux"
-    # Use shopt to handle empty globs gracefully
     shopt -s nullglob
-    for file in deb/*.deb rpm/*.rpm archive/*.tar.gz archive/*.zip; do
+    for file in deb/*.deb rpm/*.rpm; do
         if [ -f "$file" ]; then
             filename=$(basename "$file")
             if [ ! -f "$filename" ]; then
                 ln -s "${file#linux/}" "$filename" 2>/dev/null || cp "$file" "$filename"
+            fi
+        fi
+    done
+    shopt -u nullglob
+    
+    cd "$DIST_DIR/macos"
+    shopt -s nullglob
+    for file in dmg/*.dmg pkg/*.pkg; do
+        if [ -f "$file" ]; then
+            filename=$(basename "$file")
+            if [ ! -f "$filename" ]; then
+                ln -s "${file#macos/}" "$filename" 2>/dev/null || cp "$file" "$filename"
             fi
         fi
     done
@@ -274,12 +337,42 @@ display_summary() {
     fi
     
     echo ""
-    echo "Archive packages (TGZ, ZIP):"
+    echo "DMG packages (macOS):"
+    if ls "$DIST_DIR/macos/dmg"/*.dmg 1> /dev/null 2>&1; then
+        for file in "$DIST_DIR/macos/dmg"/*.dmg; do
+            if [ -f "$file" ]; then
+                size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null || echo "0")
+                echo "  $(basename "$file") ($(numfmt --to=iec-i --suffix=B "$size" 2>/dev/null || echo "${size}B"))"
+                total=$((total + size))
+                count=$((count + 1))
+            fi
+        done
+    else
+        echo "  (none)"
+    fi
+    
+    echo ""
+    echo "PKG packages (macOS):"
+    if ls "$DIST_DIR/macos/pkg"/*.pkg 1> /dev/null 2>&1; then
+        for file in "$DIST_DIR/macos/pkg"/*.pkg; do
+            if [ -f "$file" ]; then
+                size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null || echo "0")
+                echo "  $(basename "$file") ($(numfmt --to=iec-i --suffix=B "$size" 2>/dev/null || echo "${size}B"))"
+                total=$((total + size))
+                count=$((count + 1))
+            fi
+        done
+    else
+        echo "  (none)"
+    fi
+    
+    echo ""
+    echo "Source packages:"
     shopt -s nullglob
-    archive_files=("$DIST_DIR/linux/archive"/*.tar.gz "$DIST_DIR/linux/archive"/*.zip)
+    source_files=("$DIST_DIR/source"/*-src.tar.gz "$DIST_DIR/source"/*-src.zip)
     shopt -u nullglob
-    if [ ${#archive_files[@]} -gt 0 ] && [ -f "${archive_files[0]}" ]; then
-        for file in "${archive_files[@]}"; do
+    if [ ${#source_files[@]} -gt 0 ] && [ -f "${source_files[0]}" ]; then
+        for file in "${source_files[@]}"; do
             if [ -f "$file" ]; then
                 size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null || echo "0")
                 echo "  $(basename "$file") ($(numfmt --to=iec-i --suffix=B "$size" 2>/dev/null || echo "${size}B"))"
