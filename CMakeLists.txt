@@ -336,6 +336,11 @@ if(ENABLE_PACKAGING)
         # PKG settings
         set(CPACK_PRODUCTBUILD_IDENTIFIER "com.blburns.${PROJECT_NAME}")
         set(CPACK_PRODUCTBUILD_PACKAGE_NAME "${PROJECT_NAME}")
+        # Unset license/readme files for PKG - productbuild requires .rtf, .html, or .txt
+        # LICENSE has no extension and README.md has .md (not supported)
+        unset(CPACK_RESOURCE_FILE_LICENSE)
+        unset(CPACK_RESOURCE_FILE_README)
+        unset(CPACK_RESOURCE_FILE_WELCOME)
 
     else()
         # Linux DEB and RPM packages
