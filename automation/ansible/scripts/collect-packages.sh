@@ -72,7 +72,7 @@ fetch_packages() {
     
     # Create a temporary playbook for fetching packages
     TEMP_PLAYBOOK=$(mktemp)
-    cat > "$TEMP_PLAYBOOK" << EOF
+    cat > "$TEMP_PLAYBOOK" << 'PLAYBOOK_EOF'
 ---
 - name: Collect packages from remote VMs
   hosts: build-vms
@@ -81,7 +81,7 @@ fetch_packages() {
     project_dir: "/opt/simple-smtp-mailer"
     remote_dist_dir: "/opt/simple-smtp-mailer/dist"
     remote_build_dir: "/opt/simple-smtp-mailer/build"
-    local_dist_dir: "$DIST_DIR"
+    local_dist_dir: "{{ playbook_dir }}/../../dist"
     
   tasks:
     - name: Check if dist directory exists on remote
@@ -180,7 +180,7 @@ fetch_packages() {
         - build_packages.files is defined
         - item.path | regex_search('\.(tar\.gz|zip)$')
         - dist_packages.files | default([]) | length == 0
-EOF
+PLAYBOOK_EOF
 
     # Run the playbook
     if ansible-playbook -i "$INVENTORY_FILE" "$TEMP_PLAYBOOK"; then
