@@ -53,6 +53,7 @@
     - name: Update Homebrew (macOS)
       homebrew:
         update_homebrew: yes
+      become: false
       when: ansible_facts['os_family'] == "Darwin"
       ignore_errors: yes
 
@@ -106,6 +107,7 @@
           - pkg-config
           - git
         state: present
+      become: false
       when: ansible_facts['os_family'] == "Darwin"
       ignore_errors: yes
 
@@ -149,7 +151,9 @@
         owner: "{{ build_user }}"
         group: "{{ build_group }}"
         mode: '0755'
-      become: yes
+      become: "{{ ansible_become | default(false) }}"
+      # On macOS, ensure staff group exists
+      when: ansible_facts['os_family'] != "Darwin" or (ansible_facts['os_family'] == "Darwin" and build_group == "staff")
 
     - name: Clean build directory if requested
       file:
