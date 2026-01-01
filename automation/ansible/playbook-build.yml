@@ -3,9 +3,7 @@
   hosts: build-vms
   # Package installation tasks need sudo, but build tasks don't
   # Individual tasks will set become: yes when needed
-  # Disable auto-injection of facts as variables to avoid deprecation warnings
   vars:
-    inject_facts_as_vars: false
     project_dir: /opt/simple-smtp-mailer
     build_user: "{{ ansible_user }}"
     build_group: "{{ ansible_user }}"
