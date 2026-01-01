@@ -33,6 +33,8 @@
           - '!all'
           - '!any'
           - os_family
+          - env
+          - architecture
       register: os_facts
 
     - name: Update package cache (Debian/Ubuntu)
