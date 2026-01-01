@@ -223,21 +223,21 @@
       failed_when: false
       when: create_packages | bool and ansible_facts['os_family'] == "RedHat"
 
-    - name: Create TGZ package (all Linux)
+    - name: Create TGZ package (all Linux) - Debian/Ubuntu only
       make:
         chdir: "{{ project_dir }}"
         target: package-tgz
       register: tgz_package_result
       failed_when: false
-      when: create_packages | bool
+      when: create_packages | bool and ansible_facts['os_family'] == "Debian"
 
-    - name: Create ZIP package (all Linux)
+    - name: Create ZIP package (all Linux) - RedHat/CentOS only
       make:
         chdir: "{{ project_dir }}"
         target: package-zip
       register: zip_package_result
       failed_when: false
-      when: create_packages | bool
+      when: create_packages | bool and ansible_facts['os_family'] == "RedHat"
 
     - name: Display DEB package creation results
       debug:

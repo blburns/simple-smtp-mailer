@@ -94,6 +94,50 @@ else
     RMDIR = rm -rf
     MKDIR = mkdir -p
     CP = cp -r
+    # Detect Linux distribution
+    ifeq ($(shell test -f /etc/os-release && grep -q "ID=debian\|ID=ubuntu" /etc/os-release && echo "yes"),yes)
+        DISTRIBUTION = debian
+    else ifeq ($(shell test -f /etc/os-release && grep -q "ID=fedora\|ID=rhel\|ID=centos\|ID=rocky\|ID=almalinux" /etc/os-release && echo "yes"),yes)
+        DISTRIBUTION = redhat
+    else ifeq ($(shell test -f /etc/redhat-release && echo "yes"),yes)
+        DISTRIBUTION = redhat
+    else ifeq ($(shell test -f /etc/debian_version && echo "yes"),yes)
+        DISTRIBUTION = debian
+    else
+        DISTRIBUTION = generic
+    endif
+    # Detect architecture
+    ARCH := $(shell uname -m)
+    ifeq ($(ARCH),x86_64)
+        ARCH = amd64
+    else ifeq ($(ARCH),aarch64)
+        ARCH = aarch64
+    else ifeq ($(ARCH),armv7l)
+        ARCH = armv7
+    endif
+endif
+
+# Set OS type for package naming
+ifeq ($(PLATFORM),windows)
+    OS_TYPE = win
+else ifeq ($(PLATFORM),macos)
+    OS_TYPE = macos
+else ifeq ($(PLATFORM),linux)
+    OS_TYPE = linux
+else
+    OS_TYPE = unknown
+endif
+
+# Set architecture for package naming (if not already set)
+ifndef ARCH
+    ARCH := $(shell uname -m)
+    ifeq ($(ARCH),x86_64)
+        ARCH = amd64
+    else ifeq ($(ARCH),aarch64)
+        ARCH = aarch64
+    else ifeq ($(ARCH),armv7l)
+        ARCH = armv7
+    endif
 endif
 
 # Directories
@@ -673,17 +717,23 @@ endif
 package-zip: build
 	@echo "Building ZIP package..."
 	@mkdir -p $(DIST_DIR)
-	@mkdir -p $(DIST_DIR)/$(PROJECT_NAME)-$(VERSION)-$(PLATFORM)-$(shell uname -m)
-	@cp $(BUILD_DIR)/$(PROJECT_NAME)$(if $(filter windows,$(PLATFORM)),.exe,) $(DIST_DIR)/$(PROJECT_NAME)-$(VERSION)-$(PLATFORM)-$(shell uname -m)/
-	@cp README.md $(DIST_DIR)/$(PROJECT_NAME)-$(VERSION)-$(PLATFORM)-$(shell uname -m)/ 2>/dev/null || true
-	@cp LICENSE $(DIST_DIR)/$(PROJECT_NAME)-$(VERSION)-$(PLATFORM)-$(shell uname -m)/ 2>/dev/null || true
-ifeq ($(PLATFORM),windows)
-	@cd $(DIST_DIR) && powershell -Command "Compress-Archive -Path '$(PROJECT_NAME)-$(VERSION)-$(PLATFORM)-$(shell uname -m)' -DestinationPath '$(PROJECT_NAME)-$(VERSION)-$(PLATFORM)-$(shell uname -m).zip' -Force"
+	# Use standardized naming: {app_name}-{version}-{os_type}-{distribution}-{arch}.zip
+ifeq ($(PLATFORM),linux)
+	PACKAGE_NAME = $(PROJECT_NAME)-$(VERSION)-$(OS_TYPE)-$(DISTRIBUTION)-$(ARCH)
 else
-	@cd $(DIST_DIR) && zip -r $(PROJECT_NAME)-$(VERSION)-$(PLATFORM)-$(shell uname -m).zip $(PROJECT_NAME)-$(VERSION)-$(PLATFORM)-$(shell uname -m)/
+	PACKAGE_NAME = $(PROJECT_NAME)-$(VERSION)-$(OS_TYPE)-$(ARCH)
 endif
-	@rm -rf $(DIST_DIR)/$(PROJECT_NAME)-$(VERSION)-$(PLATFORM)-$(shell uname -m)
-	@echo "ZIP package created: $(DIST_DIR)/$(PROJECT_NAME)-$(VERSION)-$(PLATFORM)-$(shell uname -m).zip"
+	@mkdir -p $(DIST_DIR)/$(PACKAGE_NAME)
+	@cp $(BUILD_DIR)/$(PROJECT_NAME)$(if $(filter windows,$(PLATFORM)),.exe,) $(DIST_DIR)/$(PACKAGE_NAME)/
+	@cp README.md $(DIST_DIR)/$(PACKAGE_NAME)/ 2>/dev/null || true
+	@cp LICENSE $(DIST_DIR)/$(PACKAGE_NAME)/ 2>/dev/null || true
+ifeq ($(PLATFORM),windows)
+	@cd $(DIST_DIR) && powershell -Command "Compress-Archive -Path '$(PACKAGE_NAME)' -DestinationPath '$(PACKAGE_NAME).zip' -Force"
+else
+	@cd $(DIST_DIR) && zip -r $(PACKAGE_NAME).zip $(PACKAGE_NAME)/
+endif
+	@rm -rf $(DIST_DIR)/$(PACKAGE_NAME)
+	@echo "ZIP package created: $(DIST_DIR)/$(PACKAGE_NAME).zip"
 
 # Show package information
 package-info:

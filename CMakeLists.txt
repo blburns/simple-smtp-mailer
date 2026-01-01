@@ -12,10 +12,51 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Platform detection
 if(WIN32)
     set(PLATFORM_NAME "Windows")
+    set(OS_TYPE "win")
 elseif(APPLE)
     set(PLATFORM_NAME "macOS")
+    set(OS_TYPE "macos")
 elseif(UNIX)
     set(PLATFORM_NAME "Linux")
+    set(OS_TYPE "linux")
+    
+    # Detect Linux distribution
+    if(EXISTS "/etc/os-release")
+        file(READ "/etc/os-release" OS_RELEASE)
+        if(OS_RELEASE MATCHES "ID=debian|ID=ubuntu")
+            set(DISTRIBUTION "debian")
+        elseif(OS_RELEASE MATCHES "ID=fedora|ID=rhel|ID=centos|ID=rocky|ID=almalinux")
+            set(DISTRIBUTION "redhat")
+        elseif(OS_RELEASE MATCHES "ID=arch")
+            set(DISTRIBUTION "arch")
+        elseif(OS_RELEASE MATCHES "ID=suse|ID=opensuse")
+            set(DISTRIBUTION "suse")
+        else()
+            set(DISTRIBUTION "generic")
+        endif()
+    elseif(EXISTS "/etc/redhat-release")
+        set(DISTRIBUTION "redhat")
+    elseif(EXISTS "/etc/debian_version")
+        set(DISTRIBUTION "debian")
+    else()
+        set(DISTRIBUTION "generic")
+    endif()
+else()
+    set(OS_TYPE "unknown")
+    set(DISTRIBUTION "generic")
+endif()
+
+# Detect architecture
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
+    set(ARCH "amd64")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64")
+    set(ARCH "aarch64")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "armv7l|armv7")
+    set(ARCH "armv7")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i686|x86")
+    set(ARCH "x86")
+else()
+    set(ARCH "${CMAKE_SYSTEM_PROCESSOR}")
 endif()
 
 # Build options
@@ -264,10 +305,24 @@ if(ENABLE_PACKAGING)
             set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "armhf")
             set(CPACK_RPM_PACKAGE_ARCHITECTURE "armv7hl")
         endif()
+        
+        # Set standardized package file names for Linux
+        # Format: {app_name}-{version}-{os_type}-{distribution}-{arch}.{ext}
+        set(CPACK_DEBIAN_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}-${OS_TYPE}-${DISTRIBUTION}-${ARCH}")
+        set(CPACK_RPM_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}-${OS_TYPE}-${DISTRIBUTION}-${ARCH}")
+        set(CPACK_ARCHIVE_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}-${OS_TYPE}-${DISTRIBUTION}-${ARCH}")
     endif()
 
     # Common package settings
-    set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}-${PLATFORM_NAME}")
+    # Use standardized naming: {app_name}-{version}-{os_type}-{distribution}-{arch}
+    if(WIN32)
+        set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}-${OS_TYPE}-${ARCH}")
+    elseif(APPLE)
+        set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}-${OS_TYPE}-${ARCH}")
+    else()
+        # Linux uses distribution-specific naming
+        set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}-${OS_TYPE}-${DISTRIBUTION}-${ARCH}")
+    endif()
     set(CPACK_PACKAGE_INSTALL_DIRECTORY "${PROJECT_NAME}")
 
     # Component installation
