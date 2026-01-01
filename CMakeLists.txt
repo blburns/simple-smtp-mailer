@@ -284,22 +284,7 @@ if(ENABLE_PACKAGING)
     set(CPACK_PACKAGE_CONTACT "support@blburns.com")
     set(CPACK_PACKAGE_HOMEPAGE_URL "https://github.com/blburns/simple-smtp-mailer")
 
-    # Package files
-    # For PKG packages, CPack requires .rtf, .html, or .txt extensions
-    # Check if files exist and use appropriate extensions
-    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
-        set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
-    endif()
-    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
-        # For PKG, we need to use .txt or .html - CPack doesn't like .md
-        # We'll use README.md as-is and let CPack handle it, or create a .txt version
-        set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
-    endif()
-    # Don't set welcome file if it doesn't exist (optional)
-    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/welcome.html")
-        set(CPACK_RESOURCE_FILE_WELCOME "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/welcome.html")
-    endif()
-
+    # Package files - set per platform to avoid conflicts
     # Platform-specific package settings
     if(WIN32)
         # Windows MSI and ZIP packages
@@ -336,7 +321,12 @@ if(ENABLE_PACKAGING)
         # PKG settings
         set(CPACK_PRODUCTBUILD_IDENTIFIER "com.blburns.${PROJECT_NAME}")
         set(CPACK_PRODUCTBUILD_PACKAGE_NAME "${PROJECT_NAME}")
-        # Use HTML files from packaging/assets for PKG (productbuild requires .rtf, .html, or .txt)
+        # macOS PKG resource files - productbuild requires .rtf, .html, or .txt extensions
+        # Unset any previously set values first
+        unset(CPACK_RESOURCE_FILE_LICENSE)
+        unset(CPACK_RESOURCE_FILE_README)
+        unset(CPACK_RESOURCE_FILE_WELCOME)
+        # Set only if files with proper extensions exist
         if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/readme.html")
             set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/readme.html")
         endif()
@@ -355,6 +345,14 @@ if(ENABLE_PACKAGING)
     else()
         # Linux DEB and RPM packages
         set(CPACK_GENERATOR "DEB;RPM")
+        
+        # Linux resource files
+        if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+            set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+        endif()
+        if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+            set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+        endif()
 
         # DEB package settings
         set(CPACK_DEBIAN_PACKAGE_MAINTAINER "blburns <support@blburns.com>")
