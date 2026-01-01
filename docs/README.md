@@ -35,7 +35,10 @@ Welcome to the comprehensive documentation for ssmtp-mailer, a powerful and secu
 ### 🛠️ **Development & Building**
 - **[Development Overview](development/README.md)** - Building from source
 - **[Build Scripts](development/build-scripts.md)** - Automated build processes
-- **[Building Guide](development/building.md)** - Manual build instructions
+- **[Ansible Remote Build](development/ansible-remote-build.md)** - Build on remote VMs with Ansible
+- **[Linux Build Guide](development/linux-build.md)** - Manual Linux build instructions
+- **[macOS Build Guide](development/macos-build.md)** - Manual macOS build instructions
+- **[Windows Build Guide](development/windows-build.md)** - Manual Windows build instructions
 
 ### 🌟 **Features**
 - **[Daemon Mode](features/daemon-mode.md)** - Background process and continuous email processing
