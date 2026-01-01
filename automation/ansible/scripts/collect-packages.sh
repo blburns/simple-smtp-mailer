@@ -249,16 +249,16 @@ fetch_packages() {
         - (item.path | regex_search('\.(deb|rpm|dmg|pkg)$')) is none
           
     - name: Fetch source packages from dist
-        fetch:
-          src: "{{ item.path }}"
-          dest: "{{ local_dist_dir }}/source/{{ inventory_hostname }}-{{ item.path | basename }}"
-          flat: yes
-        loop: "{{ dist_packages.files | default([]) }}"
-        when: 
-          - dist_packages.files is defined
-          - (item.path | regex_search('-src\.(tar\.gz|zip)$')) is not none
-          - (item.path | regex_search('\.(deb|rpm|dmg|pkg)$')) is none
-          - (centralized_packages.files | default([]) | length) == 0
+      fetch:
+        src: "{{ item.path }}"
+        dest: "{{ local_dist_dir }}/source/{{ inventory_hostname }}-{{ item.path | basename }}"
+        flat: yes
+      loop: "{{ dist_packages.files | default([]) }}"
+      when: 
+        - dist_packages.files is defined
+        - (item.path | regex_search('-src\.(tar\.gz|zip)$')) is not none
+        - (item.path | regex_search('\.(deb|rpm|dmg|pkg)$')) is none
+        - (centralized_packages.files | default([]) | length) == 0
         
     - name: Fetch DEB packages from build (fallback)
       fetch:
