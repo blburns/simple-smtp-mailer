@@ -126,7 +126,7 @@ fetch_packages() {
       loop: "{{ dist_packages.files | default([]) }}"
       when: 
         - dist_packages.files is defined
-        - (item.path | regex_search('\.deb$')) is not none
+        - item.path | regex_search('\.deb$') | bool
         
     - name: Fetch RPM packages from dist
       fetch:
@@ -136,7 +136,7 @@ fetch_packages() {
       loop: "{{ dist_packages.files | default([]) }}"
       when: 
         - dist_packages.files is defined
-        - (item.path | regex_search('\.rpm$')) is not none
+        - item.path | regex_search('\.rpm$') | bool
         
     - name: Fetch archive packages (TGZ, ZIP) from dist
       fetch:
@@ -146,7 +146,7 @@ fetch_packages() {
       loop: "{{ dist_packages.files | default([]) }}"
       when: 
         - dist_packages.files is defined
-        - (item.path | regex_search('\.(tar\.gz|zip)$')) is not none
+        - item.path | regex_search('\.(tar\.gz|zip)$') | bool
         
     - name: Fetch DEB packages from build (fallback)
       fetch:
@@ -156,7 +156,7 @@ fetch_packages() {
       loop: "{{ build_packages.files | default([]) }}"
       when: 
         - build_packages.files is defined
-        - (item.path | regex_search('\.deb$')) is not none
+        - item.path | regex_search('\.deb$') | bool
         - (dist_packages.files | default([]) | length) == 0
         
     - name: Fetch RPM packages from build (fallback)
@@ -167,7 +167,7 @@ fetch_packages() {
       loop: "{{ build_packages.files | default([]) }}"
       when: 
         - build_packages.files is defined
-        - (item.path | regex_search('\.rpm$')) is not none
+        - item.path | regex_search('\.rpm$') | bool
         - (dist_packages.files | default([]) | length) == 0
         
     - name: Fetch archive packages from build (fallback)
@@ -178,7 +178,7 @@ fetch_packages() {
       loop: "{{ build_packages.files | default([]) }}"
       when: 
         - build_packages.files is defined
-        - (item.path | regex_search('\.(tar\.gz|zip)$')) is not none
+        - item.path | regex_search('\.(tar\.gz|zip)$') | bool
         - (dist_packages.files | default([]) | length) == 0
 PLAYBOOK_EOF
 
