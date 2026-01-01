@@ -99,33 +99,33 @@ fetch_packages() {
         path: "{{ remote_dist_dir }}"
       register: dist_dir_stat
       
-      - name: Check if build directory exists on remote
-        stat:
-          path: "{{ remote_build_dir }}"
-        register: build_dir_stat
-        
-      - name: Check if centralized directory exists on remote
-        stat:
-          path: "{{ remote_centralized_dir }}"
-        register: centralized_dir_stat
-        
-      - name: List packages in centralized directory (preferred)
-        find:
-          paths: "{{ remote_centralized_dir }}"
-          patterns:
-            - "*.deb"
-            - "*.rpm"
-            - "*.tar.gz"
-            - "*.zip"
-            - "*.dmg"
-            - "*.pkg"
-            - "*-src.tar.gz"
-            - "*-src.zip"
-          excludes: "*.tar.Z"
-        register: centralized_packages
-        when: centralized_dir_stat.stat.exists
-        
-      - name: List packages in dist directory
+    - name: Check if build directory exists on remote
+      stat:
+        path: "{{ remote_build_dir }}"
+      register: build_dir_stat
+      
+    - name: Check if centralized directory exists on remote
+      stat:
+        path: "{{ remote_centralized_dir }}"
+      register: centralized_dir_stat
+      
+    - name: List packages in centralized directory (preferred)
+      find:
+        paths: "{{ remote_centralized_dir }}"
+        patterns:
+          - "*.deb"
+          - "*.rpm"
+          - "*.tar.gz"
+          - "*.zip"
+          - "*.dmg"
+          - "*.pkg"
+          - "*-src.tar.gz"
+          - "*-src.zip"
+        excludes: "*.tar.Z"
+      register: centralized_packages
+      when: centralized_dir_stat.stat.exists
+      
+    - name: List packages in dist directory
       find:
         paths: "{{ remote_dist_dir }}"
         patterns:
@@ -153,7 +153,7 @@ fetch_packages() {
       register: build_packages
       when: build_dir_stat.stat.exists
       
-      - name: Fetch DEB packages from centralized (preferred)
+    - name: Fetch DEB packages from centralized (preferred)
         fetch:
           src: "{{ item.path }}"
           dest: "{{ local_dist_dir }}/linux/deb/{{ inventory_hostname }}-{{ item.path | basename }}"
@@ -173,8 +173,8 @@ fetch_packages() {
           - dist_packages.files is defined
           - (item.path | regex_search('\.deb$')) is not none
           - (centralized_packages.files | default([]) | length) == 0
-        
-      - name: Fetch RPM packages from centralized (preferred)
+          
+    - name: Fetch RPM packages from centralized (preferred)
         fetch:
           src: "{{ item.path }}"
           dest: "{{ local_dist_dir }}/linux/rpm/{{ inventory_hostname }}-{{ item.path | basename }}"
@@ -194,8 +194,8 @@ fetch_packages() {
           - dist_packages.files is defined
           - (item.path | regex_search('\.rpm$')) is not none
           - (centralized_packages.files | default([]) | length) == 0
-        
-      - name: Fetch DMG packages from centralized (preferred)
+          
+    - name: Fetch DMG packages from centralized (preferred)
         fetch:
           src: "{{ item.path }}"
           dest: "{{ local_dist_dir }}/macos/dmg/{{ inventory_hostname }}-{{ item.path | basename }}"
@@ -215,8 +215,8 @@ fetch_packages() {
           - dist_packages.files is defined
           - (item.path | regex_search('\.dmg$')) is not none
           - (centralized_packages.files | default([]) | length) == 0
-        
-      - name: Fetch PKG packages from centralized (preferred)
+          
+    - name: Fetch PKG packages from centralized (preferred)
         fetch:
           src: "{{ item.path }}"
           dest: "{{ local_dist_dir }}/macos/pkg/{{ inventory_hostname }}-{{ item.path | basename }}"
@@ -236,8 +236,8 @@ fetch_packages() {
           - dist_packages.files is defined
           - (item.path | regex_search('\.pkg$')) is not none
           - (centralized_packages.files | default([]) | length) == 0
-        
-      - name: Fetch source packages from centralized (preferred)
+          
+    - name: Fetch source packages from centralized (preferred)
         fetch:
           src: "{{ item.path }}"
           dest: "{{ local_dist_dir }}/source/{{ inventory_hostname }}-{{ item.path | basename }}"
