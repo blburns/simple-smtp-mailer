@@ -238,27 +238,35 @@ install(TARGETS ${PROJECT_NAME}
 
 install(DIRECTORY include/
     DESTINATION include
-    FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp"
     COMPONENT development
+    FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp"
+    PATTERN "CVS" EXCLUDE
+    PATTERN ".svn" EXCLUDE
 )
 
 # Install configuration files
 install(DIRECTORY config/
     DESTINATION etc/${PROJECT_NAME}
-    FILES_MATCHING PATTERN "*.conf" PATTERN "*.example"
     COMPONENT config
+    FILES_MATCHING PATTERN "*.conf" PATTERN "*.example"
+    PATTERN "CVS" EXCLUDE
+    PATTERN ".svn" EXCLUDE
 )
 
 # Install OAuth2 helper tools
 install(DIRECTORY tools/oauth2-helper/
     DESTINATION share/${PROJECT_NAME}/oauth2-helper
     COMPONENT tools
+    PATTERN "CVS" EXCLUDE
+    PATTERN ".svn" EXCLUDE
 )
 
 # Install documentation
 install(DIRECTORY docs/
     DESTINATION share/${PROJECT_NAME}/docs
     COMPONENT docs
+    PATTERN "CVS" EXCLUDE
+    PATTERN ".svn" EXCLUDE
 )
 
 # Install DMG installation script (macOS only)
