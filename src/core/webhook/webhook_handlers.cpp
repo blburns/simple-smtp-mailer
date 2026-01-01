@@ -2,6 +2,7 @@
 #include <json/json.h>
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 #include <openssl/hmac.h>
 #include <openssl/evp.h>
 #include <iomanip>
