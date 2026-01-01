@@ -430,6 +430,19 @@
       loop: "{{ all_source_packages | default([]) }}"
       when: create_packages | bool
 
+    - name: Organize packages into centralized directory
+      shell: "{{ project_dir }}/automation/ansible/scripts/organize-packages.sh"
+      args:
+        chdir: "{{ project_dir }}"
+      register: organize_result
+      failed_when: false
+      when: create_packages | bool
+
+    - name: Display package organization results
+      debug:
+        msg: "{{ organize_result.stdout_lines | default([]) }}"
+      when: create_packages | bool and organize_result.stdout_lines is defined
+
     - name: Get build artifacts info
       stat:
         path: "{{ item }}"
