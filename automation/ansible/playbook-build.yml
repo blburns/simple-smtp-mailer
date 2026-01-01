@@ -111,9 +111,9 @@
       when: ansible_facts['os_family'] == "Darwin"
       ignore_errors: yes
 
-    - name: Set up Homebrew PATH for macOS
+    - name: Set up Homebrew PATH for macOS (Apple Silicon)
       lineinfile:
-        path: "{{ ansible_env.HOME }}/.zshrc"
+        path: "{{ ansible_facts['env']['HOME'] }}/.zshrc"
         line: 'eval "$(/opt/homebrew/bin/brew shellenv)"'
         create: yes
         state: present
@@ -123,7 +123,7 @@
 
     - name: Set up Homebrew PATH for macOS (Intel)
       lineinfile:
-        path: "{{ ansible_env.HOME }}/.zshrc"
+        path: "{{ ansible_facts['env']['HOME'] }}/.zshrc"
         line: 'eval "$(/usr/local/bin/brew shellenv)"'
         create: yes
         state: present
