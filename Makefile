@@ -75,6 +75,13 @@ else ifeq ($(UNAME_S),Darwin)
     RMDIR = rm -rf
     MKDIR = mkdir -p
     CP = cp -r
+    # Detect macOS architecture
+    ARCH := $(shell uname -m)
+    ifeq ($(ARCH),x86_64)
+        ARCH = intel
+    else ifeq ($(ARCH),arm64)
+        ARCH = aarch64
+    endif
 else
     PLATFORM = linux
     CXX = g++

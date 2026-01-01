@@ -16,6 +16,14 @@ if(WIN32)
 elseif(APPLE)
     set(PLATFORM_NAME "macOS")
     set(OS_TYPE "macos")
+    # Detect macOS architecture
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64|i386")
+        set(ARCH "intel")
+    elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64")
+        set(ARCH "aarch64")
+    else()
+        set(ARCH "${CMAKE_SYSTEM_PROCESSOR}")
+    endif()
 elseif(UNIX)
     set(PLATFORM_NAME "Linux")
     set(OS_TYPE "linux")
@@ -310,10 +318,13 @@ if(ENABLE_PACKAGING)
 
     # Common package settings
     # Use standardized naming: {app_name}-{version}-{os_type}-{distribution}-{arch}
-    # CPack will add the appropriate extension (.deb, .rpm, .tar.gz, etc.)
+    # CPack will add the appropriate extension (.deb, .rpm, .tar.gz, .dmg, .pkg, etc.)
     if(WIN32)
         set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}-${OS_TYPE}-${ARCH}")
     elseif(APPLE)
+        # macOS: {app_name}-{version}-{os_type}-{arch}
+        # Examples: simple-smtp-mailer-0.2.0-macos-intel.dmg
+        #          simple-smtp-mailer-0.2.0-macos-aarch64.dmg
         set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}-${OS_TYPE}-${ARCH}")
     else()
         # Linux uses distribution-specific naming
