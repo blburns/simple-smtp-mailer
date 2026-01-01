@@ -294,6 +294,16 @@
       failed_when: false
       when: create_packages | bool and ansible_facts['os_family'] == "Darwin"
 
+    - name: Display DMG package creation results
+      debug:
+        var: dmg_package_result.stdout_lines
+      when: create_packages | bool and ansible_facts['os_family'] == "Darwin" and dmg_package_result.stdout_lines is defined
+
+    - name: Display PKG package creation results
+      debug:
+        var: pkg_package_result.stdout_lines
+      when: create_packages | bool and ansible_facts['os_family'] == "Darwin" and pkg_package_result.stdout_lines is defined
+
     - name: Display DEB package creation results
       debug:
         var: deb_package_result.stdout_lines
