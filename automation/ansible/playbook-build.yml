@@ -185,14 +185,25 @@
       debug:
         msg: "Current commit: {{ git_commit.stdout }}"
 
-    - name: Create build directory
+    - name: Create build directory (Linux)
       file:
         path: "{{ project_dir }}/build"
         state: directory
         owner: "{{ build_user }}"
         group: "{{ build_group }}"
         mode: '0755'
-      become: yes
+      become: "{{ ansible_become | default(false) }}"
+      when: ansible_facts['os_family'] != "Darwin"
+
+    - name: Create build directory (macOS)
+      file:
+        path: "{{ project_dir }}/build"
+        state: directory
+        owner: "{{ build_user }}"
+        group: "staff"
+        mode: '0755'
+      become: "{{ ansible_become | default(false) }}"
+      when: ansible_facts['os_family'] == "Darwin"
 
     - name: Configure CMake
       command: >
@@ -266,22 +277,6 @@
       register: zip_package_result
       failed_when: false
       when: create_packages | bool and ansible_facts['os_family'] == "RedHat"
-
-    - name: Create DMG package (macOS)
-      make:
-        chdir: "{{ project_dir }}"
-        target: package-dmg
-      register: dmg_package_result
-      failed_when: false
-      when: create_packages | bool and ansible_facts['os_family'] == "Darwin"
-
-    - name: Create PKG package (macOS)
-      make:
-        chdir: "{{ project_dir }}"
-        target: package-pkg
-      register: pkg_package_result
-      failed_when: false
-      when: create_packages | bool and ansible_facts['os_family'] == "Darwin"
 
     - name: Create DMG package (macOS)
       make:
