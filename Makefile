@@ -617,6 +617,36 @@ else
 	@echo "PKG packages are only supported on macOS"
 endif
 
+package-tgz: build
+ifeq ($(PLATFORM),linux)
+	@echo "Building TGZ package..."
+	@mkdir -p $(DIST_DIR)
+	cd $(BUILD_DIR) && cpack -G TGZ
+	mv $(BUILD_DIR)/$(PROJECT_NAME)-$(VERSION)-*.tar.gz $(DIST_DIR)/ 2>/dev/null || true
+	@echo "TGZ package created: $(DIST_DIR)/$(PROJECT_NAME)-$(VERSION)-*.tar.gz"
+else
+	@echo "TGZ packages are primarily supported on Linux"
+	@mkdir -p $(DIST_DIR)
+	cd $(BUILD_DIR) && cpack -G TGZ
+	mv $(BUILD_DIR)/$(PROJECT_NAME)-$(VERSION)-*.tar.gz $(DIST_DIR)/ 2>/dev/null || true
+	@echo "TGZ package created: $(DIST_DIR)/$(PROJECT_NAME)-$(VERSION)-*.tar.gz"
+endif
+
+package-zip: build
+	@echo "Building ZIP package..."
+	@mkdir -p $(DIST_DIR)
+	@mkdir -p $(DIST_DIR)/$(PROJECT_NAME)-$(VERSION)-$(PLATFORM)-$(shell uname -m)
+	@cp $(BUILD_DIR)/$(PROJECT_NAME)$(if $(filter windows,$(PLATFORM)),.exe,) $(DIST_DIR)/$(PROJECT_NAME)-$(VERSION)-$(PLATFORM)-$(shell uname -m)/
+	@cp README.md $(DIST_DIR)/$(PROJECT_NAME)-$(VERSION)-$(PLATFORM)-$(shell uname -m)/ 2>/dev/null || true
+	@cp LICENSE $(DIST_DIR)/$(PROJECT_NAME)-$(VERSION)-$(PLATFORM)-$(shell uname -m)/ 2>/dev/null || true
+ifeq ($(PLATFORM),windows)
+	@cd $(DIST_DIR) && powershell -Command "Compress-Archive -Path '$(PROJECT_NAME)-$(VERSION)-$(PLATFORM)-$(shell uname -m)' -DestinationPath '$(PROJECT_NAME)-$(VERSION)-$(PLATFORM)-$(shell uname -m).zip' -Force"
+else
+	@cd $(DIST_DIR) && zip -r $(PROJECT_NAME)-$(VERSION)-$(PLATFORM)-$(shell uname -m).zip $(PROJECT_NAME)-$(VERSION)-$(PLATFORM)-$(shell uname -m)/
+endif
+	@rm -rf $(DIST_DIR)/$(PROJECT_NAME)-$(VERSION)-$(PLATFORM)-$(shell uname -m)
+	@echo "ZIP package created: $(DIST_DIR)/$(PROJECT_NAME)-$(VERSION)-$(PLATFORM)-$(shell uname -m).zip"
+
 # Show package information
 package-info:
 	@echo "Package Information for $(PROJECT_NAME) $(VERSION)"
@@ -648,6 +678,8 @@ endif
 	@echo "  make package-all      - Create all packages"
 	@echo "  make package-deb      - Create DEB package (Linux only)"
 	@echo "  make package-rpm      - Create RPM package (Linux only)"
+	@echo "  make package-tgz      - Create TGZ package (all platforms)"
+	@echo "  make package-zip      - Create ZIP package (all platforms)"
 	@echo "  make package-msi      - Create MSI package (Windows only)"
 	@echo "  make package-dmg      - Create DMG package (macOS only)"
 	@echo "  make package-pkg      - Create PKG package (macOS only)"
@@ -1042,7 +1074,7 @@ endif
 
 # Phony targets
 .PHONY: all build clean install uninstall test package package-source package-all \
-        package-deb package-rpm package-msi package-exe package-dmg package-pkg package-info \
+        package-deb package-rpm package-tgz package-zip package-msi package-exe package-dmg package-pkg package-info \
         static-build static-test static-package static-zip static-all \
         dev-build dev-test format check-style lint security-scan deps dev-deps \
         docker-build docker-run docker-stop service-install service-uninstall service-status \
