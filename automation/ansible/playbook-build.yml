@@ -26,6 +26,8 @@
           - "Clean build: {{ clean_build }}"
           - "Run tests: {{ run_tests }}"
           - "Create packages: {{ create_packages }}"
+          - "Create packages (bool): {{ create_packages | bool }}"
+          - "OS family: {{ ansible_facts['os_family'] | default('not set') }}"
 
     - name: Gather OS facts
       setup:
