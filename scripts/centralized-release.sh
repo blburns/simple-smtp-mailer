@@ -323,14 +323,20 @@ create_github_release() {
     local tag="v$VERSION"
     local release_notes="$version_dir/RELEASE_NOTES.md"
     
-    print_step "Creating GitHub release..."
-    
     if [[ "$RELEASE_ACTION" == "create" ]]; then
+        print_step "Creating GitHub release..."
         gh release create "$tag" \
             --title "ssmtp-mailer v$VERSION" \
             --notes-file "$release_notes" \
             --draft
         print_success "Draft release created"
+    else
+        print_step "Updating existing GitHub release..."
+        # Update release notes if they exist
+        if [[ -f "$release_notes" ]]; then
+            gh release edit "$tag" --notes-file "$release_notes"
+            print_success "Release notes updated"
+        fi
     fi
     
     # Upload all packages
@@ -355,10 +361,14 @@ create_github_release() {
         print_success "Successfully uploaded $uploaded package(s)"
     fi
     
-    # Publish the release
-    print_step "Publishing release..."
-    gh release edit "$tag" --draft=false
-    print_success "Release v$VERSION published successfully!"
+    # Publish the release (only if it was a draft)
+    if [[ "$RELEASE_ACTION" == "create" ]]; then
+        print_step "Publishing release..."
+        gh release edit "$tag" --draft=false
+        print_success "Release v$VERSION published successfully!"
+    else
+        print_success "Release v$VERSION updated successfully!"
+    fi
 }
 
 show_help() {
