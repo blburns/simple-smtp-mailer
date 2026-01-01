@@ -493,10 +493,31 @@ display_summary() {
     fi
     
     echo ""
+    
+    # Show centralized directory packages
+    VERSION=$(grep '^VERSION =' "$PROJECT_ROOT/Makefile" 2>/dev/null | cut -d' ' -f3 || echo "0.2.0")
+    CENTRALIZED_DIR="$DIST_DIR/centralized/v$VERSION"
+    echo ""
+    echo "Centralized directory ($CENTRALIZED_DIR):"
+    if [ -d "$CENTRALIZED_DIR" ] && ls "$CENTRALIZED_DIR"/*.{deb,rpm,dmg,pkg,tar.gz,zip} 1> /dev/null 2>&1; then
+        shopt -s nullglob
+        for file in "$CENTRALIZED_DIR"/*.{deb,rpm,dmg,pkg,tar.gz,zip}; do
+            if [ -f "$file" ]; then
+                size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null || echo "0")
+                echo "  $(basename "$file") ($(numfmt --to=iec-i --suffix=B "$size" 2>/dev/null || echo "${size}B"))"
+            fi
+        done
+        shopt -u nullglob
+    else
+        echo "  (none)"
+    fi
+    
+    echo ""
     if [ $count -gt 0 ]; then
         print_success "Total: $count package(s), $(numfmt --to=iec-i --suffix=B "$total" 2>/dev/null || echo "${total}B")"
         echo ""
         print_info "Packages are ready in: $DIST_DIR"
+        print_info "Centralized packages in: $CENTRALIZED_DIR"
         echo ""
         print_info "Directory structure:"
         tree -L 3 "$DIST_DIR" 2>/dev/null || find "$DIST_DIR" -type f | head -20
