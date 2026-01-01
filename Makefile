@@ -719,21 +719,24 @@ package-zip: build
 	@mkdir -p $(DIST_DIR)
 	# Use standardized naming: {app_name}-{version}-{os_type}-{distribution}-{arch}.zip
 ifeq ($(PLATFORM),linux)
-	PACKAGE_NAME = $(PROJECT_NAME)-$(VERSION)-$(OS_TYPE)-$(DISTRIBUTION)-$(ARCH)
+	@PACKAGE_NAME="$(PROJECT_NAME)-$(VERSION)-$(OS_TYPE)-$(DISTRIBUTION)-$(ARCH)"; \
+	mkdir -p $(DIST_DIR)/$$PACKAGE_NAME; \
+	cp $(BUILD_DIR)/$(PROJECT_NAME) $(DIST_DIR)/$$PACKAGE_NAME/; \
+	cp README.md $(DIST_DIR)/$$PACKAGE_NAME/ 2>/dev/null || true; \
+	cp LICENSE $(DIST_DIR)/$$PACKAGE_NAME/ 2>/dev/null || true; \
+	cd $(DIST_DIR) && zip -r $$PACKAGE_NAME.zip $$PACKAGE_NAME/; \
+	rm -rf $(DIST_DIR)/$$PACKAGE_NAME; \
+	echo "ZIP package created: $(DIST_DIR)/$$PACKAGE_NAME.zip"
 else
-	PACKAGE_NAME = $(PROJECT_NAME)-$(VERSION)-$(OS_TYPE)-$(ARCH)
+	@PACKAGE_NAME="$(PROJECT_NAME)-$(VERSION)-$(OS_TYPE)-$(ARCH)"; \
+	mkdir -p $(DIST_DIR)/$$PACKAGE_NAME; \
+	cp $(BUILD_DIR)/$(PROJECT_NAME)$(if $(filter windows,$(PLATFORM)),.exe,) $(DIST_DIR)/$$PACKAGE_NAME/; \
+	cp README.md $(DIST_DIR)/$$PACKAGE_NAME/ 2>/dev/null || true; \
+	cp LICENSE $(DIST_DIR)/$$PACKAGE_NAME/ 2>/dev/null || true; \
+	cd $(DIST_DIR) && $(if $(filter windows,$(PLATFORM)),powershell -Command "Compress-Archive -Path '$$PACKAGE_NAME' -DestinationPath '$$PACKAGE_NAME.zip' -Force",zip -r $$PACKAGE_NAME.zip $$PACKAGE_NAME/); \
+	rm -rf $(DIST_DIR)/$$PACKAGE_NAME; \
+	echo "ZIP package created: $(DIST_DIR)/$$PACKAGE_NAME.zip"
 endif
-	@mkdir -p $(DIST_DIR)/$(PACKAGE_NAME)
-	@cp $(BUILD_DIR)/$(PROJECT_NAME)$(if $(filter windows,$(PLATFORM)),.exe,) $(DIST_DIR)/$(PACKAGE_NAME)/
-	@cp README.md $(DIST_DIR)/$(PACKAGE_NAME)/ 2>/dev/null || true
-	@cp LICENSE $(DIST_DIR)/$(PACKAGE_NAME)/ 2>/dev/null || true
-ifeq ($(PLATFORM),windows)
-	@cd $(DIST_DIR) && powershell -Command "Compress-Archive -Path '$(PACKAGE_NAME)' -DestinationPath '$(PACKAGE_NAME).zip' -Force"
-else
-	@cd $(DIST_DIR) && zip -r $(PACKAGE_NAME).zip $(PACKAGE_NAME)/
-endif
-	@rm -rf $(DIST_DIR)/$(PACKAGE_NAME)
-	@echo "ZIP package created: $(DIST_DIR)/$(PACKAGE_NAME).zip"
 
 # Show package information
 package-info:
