@@ -178,6 +178,18 @@ else
 	cd $(BUILD_DIR) && cmake .. && make -j$(PARALLEL_JOBS)
 endif
 
+# Build universal binary for macOS (Intel + Apple Silicon)
+build-universal: $(BUILD_DIR)-dir
+ifeq ($(PLATFORM),macos)
+	@echo "Building universal binary (Intel + Apple Silicon)..."
+	cd $(BUILD_DIR) && cmake .. -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" && make -j$(PARALLEL_JOBS)
+	@echo "Universal binary built successfully"
+else
+	@echo "Universal binary build is only supported on macOS"
+	@echo "Falling back to regular build..."
+	$(MAKE) build
+endif
+
 # Clean build
 clean:
 ifeq ($(PLATFORM),windows)
