@@ -251,7 +251,8 @@ automation/ansible/
 ├── inventory-vmware.ini      # VM inventory configuration
 ├── playbook-build.yml        # Build playbook
 ├── scripts/
-│   └── remote-build.sh      # Convenience script
+│   ├── remote-build.sh      # Convenience script for building
+│   └── collect-packages.sh  # Script to collect packages from VMs
 └── README-REMOTE-BUILD.md   # This file
 ```
 
@@ -261,6 +262,30 @@ automation/ansible/
 2. Test connectivity: `ansible build-vms -i inventory-vmware.ini -m ping`
 3. Run your first build: `./scripts/remote-build.sh`
 4. Check build artifacts on VMs
+
+## Collecting Packages
+
+After building packages on the remote VMs, collect them locally for GitHub release:
+
+```bash
+cd automation/ansible
+./scripts/collect-packages.sh
+```
+
+This script will:
+- Fetch all packages (DEB, RPM, TGZ, ZIP) from both VMs
+- Organize them in `dist/linux/{deb,rpm,archive}/` directories
+- Remove hostname prefixes from package names
+- Display a summary of collected packages
+
+The packages will be organized as:
+```
+dist/
+├── linux/
+│   ├── deb/          # DEB packages from BUILD_DEB
+│   ├── rpm/          # RPM packages from BUILD_RPM
+│   └── archive/      # TGZ and ZIP packages from both VMs
+```
 
 ## Support
 
