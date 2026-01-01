@@ -237,7 +237,7 @@
       args:
         chdir: "{{ project_dir }}/build"
       environment:
-        PATH: "{{ ansible_env.PATH }}:/opt/homebrew/bin:/usr/local/bin"
+        PATH: "{{ ansible_facts['env']['PATH'] | default('/usr/bin:/bin:/usr/sbin:/sbin') }}:/opt/homebrew/bin:/usr/local/bin"
       register: cmake_result
 
     - name: Display CMake configuration
@@ -249,7 +249,7 @@
         chdir: "{{ project_dir }}/build"
         target: all
       environment:
-        PATH: "{{ ansible_env.PATH }}:/opt/homebrew/bin:/usr/local/bin"
+        PATH: "{{ ansible_facts['env']['PATH'] | default('/usr/bin:/bin:/usr/sbin:/sbin') }}:/opt/homebrew/bin:/usr/local/bin"
       register: build_result
       when: ansible_facts['os_family'] == "Darwin"
       
@@ -270,7 +270,7 @@
       args:
         chdir: "{{ project_dir }}/build"
       environment:
-        PATH: "{{ ansible_env.PATH }}:/opt/homebrew/bin:/usr/local/bin"
+        PATH: "{{ ansible_facts['env']['PATH'] | default('/usr/bin:/bin:/usr/sbin:/sbin') }}:/opt/homebrew/bin:/usr/local/bin"
       register: test_result
       failed_when: false
       when: run_tests | bool and ansible_facts['os_family'] == "Darwin"
@@ -324,6 +324,8 @@
       make:
         chdir: "{{ project_dir }}"
         target: package-dmg
+      environment:
+        PATH: "{{ ansible_facts['env']['PATH'] | default('/usr/bin:/bin:/usr/sbin:/sbin') }}:/opt/homebrew/bin:/usr/local/bin"
       register: dmg_package_result
       failed_when: false
       when: create_packages | bool and ansible_facts['os_family'] == "Darwin"
@@ -332,6 +334,8 @@
       make:
         chdir: "{{ project_dir }}"
         target: package-pkg
+      environment:
+        PATH: "{{ ansible_facts['env']['PATH'] | default('/usr/bin:/bin:/usr/sbin:/sbin') }}:/opt/homebrew/bin:/usr/local/bin"
       register: pkg_package_result
       failed_when: false
       when: create_packages | bool and ansible_facts['os_family'] == "Darwin"

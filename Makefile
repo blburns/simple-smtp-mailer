@@ -721,8 +721,24 @@ ifeq ($(PLATFORM),macos)
 	@echo "Building DMG package..."
 	@mkdir -p $(DIST_DIR)
 	cd $(BUILD_DIR) && cpack -G DragNDrop
-	mv $(BUILD_DIR)/$(PROJECT_NAME)-$(VERSION)-*.dmg $(DIST_DIR)/
-	@echo "DMG package created: $(DIST_DIR)/$(PROJECT_NAME)-$(VERSION)-*.dmg"
+	@if ls $(BUILD_DIR)/*.dmg 1> /dev/null 2>&1; then \
+		mv $(BUILD_DIR)/*.dmg $(DIST_DIR)/; \
+		echo "DMG package(s) moved to $(DIST_DIR)/"; \
+		ls -lh $(DIST_DIR)/*.dmg; \
+	else \
+		echo "Warning: No DMG package found in $(BUILD_DIR)/"; \
+		echo "Checking for DMG packages with different naming..."; \
+		find $(BUILD_DIR) -name "*.dmg" -exec mv {} $(DIST_DIR)/ \; 2>/dev/null || true; \
+		if ls $(DIST_DIR)/*.dmg 1> /dev/null 2>&1; then \
+			echo "DMG package(s) found and moved:"; \
+			ls -lh $(DIST_DIR)/*.dmg; \
+		else \
+			echo "Error: No DMG package was created"; \
+			echo "Files in build directory:"; \
+			ls -la $(BUILD_DIR)/ | grep -E '\.(dmg|pkg)' || echo "No package files found"; \
+			exit 1; \
+		fi; \
+	fi
 else
 	@echo "DMG packages are only supported on macOS"
 endif
@@ -732,8 +748,24 @@ ifeq ($(PLATFORM),macos)
 	@echo "Building PKG package..."
 	@mkdir -p $(DIST_DIR)
 	cd $(BUILD_DIR) && cpack -G productbuild
-	mv $(BUILD_DIR)/$(PROJECT_NAME)-$(VERSION)-*.pkg $(DIST_DIR)/
-	@echo "PKG package created: $(DIST_DIR)/$(PROJECT_NAME)-$(VERSION)-*.pkg"
+	@if ls $(BUILD_DIR)/*.pkg 1> /dev/null 2>&1; then \
+		mv $(BUILD_DIR)/*.pkg $(DIST_DIR)/; \
+		echo "PKG package(s) moved to $(DIST_DIR)/"; \
+		ls -lh $(DIST_DIR)/*.pkg; \
+	else \
+		echo "Warning: No PKG package found in $(BUILD_DIR)/"; \
+		echo "Checking for PKG packages with different naming..."; \
+		find $(BUILD_DIR) -name "*.pkg" -exec mv {} $(DIST_DIR)/ \; 2>/dev/null || true; \
+		if ls $(DIST_DIR)/*.pkg 1> /dev/null 2>&1; then \
+			echo "PKG package(s) found and moved:"; \
+			ls -lh $(DIST_DIR)/*.pkg; \
+		else \
+			echo "Error: No PKG package was created"; \
+			echo "Files in build directory:"; \
+			ls -la $(BUILD_DIR)/ | grep -E '\.(dmg|pkg)' || echo "No package files found"; \
+			exit 1; \
+		fi; \
+	fi
 else
 	@echo "PKG packages are only supported on macOS"
 endif
