@@ -336,11 +336,21 @@ if(ENABLE_PACKAGING)
         # PKG settings
         set(CPACK_PRODUCTBUILD_IDENTIFIER "com.blburns.${PROJECT_NAME}")
         set(CPACK_PRODUCTBUILD_PACKAGE_NAME "${PROJECT_NAME}")
-        # Unset license/readme files for PKG - productbuild requires .rtf, .html, or .txt
-        # LICENSE has no extension and README.md has .md (not supported)
-        unset(CPACK_RESOURCE_FILE_LICENSE)
-        unset(CPACK_RESOURCE_FILE_README)
-        unset(CPACK_RESOURCE_FILE_WELCOME)
+        # Use HTML files from packaging/assets for PKG (productbuild requires .rtf, .html, or .txt)
+        if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/readme.html")
+            set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/readme.html")
+        endif()
+        if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/welcome.html")
+            set(CPACK_RESOURCE_FILE_WELCOME "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/welcome.html")
+        endif()
+        # Check for license file with proper extension in packaging/assets/licenses
+        if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/licenses/LICENSE.txt")
+            set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/licenses/LICENSE.txt")
+        elseif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/licenses/LICENSE.html")
+            set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/licenses/LICENSE.html")
+        elseif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/licenses/LICENSE.rtf")
+            set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/licenses/LICENSE.rtf")
+        endif()
 
     else()
         # Linux DEB and RPM packages
