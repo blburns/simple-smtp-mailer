@@ -323,34 +323,44 @@
       when: create_packages | bool and ansible_facts['os_family'] == "RedHat"
 
     - name: Create DMG package (macOS)
-      make:
+      shell: make package-dmg
+      args:
         chdir: "{{ project_dir }}"
-        target: package-dmg
       environment:
         PATH: "{{ ansible_facts['env']['PATH'] | default('/usr/bin:/bin:/usr/sbin:/sbin') }}:/opt/homebrew/bin:/usr/local/bin"
       register: dmg_package_result
-      failed_when: false
+      failed_when: dmg_package_result.rc != 0
       when: create_packages | bool and ansible_facts['os_family'] == "Darwin"
 
+    - name: Display DMG package creation output
+      debug:
+        msg: "{{ dmg_package_result.stdout_lines | default([]) }}"
+      when: create_packages | bool and ansible_facts['os_family'] == "Darwin" and dmg_package_result.stdout_lines is defined
+
+    - name: Display DMG package creation errors
+      debug:
+        msg: "{{ dmg_package_result.stderr_lines | default([]) }}"
+      when: create_packages | bool and ansible_facts['os_family'] == "Darwin" and dmg_package_result.stderr_lines is defined
+
     - name: Create PKG package (macOS)
-      make:
+      shell: make package-pkg
+      args:
         chdir: "{{ project_dir }}"
-        target: package-pkg
       environment:
         PATH: "{{ ansible_facts['env']['PATH'] | default('/usr/bin:/bin:/usr/sbin:/sbin') }}:/opt/homebrew/bin:/usr/local/bin"
       register: pkg_package_result
-      failed_when: false
+      failed_when: pkg_package_result.rc != 0
       when: create_packages | bool and ansible_facts['os_family'] == "Darwin"
 
-    - name: Display DMG package creation results
+    - name: Display PKG package creation output
       debug:
-        var: dmg_package_result.stdout_lines
-      when: create_packages | bool and ansible_facts['os_family'] == "Darwin" and dmg_package_result.stdout_lines is defined
-
-    - name: Display PKG package creation results
-      debug:
-        var: pkg_package_result.stdout_lines
+        msg: "{{ pkg_package_result.stdout_lines | default([]) }}"
       when: create_packages | bool and ansible_facts['os_family'] == "Darwin" and pkg_package_result.stdout_lines is defined
+
+    - name: Display PKG package creation errors
+      debug:
+        msg: "{{ pkg_package_result.stderr_lines | default([]) }}"
+      when: create_packages | bool and ansible_facts['os_family'] == "Darwin" and pkg_package_result.stderr_lines is defined
 
     - name: Display DEB package creation results
       debug:
