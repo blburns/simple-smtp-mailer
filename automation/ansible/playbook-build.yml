@@ -308,22 +308,6 @@
       failed_when: false
       when: create_packages | bool and ansible_facts['os_family'] == "RedHat"
 
-    - name: Create TGZ package (all Linux) - Debian/Ubuntu only
-      make:
-        chdir: "{{ project_dir }}"
-        target: package-tgz
-      register: tgz_package_result
-      failed_when: false
-      when: create_packages | bool and ansible_facts['os_family'] == "Debian"
-
-    - name: Create ZIP package (all Linux) - RedHat/CentOS only
-      make:
-        chdir: "{{ project_dir }}"
-        target: package-zip
-      register: zip_package_result
-      failed_when: false
-      when: create_packages | bool and ansible_facts['os_family'] == "RedHat"
-
     - name: Create DMG package (macOS)
       shell: make package-dmg
       args:
@@ -364,6 +348,24 @@
         msg: "{{ pkg_package_result.stderr_lines | default([]) }}"
       when: create_packages | bool and ansible_facts['os_family'] == "Darwin" and pkg_package_result.stderr_lines is defined
 
+    - name: Create source packages (TGZ and ZIP)
+      shell: make package-source
+      args:
+        chdir: "{{ project_dir }}"
+      register: source_package_result
+      failed_when: false
+      when: create_packages | bool
+
+    - name: Display source package creation results
+      debug:
+        var: source_package_result.stdout_lines
+      when: create_packages | bool and source_package_result.stdout_lines is defined
+
+    - name: Display source package creation errors
+      debug:
+        var: source_package_result.stderr_lines
+      when: create_packages | bool and source_package_result.stderr_lines is defined
+
     - name: Display DEB package creation results
       debug:
         var: deb_package_result.stdout_lines
@@ -379,15 +381,6 @@
         var: rpm_package_result.stdout_lines
       when: create_packages | bool and ansible_facts['os_family'] == "RedHat" and rpm_package_result.stdout_lines is defined
 
-    - name: Display TGZ package creation results
-      debug:
-        var: tgz_package_result.stdout_lines
-      when: create_packages | bool and tgz_package_result.stdout_lines is defined
-
-    - name: Display ZIP package creation results
-      debug:
-        var: zip_package_result.stdout_lines
-      when: create_packages | bool and zip_package_result.stdout_lines is defined
 
     - name: List created packages
       find:
@@ -395,8 +388,6 @@
         patterns:
           - "*.deb"
           - "*.rpm"
-          - "*.tar.gz"
-          - "*.zip"
           - "*.dmg"
           - "*.pkg"
         excludes: "*.tar.Z"
@@ -406,15 +397,37 @@
       register: created_packages
       when: create_packages | bool
 
-    - name: Flatten package list
+    - name: List created source packages
+      find:
+        paths: "{{ item }}"
+        patterns:
+          - "*-src.tar.gz"
+          - "*-src.zip"
+      loop:
+        - "{{ project_dir }}/build"
+        - "{{ project_dir }}/dist"
+      register: created_source_packages
+      when: create_packages | bool
+    - name: Flatten binary package list
       set_fact:
         all_packages: "{{ created_packages.results | map(attribute='files') | flatten | list }}"
       when: create_packages | bool
 
-    - name: Display created packages
+    - name: Flatten source package list
+      set_fact:
+        all_source_packages: "{{ created_source_packages.results | map(attribute='files') | flatten | list }}"
+      when: create_packages | bool
+
+    - name: Display created binary packages
       debug:
-        msg: "Package: {{ item.path }} ({{ item.size | default('N/A') }} bytes)"
+        msg: "Binary Package: {{ item.path }} ({{ item.size | default('N/A') }} bytes)"
       loop: "{{ all_packages | default([]) }}"
+      when: create_packages | bool
+
+    - name: Display created source packages
+      debug:
+        msg: "Source Package: {{ item.path }} ({{ item.size | default('N/A') }} bytes)"
+      loop: "{{ all_source_packages | default([]) }}"
       when: create_packages | bool
 
     - name: Get build artifacts info
