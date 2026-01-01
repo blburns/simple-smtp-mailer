@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <thread>
 #include <chrono>
+#include <algorithm>
 
 // Test fixture with temporary directory cleanup
 class TokenManagerTest : public ::testing::Test {

@@ -2,6 +2,7 @@
 #include "simple-smtp-mailer/analytics_simple.hpp"
 #include <thread>
 #include <chrono>
+#include <algorithm>
 
 class SimpleAnalyticsTest : public ::testing::Test {
 protected:

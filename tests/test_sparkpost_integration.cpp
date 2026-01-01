@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <string>
+#include <algorithm>
 #include "simple-smtp-mailer/api_client.hpp"
 
 class SparkPostIntegrationTest : public ::testing::Test {
