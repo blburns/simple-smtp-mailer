@@ -322,16 +322,18 @@ if(ENABLE_PACKAGING)
         set(CPACK_PRODUCTBUILD_IDENTIFIER "com.blburns.${PROJECT_NAME}")
         set(CPACK_PRODUCTBUILD_PACKAGE_NAME "${PROJECT_NAME}")
         # macOS PKG resource files - productbuild requires .rtf, .html, or .txt extensions
-        # Explicitly unset all resource file variables to avoid conflicts
-        set(CPACK_RESOURCE_FILE_LICENSE "")
-        set(CPACK_RESOURCE_FILE_README "")
-        set(CPACK_RESOURCE_FILE_WELCOME "")
-        # Set only if files with proper extensions exist
+        # Don't set these variables at all if files don't exist (CPack handles missing files gracefully)
+        # Only set if files with proper extensions exist
         if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/readme.html")
             set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/readme.html")
+        else()
+            # Explicitly unset to prevent using wrong file from earlier settings
+            unset(CPACK_RESOURCE_FILE_README CACHE)
         endif()
         if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/welcome.html")
             set(CPACK_RESOURCE_FILE_WELCOME "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/welcome.html")
+        else()
+            unset(CPACK_RESOURCE_FILE_WELCOME CACHE)
         endif()
         # Check for license file with proper extension in packaging/assets/licenses
         if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/licenses/LICENSE.txt")
@@ -340,6 +342,8 @@ if(ENABLE_PACKAGING)
             set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/licenses/LICENSE.html")
         elseif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/licenses/LICENSE.rtf")
             set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/licenses/LICENSE.rtf")
+        else()
+            unset(CPACK_RESOURCE_FILE_LICENSE CACHE)
         endif()
 
     else()
