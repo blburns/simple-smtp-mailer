@@ -235,12 +235,27 @@
         chdir: "{{ project_dir }}/build"
       register: version_output
       changed_when: false
+      failed_when: false
       when: create_packages | bool
 
     - name: Extract version number
       set_fact:
-        project_version: "{{ version_output.stdout | regex_search('PROJECT_VERSION:STRING=(.+)', '\\1') | first | default('0.2.0') }}"
+        project_version: "{{ (version_output.stdout | default('') | regex_search('PROJECT_VERSION:STRING=(.+)', '\\1') | first) | default('0.2.0') }}"
       when: create_packages | bool
+
+    - name: Alternative version extraction from CMakeLists.txt
+      shell: |
+        cd {{ project_dir }}
+        grep -E 'project\(|VERSION' CMakeLists.txt | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 || echo "0.2.0"
+      register: version_alt
+      changed_when: false
+      failed_when: false
+      when: create_packages | bool and (project_version | default('') == '0.2.0' or project_version | default('') == '')
+
+    - name: Use alternative version if needed
+      set_fact:
+        project_version: "{{ version_alt.stdout | default('0.2.0') }}"
+      when: create_packages | bool and (project_version | default('') == '0.2.0' or project_version | default('') == '')
 
     - name: Create ZIP package (all Linux)
       shell: |
