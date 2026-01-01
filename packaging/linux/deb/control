@@ -1,17 +1,25 @@
 Package: simple-smtp-mailer
-Version: ${VERSION}
-Section: net
+Version: 0.2.0
+Section: mail
 Priority: optional
 Architecture: amd64
-Depends: libssl3 (>= 3.0.0), libc6 (>= 2.31)
-Maintainer: SimpleDaemons <support@simpledaemons.com>
-Description: simple-smtp-mailer - A lightweight and secure daemon
- simple-smtp-mailer is a modern, secure implementation of the SMTP protocol.
+Depends: libssl3 (>= 3.0.0), libjsoncpp25 (>= 1.9.0), libcurl4 (>= 7.68.0), libc6 (>= 2.31), python3, python3-requests
+Recommends: systemd
+Suggests: logrotate
+Conflicts: postfix, sendmail
+Provides: simple-smtp-mailer
+Maintainer: blburns <support@blburns.com>
+Homepage: https://github.com/blburns/simple-smtp-mailer
+Description: High-performance SMTP mailer with queue management and OAuth2 support
+ simple-smtp-mailer is a modern, high-performance SMTP mailer with advanced
+ features including queue management, OAuth2 authentication, and multi-provider
+ API support.
  .
  Features:
-  * High performance
-  * Secure by default
-  * Easy configuration
+  * High-performance email delivery
+  * Queue management for reliable delivery
+  * OAuth2 authentication support
+  * Multi-provider API support (Gmail, SendGrid, Mailgun, etc.)
   * Systemd integration
-Homepage: https://github.com/simpledaemons/simple-smtp-mailer
-
+  * JSON logging
+  * Webhook support for email events

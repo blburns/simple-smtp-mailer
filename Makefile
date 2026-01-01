@@ -555,7 +555,13 @@ package-deb: build
 ifeq ($(PLATFORM),linux)
 	@echo "Building DEB package..."
 	@mkdir -p $(DIST_DIR)
-	cd $(BUILD_DIR) && cpack -G DEB
+	@echo "Checking for required DEB packaging tools..."
+	@which dpkg-deb >/dev/null 2>&1 || (echo "Error: dpkg-deb not found. Install with: sudo apt-get install dpkg-dev" && exit 1)
+	@echo "Running cpack -G DEB..."
+	cd $(BUILD_DIR) && cpack -G DEB 2>&1 | tee /tmp/cpack-deb.log || true
+	@echo "Checking for DEB packages in $(BUILD_DIR)/..."
+	@ls -la $(BUILD_DIR)/*.deb 2>/dev/null || echo "No .deb files found with standard pattern"
+	@find $(BUILD_DIR) -name "*.deb" -type f 2>/dev/null | head -5 || echo "No .deb files found with find"
 	@if ls $(BUILD_DIR)/*.deb 1> /dev/null 2>&1; then \
 		mv $(BUILD_DIR)/*.deb $(DIST_DIR)/; \
 		echo "DEB package(s) moved to $(DIST_DIR)/"; \
@@ -563,12 +569,16 @@ ifeq ($(PLATFORM),linux)
 	else \
 		echo "Warning: No DEB package found in $(BUILD_DIR)/"; \
 		echo "Checking for DEB packages with different naming..."; \
-		find $(BUILD_DIR) -name "*.deb" -exec mv {} $(DIST_DIR)/ \; 2>/dev/null || true; \
+		find $(BUILD_DIR) -name "*.deb" -type f -exec mv {} $(DIST_DIR)/ \; 2>/dev/null || true; \
 		if ls $(DIST_DIR)/*.deb 1> /dev/null 2>&1; then \
 			echo "DEB package(s) found and moved:"; \
 			ls -lh $(DIST_DIR)/*.deb; \
 		else \
 			echo "Error: No DEB package was created"; \
+			echo "CPack output:"; \
+			tail -50 /tmp/cpack-deb.log 2>/dev/null || echo "No log file found"; \
+			echo "Files in build directory:"; \
+			ls -la $(BUILD_DIR)/ | grep -E '\.(deb|rpm|tar\.gz)' || echo "No package files found"; \
 			exit 1; \
 		fi; \
 	fi
