@@ -556,8 +556,22 @@ ifeq ($(PLATFORM),linux)
 	@echo "Building DEB package..."
 	@mkdir -p $(DIST_DIR)
 	cd $(BUILD_DIR) && cpack -G DEB
-	mv $(BUILD_DIR)/$(PROJECT_NAME)-$(VERSION)-*.deb $(DIST_DIR)/
-	@echo "DEB package created: $(DIST_DIR)/$(PROJECT_NAME)-$(VERSION)-*.deb"
+	@if ls $(BUILD_DIR)/*.deb 1> /dev/null 2>&1; then \
+		mv $(BUILD_DIR)/*.deb $(DIST_DIR)/; \
+		echo "DEB package(s) moved to $(DIST_DIR)/"; \
+		ls -lh $(DIST_DIR)/*.deb; \
+	else \
+		echo "Warning: No DEB package found in $(BUILD_DIR)/"; \
+		echo "Checking for DEB packages with different naming..."; \
+		find $(BUILD_DIR) -name "*.deb" -exec mv {} $(DIST_DIR)/ \; 2>/dev/null || true; \
+		if ls $(DIST_DIR)/*.deb 1> /dev/null 2>&1; then \
+			echo "DEB package(s) found and moved:"; \
+			ls -lh $(DIST_DIR)/*.deb; \
+		else \
+			echo "Error: No DEB package was created"; \
+			exit 1; \
+		fi; \
+	fi
 else
 	@echo "DEB packages are only supported on Linux"
 endif
@@ -567,8 +581,22 @@ ifeq ($(PLATFORM),linux)
 	@echo "Building RPM package..."
 	@mkdir -p $(DIST_DIR)
 	cd $(BUILD_DIR) && cpack -G RPM
-	mv $(BUILD_DIR)/$(PROJECT_NAME)-$(VERSION)-*.rpm $(DIST_DIR)/
-	@echo "RPM package created: $(DIST_DIR)/$(PROJECT_NAME)-$(VERSION)-*.rpm"
+	@if ls $(BUILD_DIR)/*.rpm 1> /dev/null 2>&1; then \
+		mv $(BUILD_DIR)/*.rpm $(DIST_DIR)/; \
+		echo "RPM package(s) moved to $(DIST_DIR)/"; \
+		ls -lh $(DIST_DIR)/*.rpm; \
+	else \
+		echo "Warning: No RPM package found in $(BUILD_DIR)/"; \
+		echo "Checking for RPM packages with different naming..."; \
+		find $(BUILD_DIR) -name "*.rpm" -exec mv {} $(DIST_DIR)/ \; 2>/dev/null || true; \
+		if ls $(DIST_DIR)/*.rpm 1> /dev/null 2>&1; then \
+			echo "RPM package(s) found and moved:"; \
+			ls -lh $(DIST_DIR)/*.rpm; \
+		else \
+			echo "Error: No RPM package was created"; \
+			exit 1; \
+		fi; \
+	fi
 else
 	@echo "RPM packages are only supported on Linux"
 endif
