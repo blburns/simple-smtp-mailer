@@ -293,9 +293,9 @@
       when: run_tests | bool and test_result.stdout_lines is defined
 
     - name: Create DEB package (Ubuntu/Debian)
-      make:
+      shell: make package-deb
+      args:
         chdir: "{{ project_dir }}"
-        target: package-deb
       register: deb_package_result
       failed_when: false
       when: create_packages | bool and ansible_facts['os_family'] == "Debian"
@@ -368,6 +368,11 @@
       debug:
         var: deb_package_result.stdout_lines
       when: create_packages | bool and ansible_facts['os_family'] == "Debian" and deb_package_result.stdout_lines is defined
+
+    - name: Display DEB package creation errors
+      debug:
+        var: deb_package_result.stderr_lines
+      when: create_packages | bool and ansible_facts['os_family'] == "Debian" and deb_package_result.stderr_lines is defined
 
     - name: Display RPM package creation results
       debug:
