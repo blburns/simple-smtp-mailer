@@ -737,57 +737,40 @@ ifeq ($(PLATFORM),macos)
 			exit 1; \
 		fi; \
 	fi
-	@echo "Step 2: Creating DMG with application files..."
-	@cd $(BUILD_DIR) && cpack -G DragNDrop
-	@if ls $(BUILD_DIR)/*.dmg 1> /dev/null 2>&1; then \
-		DMG_FILE=$$(ls $(BUILD_DIR)/*.dmg | head -1); \
-		DMG_NAME=$$(basename "$$DMG_FILE" .dmg); \
-		MOUNT_POINT="/tmp/$$DMG_NAME"; \
-		echo "Step 3: Mounting DMG to add PKG, LICENSE, README, and docs..."; \
-		echo "  DMG file: $$DMG_FILE"; \
-		echo "  Mount point: $$MOUNT_POINT"; \
-		rm -rf "$$MOUNT_POINT" 2>/dev/null || true; \
-		mkdir -p "$$MOUNT_POINT"; \
-		if hdiutil attach "$$DMG_FILE" -mountpoint "$$MOUNT_POINT" -nobrowse -noautoopen -quiet 2>&1; then \
-			sleep 1; \
-			if [ -d "$$MOUNT_POINT" ]; then \
-				PKG_FILE=$$(ls $(DIST_DIR)/*.pkg 2>/dev/null | head -1); \
-				if [ -f "$$PKG_FILE" ]; then \
-					cp "$$PKG_FILE" "$$MOUNT_POINT/"; \
-					echo "  Added PKG installer: $$(basename $$PKG_FILE)"; \
-				fi; \
-				if [ -f README.md ]; then \
-					cp README.md "$$MOUNT_POINT/" 2>/dev/null || true; \
-					echo "  Added README.md"; \
-				fi; \
-				if [ -f LICENSE ]; then \
-					cp LICENSE "$$MOUNT_POINT/" 2>/dev/null || true; \
-					echo "  Added LICENSE"; \
-				fi; \
-				if [ -d docs ]; then \
-					cp -r docs "$$MOUNT_POINT/" 2>/dev/null || true; \
-					echo "  Added docs directory"; \
-				fi; \
-				sync; \
-				sleep 1; \
-				hdiutil detach "$$MOUNT_POINT" -force -quiet 2>&1 || true; \
-				rm -rf "$$MOUNT_POINT" 2>/dev/null || true; \
-				mv "$$DMG_FILE" $(DIST_DIR)/; \
-				echo "DMG package created: $(DIST_DIR)/$$(basename $$DMG_FILE)"; \
-				ls -lh $(DIST_DIR)/*.dmg; \
-			else \
-				echo "  Warning: Mount point not accessible, skipping modification"; \
-				hdiutil detach "$$MOUNT_POINT" -force -quiet 2>&1 || true; \
-				rm -rf "$$MOUNT_POINT" 2>/dev/null || true; \
-				mv "$$DMG_FILE" $(DIST_DIR)/; \
-				echo "DMG package created (unmodified): $(DIST_DIR)/$$(basename $$DMG_FILE)"; \
-			fi; \
-		else \
-			echo "  Warning: Could not mount DMG, creating unmodified DMG"; \
-			rm -rf "$$MOUNT_POINT" 2>/dev/null || true; \
-			mv "$$DMG_FILE" $(DIST_DIR)/; \
-			echo "DMG package created (unmodified): $(DIST_DIR)/$$(basename $$DMG_FILE)"; \
-		fi; \
+	@echo "Step 2: Creating DMG with PKG, LICENSE, README, and docs..."
+	@DMG_TEMP_DIR="/tmp/$(PROJECT_NAME)-dmg-$$$$"; \
+	rm -rf "$$DMG_TEMP_DIR" 2>/dev/null || true; \
+	mkdir -p "$$DMG_TEMP_DIR"; \
+	echo "  Created temporary directory: $$DMG_TEMP_DIR"; \
+	PKG_FILE=$$(ls $(DIST_DIR)/*.pkg 2>/dev/null | head -1); \
+	if [ -f "$$PKG_FILE" ]; then \
+		cp "$$PKG_FILE" "$$DMG_TEMP_DIR/"; \
+		echo "  Added PKG installer: $$(basename $$PKG_FILE)"; \
+	fi; \
+	if [ -f README.md ]; then \
+		cp README.md "$$DMG_TEMP_DIR/" 2>/dev/null || true; \
+		echo "  Added README.md"; \
+	fi; \
+	if [ -f LICENSE ]; then \
+		cp LICENSE "$$DMG_TEMP_DIR/" 2>/dev/null || true; \
+		echo "  Added LICENSE"; \
+	fi; \
+	if [ -d docs ]; then \
+		cp -r docs "$$DMG_TEMP_DIR/" 2>/dev/null || true; \
+		echo "  Added docs directory"; \
+	fi; \
+	DMG_NAME="$(PROJECT_NAME)-$(VERSION)-$(OS_TYPE)-$(ARCH)"; \
+	DMG_FILE="$(DIST_DIR)/$$DMG_NAME.dmg"; \
+	echo "  Creating DMG: $$DMG_FILE"; \
+	if hdiutil create -volname "$(PROJECT_NAME)" -srcfolder "$$DMG_TEMP_DIR" -ov -format UDBZ "$$DMG_FILE" 2>&1; then \
+		echo "DMG package created: $$DMG_FILE"; \
+		ls -lh "$$DMG_FILE"; \
+		rm -rf "$$DMG_TEMP_DIR" 2>/dev/null || true; \
+	else \
+		echo "Error: Failed to create DMG"; \
+		rm -rf "$$DMG_TEMP_DIR" 2>/dev/null || true; \
+		exit 1; \
+	fi; \
 	else \
 		echo "Warning: No DMG package found in $(BUILD_DIR)/"; \
 		echo "Checking for DMG packages with different naming..."; \
