@@ -206,17 +206,17 @@
       when: run_tests | bool and test_result.stdout_lines is defined
 
     - name: Create DEB package (Ubuntu/Debian)
-      command: cpack -G DEB
-      args:
-        chdir: "{{ project_dir }}/build"
+      make:
+        chdir: "{{ project_dir }}"
+        target: package-deb
       register: deb_package_result
       failed_when: false
       when: create_packages | bool and ansible_facts['os_family'] == "Debian"
 
     - name: Create RPM package (CentOS/RHEL/Fedora)
-      command: cpack -G RPM
-      args:
-        chdir: "{{ project_dir }}/build"
+      make:
+        chdir: "{{ project_dir }}"
+        target: package-rpm
       register: rpm_package_result
       failed_when: false
       when: create_packages | bool and ansible_facts['os_family'] == "RedHat"
@@ -279,20 +279,28 @@
 
     - name: List created packages
       find:
-        paths: "{{ project_dir }}/build"
+        paths: "{{ item }}"
         patterns:
           - "*.deb"
           - "*.rpm"
           - "*.tar.gz"
           - "*.zip"
         excludes: "*.tar.Z"
+      loop:
+        - "{{ project_dir }}/build"
+        - "{{ project_dir }}/dist"
       register: created_packages
+      when: create_packages | bool
+
+    - name: Flatten package list
+      set_fact:
+        all_packages: "{{ created_packages.results | map(attribute='files') | flatten | list }}"
       when: create_packages | bool
 
     - name: Display created packages
       debug:
         msg: "Package: {{ item.path }} ({{ item.size | default('N/A') }} bytes)"
-      loop: "{{ created_packages.files | default([]) }}"
+      loop: "{{ all_packages | default([]) }}"
       when: create_packages | bool
 
     - name: Get build artifacts info
