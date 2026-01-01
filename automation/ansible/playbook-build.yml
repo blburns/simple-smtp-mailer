@@ -239,6 +239,22 @@
       failed_when: false
       when: create_packages | bool and ansible_facts['os_family'] == "RedHat"
 
+    - name: Create DMG package (macOS)
+      make:
+        chdir: "{{ project_dir }}"
+        target: package-dmg
+      register: dmg_package_result
+      failed_when: false
+      when: create_packages | bool and ansible_facts['os_family'] == "Darwin"
+
+    - name: Create PKG package (macOS)
+      make:
+        chdir: "{{ project_dir }}"
+        target: package-pkg
+      register: pkg_package_result
+      failed_when: false
+      when: create_packages | bool and ansible_facts['os_family'] == "Darwin"
+
     - name: Display DEB package creation results
       debug:
         var: deb_package_result.stdout_lines
