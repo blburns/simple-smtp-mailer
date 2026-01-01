@@ -172,12 +172,18 @@ create_release_notes() {
     
     print_step "Creating comprehensive release notes..."
     
+    # Get git commit info for the release
+    local git_commit=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
+    local git_date=$(git log -1 --format='%cd' --date=short 2>/dev/null || date '+%Y-%m-%d')
+    
     cat > "$release_notes" << EOF
-# ssmtp-mailer v$VERSION Release Notes
+# simple-smtp-mailer v$VERSION Release Notes
 
 ## Release Information
 - **Version**: $VERSION
 - **Release Date**: $(date '+%Y-%m-%d %H:%M:%S UTC')
+- **Git Commit**: $git_commit
+- **Git Date**: $git_date
 - **Release Manager**: Centralized Release Script
 
 ## Packages Included
@@ -211,35 +217,44 @@ EOF
 - Improved SMTP and API client support
 - Better error handling and logging
 - Cross-platform compatibility improvements
+- macOS DMG with PKG installer, LICENSE, README, and documentation
+- Improved macOS PKG installer with proper component display
 
 ## Supported Platforms
 
 - **Linux**: Debian/Ubuntu (.deb), Red Hat/CentOS (.rpm), Generic (.tar.gz)
-- **macOS**: Intel (.dmg, .pkg), Apple Silicon (.dmg, .pkg)
+- **macOS**: Intel (.dmg, .pkg), Apple Silicon (.dmg, .pkg), Universal (.dmg, .pkg)
 - **Windows**: Installer (.exe), MSI Package (.msi)
-- **Source**: Source code archive (.tar.gz)
+- **Source**: Source code archive (.tar.gz, .zip)
 
 ## Installation
 
 ### Linux (Debian/Ubuntu)
 \`\`\`bash
-sudo dpkg -i ssmtp-mailer-$VERSION-linux-amd64.deb
+sudo dpkg -i simple-smtp-mailer-$VERSION-linux-debian-amd64.deb
 \`\`\`
 
 ### Linux (Red Hat/CentOS)
 \`\`\`bash
-sudo rpm -i ssmtp-mailer-$VERSION-linux-amd64.rpm
+sudo rpm -i simple-smtp-mailer-$VERSION-linux-redhat-amd64.rpm
 \`\`\`
 
 ### macOS
-Double-click the .dmg file and follow the installation instructions.
+1. Open the .dmg file
+2. Double-click the .pkg installer
+3. Follow the installation wizard
+
+The DMG also contains:
+- LICENSE file
+- README.md
+- docs/ directory with documentation
 
 ### Windows
 Run the .exe installer and follow the setup wizard.
 
 ## Documentation
 
-For detailed documentation, visit: https://github.com/your-repo/ssmtp-mailer
+For detailed documentation, visit: https://github.com/blburns/simple-smtp-mailer
 
 ## Support
 
@@ -325,8 +340,13 @@ create_github_release() {
     
     if [[ "$RELEASE_ACTION" == "create" ]]; then
         print_step "Creating GitHub release..."
+        # Check if tag exists, create it if not
+        if ! git rev-parse "$tag" >/dev/null 2>&1; then
+            print_info "Tag $tag does not exist, creating it..."
+            git tag -a "$tag" -m "Release $tag" || print_warning "Could not create tag (may already exist)"
+        fi
         gh release create "$tag" \
-            --title "ssmtp-mailer v$VERSION" \
+            --title "simple-smtp-mailer v$VERSION" \
             --notes-file "$release_notes" \
             --draft
         print_success "Draft release created"
@@ -336,6 +356,18 @@ create_github_release() {
         if [[ -f "$release_notes" ]]; then
             gh release edit "$tag" --notes-file "$release_notes"
             print_success "Release notes updated"
+        fi
+        # Ensure tag points to current HEAD if updating
+        if git rev-parse "$tag" >/dev/null 2>&1; then
+            local current_tag_commit=$(git rev-parse "$tag" 2>/dev/null)
+            local head_commit=$(git rev-parse HEAD 2>/dev/null)
+            if [[ "$current_tag_commit" != "$head_commit" ]]; then
+                print_info "Updating tag $tag to point to current HEAD..."
+                git tag -d "$tag" 2>/dev/null || true
+                git tag -a "$tag" -m "Release $tag (updated)" || true
+                git push origin ":refs/tags/$tag" 2>/dev/null || true
+                git push origin "$tag" 2>/dev/null || print_warning "Could not push updated tag"
+            fi
         fi
     fi
     
