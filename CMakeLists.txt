@@ -183,9 +183,7 @@ endif()
 
 # Package generation
 if(ENABLE_PACKAGING)
-    include(CPack)
-
-    # Package information
+    # Package information (must be set BEFORE include(CPack))
     set(CPACK_PACKAGE_NAME "${PROJECT_NAME}")
     set(CPACK_PACKAGE_VENDOR "blburns")
     set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "High-performance SMTP mailer with queue management and OAuth2 support")
