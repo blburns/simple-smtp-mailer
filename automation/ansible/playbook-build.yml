@@ -111,6 +111,26 @@
       when: ansible_facts['os_family'] == "Darwin"
       ignore_errors: yes
 
+    - name: Set up Homebrew PATH for macOS
+      lineinfile:
+        path: "{{ ansible_env.HOME }}/.zshrc"
+        line: 'eval "$(/opt/homebrew/bin/brew shellenv)"'
+        create: yes
+        state: present
+      become: false
+      when: ansible_facts['os_family'] == "Darwin" and ansible_facts['architecture'] == "arm64"
+      ignore_errors: yes
+
+    - name: Set up Homebrew PATH for macOS (Intel)
+      lineinfile:
+        path: "{{ ansible_env.HOME }}/.zshrc"
+        line: 'eval "$(/usr/local/bin/brew shellenv)"'
+        create: yes
+        state: present
+      become: false
+      when: ansible_facts['os_family'] == "Darwin" and ansible_facts['architecture'] != "arm64"
+      ignore_errors: yes
+
     - name: Install Xcode Command Line Tools (macOS)
       command: xcode-select --install
       args:
@@ -206,7 +226,7 @@
       when: ansible_facts['os_family'] == "Darwin"
 
     - name: Configure CMake
-      command: >
+      shell: >
         cmake ..
         -DCMAKE_BUILD_TYPE={{ build_type }}
         -DENABLE_TESTS={{ 'ON' if run_tests | bool else 'OFF' }}
@@ -216,6 +236,8 @@
         -DENABLE_CURL=ON
       args:
         chdir: "{{ project_dir }}/build"
+      environment:
+        PATH: "{{ ansible_env.PATH }}:/opt/homebrew/bin:/usr/local/bin"
       register: cmake_result
 
     - name: Display CMake configuration
@@ -226,7 +248,17 @@
       make:
         chdir: "{{ project_dir }}/build"
         target: all
+      environment:
+        PATH: "{{ ansible_env.PATH }}:/opt/homebrew/bin:/usr/local/bin"
       register: build_result
+      when: ansible_facts['os_family'] == "Darwin"
+      
+    - name: Build project (Linux)
+      make:
+        chdir: "{{ project_dir }}/build"
+        target: all
+      register: build_result
+      when: ansible_facts['os_family'] != "Darwin"
 
     - name: Display build output
       debug:
