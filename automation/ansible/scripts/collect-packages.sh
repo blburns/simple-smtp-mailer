@@ -14,6 +14,9 @@ PROJECT_NAME="simple-smtp-mailer"
 REMOTE_PROJECT_DIR="/opt/simple-smtp-mailer"
 REMOTE_DIST_DIR="$REMOTE_PROJECT_DIR/dist"
 REMOTE_BUILD_DIR="$REMOTE_PROJECT_DIR/build"
+# Get version from Makefile (assuming it's in the project root)
+VERSION=$(grep '^VERSION =' "$PROJECT_ROOT/Makefile" 2>/dev/null | cut -d' ' -f3 || echo "0.2.0")
+REMOTE_CENTRALIZED_DIR="$REMOTE_PROJECT_DIR/dist/centralized/v$VERSION"
 
 # Colors for output
 RED='\033[0;31m'
@@ -95,12 +98,33 @@ fetch_packages() {
         path: "{{ remote_dist_dir }}"
       register: dist_dir_stat
       
-    - name: Check if build directory exists on remote
-      stat:
-        path: "{{ remote_build_dir }}"
-      register: build_dir_stat
-      
-    - name: List packages in dist directory
+      - name: Check if build directory exists on remote
+        stat:
+          path: "{{ remote_build_dir }}"
+        register: build_dir_stat
+        
+      - name: Check if centralized directory exists on remote
+        stat:
+          path: "{{ remote_centralized_dir }}"
+        register: centralized_dir_stat
+        
+      - name: List packages in centralized directory (preferred)
+        find:
+          paths: "{{ remote_centralized_dir }}"
+          patterns:
+            - "*.deb"
+            - "*.rpm"
+            - "*.tar.gz"
+            - "*.zip"
+            - "*.dmg"
+            - "*.pkg"
+            - "*-src.tar.gz"
+            - "*-src.zip"
+          excludes: "*.tar.Z"
+        register: centralized_packages
+        when: centralized_dir_stat.stat.exists
+        
+      - name: List packages in dist directory
       find:
         paths: "{{ remote_dist_dir }}"
         patterns:
@@ -128,56 +152,112 @@ fetch_packages() {
       register: build_packages
       when: build_dir_stat.stat.exists
       
-    - name: Fetch DEB packages from dist
-      fetch:
-        src: "{{ item.path }}"
-        dest: "{{ local_dist_dir }}/linux/deb/{{ inventory_hostname }}-{{ item.path | basename }}"
-        flat: yes
-      loop: "{{ dist_packages.files | default([]) }}"
-      when: 
-        - dist_packages.files is defined
-        - (item.path | regex_search('\.deb$')) is not none
+      - name: Fetch DEB packages from centralized (preferred)
+        fetch:
+          src: "{{ item.path }}"
+          dest: "{{ local_dist_dir }}/linux/deb/{{ inventory_hostname }}-{{ item.path | basename }}"
+          flat: yes
+        loop: "{{ centralized_packages.files | default([]) }}"
+        when: 
+          - centralized_packages.files is defined
+          - (item.path | regex_search('\.deb$')) is not none
+          
+      - name: Fetch DEB packages from dist
+        fetch:
+          src: "{{ item.path }}"
+          dest: "{{ local_dist_dir }}/linux/deb/{{ inventory_hostname }}-{{ item.path | basename }}"
+          flat: yes
+        loop: "{{ dist_packages.files | default([]) }}"
+        when: 
+          - dist_packages.files is defined
+          - (item.path | regex_search('\.deb$')) is not none
+          - (centralized_packages.files | default([]) | length) == 0
         
-    - name: Fetch RPM packages from dist
-      fetch:
-        src: "{{ item.path }}"
-        dest: "{{ local_dist_dir }}/linux/rpm/{{ inventory_hostname }}-{{ item.path | basename }}"
-        flat: yes
-      loop: "{{ dist_packages.files | default([]) }}"
-      when: 
-        - dist_packages.files is defined
-        - (item.path | regex_search('\.rpm$')) is not none
+      - name: Fetch RPM packages from centralized (preferred)
+        fetch:
+          src: "{{ item.path }}"
+          dest: "{{ local_dist_dir }}/linux/rpm/{{ inventory_hostname }}-{{ item.path | basename }}"
+          flat: yes
+        loop: "{{ centralized_packages.files | default([]) }}"
+        when: 
+          - centralized_packages.files is defined
+          - (item.path | regex_search('\.rpm$')) is not none
+          
+      - name: Fetch RPM packages from dist
+        fetch:
+          src: "{{ item.path }}"
+          dest: "{{ local_dist_dir }}/linux/rpm/{{ inventory_hostname }}-{{ item.path | basename }}"
+          flat: yes
+        loop: "{{ dist_packages.files | default([]) }}"
+        when: 
+          - dist_packages.files is defined
+          - (item.path | regex_search('\.rpm$')) is not none
+          - (centralized_packages.files | default([]) | length) == 0
         
-    - name: Fetch DMG packages from dist
-      fetch:
-        src: "{{ item.path }}"
-        dest: "{{ local_dist_dir }}/macos/dmg/{{ inventory_hostname }}-{{ item.path | basename }}"
-        flat: yes
-      loop: "{{ dist_packages.files | default([]) }}"
-      when: 
-        - dist_packages.files is defined
-        - (item.path | regex_search('\.dmg$')) is not none
+      - name: Fetch DMG packages from centralized (preferred)
+        fetch:
+          src: "{{ item.path }}"
+          dest: "{{ local_dist_dir }}/macos/dmg/{{ inventory_hostname }}-{{ item.path | basename }}"
+          flat: yes
+        loop: "{{ centralized_packages.files | default([]) }}"
+        when: 
+          - centralized_packages.files is defined
+          - (item.path | regex_search('\.dmg$')) is not none
+          
+      - name: Fetch DMG packages from dist
+        fetch:
+          src: "{{ item.path }}"
+          dest: "{{ local_dist_dir }}/macos/dmg/{{ inventory_hostname }}-{{ item.path | basename }}"
+          flat: yes
+        loop: "{{ dist_packages.files | default([]) }}"
+        when: 
+          - dist_packages.files is defined
+          - (item.path | regex_search('\.dmg$')) is not none
+          - (centralized_packages.files | default([]) | length) == 0
         
-    - name: Fetch PKG packages from dist
-      fetch:
-        src: "{{ item.path }}"
-        dest: "{{ local_dist_dir }}/macos/pkg/{{ inventory_hostname }}-{{ item.path | basename }}"
-        flat: yes
-      loop: "{{ dist_packages.files | default([]) }}"
-      when: 
-        - dist_packages.files is defined
-        - (item.path | regex_search('\.pkg$')) is not none
+      - name: Fetch PKG packages from centralized (preferred)
+        fetch:
+          src: "{{ item.path }}"
+          dest: "{{ local_dist_dir }}/macos/pkg/{{ inventory_hostname }}-{{ item.path | basename }}"
+          flat: yes
+        loop: "{{ centralized_packages.files | default([]) }}"
+        when: 
+          - centralized_packages.files is defined
+          - (item.path | regex_search('\.pkg$')) is not none
+          
+      - name: Fetch PKG packages from dist
+        fetch:
+          src: "{{ item.path }}"
+          dest: "{{ local_dist_dir }}/macos/pkg/{{ inventory_hostname }}-{{ item.path | basename }}"
+          flat: yes
+        loop: "{{ dist_packages.files | default([]) }}"
+        when: 
+          - dist_packages.files is defined
+          - (item.path | regex_search('\.pkg$')) is not none
+          - (centralized_packages.files | default([]) | length) == 0
         
-    - name: Fetch source packages from dist
-      fetch:
-        src: "{{ item.path }}"
-        dest: "{{ local_dist_dir }}/source/{{ inventory_hostname }}-{{ item.path | basename }}"
-        flat: yes
-      loop: "{{ dist_packages.files | default([]) }}"
-      when: 
-        - dist_packages.files is defined
-        - (item.path | regex_search('-src\.(tar\.gz|zip)$')) is not none
-        - (item.path | regex_search('\.(deb|rpm|dmg|pkg)$')) is none
+      - name: Fetch source packages from centralized (preferred)
+        fetch:
+          src: "{{ item.path }}"
+          dest: "{{ local_dist_dir }}/source/{{ inventory_hostname }}-{{ item.path | basename }}"
+          flat: yes
+        loop: "{{ centralized_packages.files | default([]) }}"
+        when: 
+          - centralized_packages.files is defined
+          - (item.path | regex_search('-src\.(tar\.gz|zip)$')) is not none
+          - (item.path | regex_search('\.(deb|rpm|dmg|pkg)$')) is none
+          
+      - name: Fetch source packages from dist
+        fetch:
+          src: "{{ item.path }}"
+          dest: "{{ local_dist_dir }}/source/{{ inventory_hostname }}-{{ item.path | basename }}"
+          flat: yes
+        loop: "{{ dist_packages.files | default([]) }}"
+        when: 
+          - dist_packages.files is defined
+          - (item.path | regex_search('-src\.(tar\.gz|zip)$')) is not none
+          - (item.path | regex_search('\.(deb|rpm|dmg|pkg)$')) is none
+          - (centralized_packages.files | default([]) | length) == 0
         
     - name: Fetch DEB packages from build (fallback)
       fetch:
