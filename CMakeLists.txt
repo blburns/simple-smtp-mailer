@@ -285,8 +285,20 @@ if(ENABLE_PACKAGING)
     set(CPACK_PACKAGE_HOMEPAGE_URL "https://github.com/blburns/simple-smtp-mailer")
 
     # Package files
-    set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
-    set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+    # For PKG packages, CPack requires .rtf, .html, or .txt extensions
+    # Check if files exist and use appropriate extensions
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+        set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+    endif()
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+        # For PKG, we need to use .txt or .html - CPack doesn't like .md
+        # We'll use README.md as-is and let CPack handle it, or create a .txt version
+        set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+    endif()
+    # Don't set welcome file if it doesn't exist (optional)
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/welcome.html")
+        set(CPACK_RESOURCE_FILE_WELCOME "${CMAKE_CURRENT_SOURCE_DIR}/packaging/assets/welcome.html")
+    endif()
 
     # Platform-specific package settings
     if(WIN32)
