@@ -229,33 +229,19 @@
       failed_when: false
       when: create_packages | bool
 
-    - name: Get project version from CMake
-      command: grep 'PROJECT_VERSION' CMakeCache.txt
-      args:
-        chdir: "{{ project_dir }}/build"
-      register: version_output
-      changed_when: false
-      failed_when: false
-      when: create_packages | bool
-
-    - name: Extract version number
-      set_fact:
-        project_version: "{{ (version_output.stdout | default('') | regex_search('PROJECT_VERSION:STRING=(.+)', '\\1') | first) | default('0.2.0') }}"
-      when: create_packages | bool
-
-    - name: Alternative version extraction from CMakeLists.txt
+    - name: Extract version from CMakeLists.txt
       shell: |
         cd {{ project_dir }}
-        grep -E 'project\(|VERSION' CMakeLists.txt | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 || echo "0.2.0"
-      register: version_alt
+        grep -E 'project\(.*VERSION' CMakeLists.txt | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 || echo "0.2.0"
+      register: version_extract
       changed_when: false
       failed_when: false
-      when: create_packages | bool and (project_version | default('') == '0.2.0' or project_version | default('') == '')
+      when: create_packages | bool
 
-    - name: Use alternative version if needed
+    - name: Set project version
       set_fact:
-        project_version: "{{ version_alt.stdout | default('0.2.0') }}"
-      when: create_packages | bool and (project_version | default('') == '0.2.0' or project_version | default('') == '')
+        project_version: "{{ version_extract.stdout | default('0.2.0') | trim }}"
+      when: create_packages | bool
 
     - name: Create ZIP package (all Linux)
       shell: |
