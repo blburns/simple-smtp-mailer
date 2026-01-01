@@ -770,20 +770,6 @@ ifeq ($(PLATFORM),macos)
 		echo "Error: Failed to create DMG"; \
 		rm -rf "$$DMG_TEMP_DIR" 2>/dev/null || true; \
 		exit 1; \
-	fi; \
-	else \
-		echo "Warning: No DMG package found in $(BUILD_DIR)/"; \
-		echo "Checking for DMG packages with different naming..."; \
-		find $(BUILD_DIR) -name "*.dmg" -exec mv {} $(DIST_DIR)/ \; 2>/dev/null || true; \
-		if ls $(DIST_DIR)/*.dmg 1> /dev/null 2>&1; then \
-			echo "DMG package(s) found and moved:"; \
-			ls -lh $(DIST_DIR)/*.dmg; \
-		else \
-			echo "Error: No DMG package was created"; \
-			echo "Files in build directory:"; \
-			ls -la $(BUILD_DIR)/ | grep -E '\.(dmg|pkg)' || echo "No package files found"; \
-			exit 1; \
-		fi; \
 	fi
 else
 	@echo "DMG packages are only supported on macOS"
