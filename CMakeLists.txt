@@ -18,13 +18,21 @@ elseif(APPLE)
     set(OS_TYPE "macos")
     # Detect macOS architecture
     # Check if building universal binary (both x86_64 and arm64)
-    if(CMAKE_OSX_ARCHITECTURES)
+    if(BUILD_UNIVERSAL_BINARY)
+        # Force universal binary if option is set
+        if(NOT CMAKE_OSX_ARCHITECTURES)
+            set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64")
+        endif()
+        set(ARCH "universal")
+        message(STATUS "Building universal binary (Intel + Apple Silicon)")
+    elseif(CMAKE_OSX_ARCHITECTURES)
         # Check if CMAKE_OSX_ARCHITECTURES contains both architectures
         string(FIND "${CMAKE_OSX_ARCHITECTURES}" "x86_64" HAS_X86_64)
         string(FIND "${CMAKE_OSX_ARCHITECTURES}" "arm64" HAS_ARM64)
         if(NOT HAS_X86_64 EQUAL -1 AND NOT HAS_ARM64 EQUAL -1)
             # Universal binary (both architectures)
             set(ARCH "universal")
+            message(STATUS "Detected universal binary build (Intel + Apple Silicon)")
         elseif(NOT HAS_X86_64 EQUAL -1)
             # Intel only
             set(ARCH "intel")
@@ -110,6 +118,7 @@ option(ENABLE_SSL "Enable SSL/TLS support" ON)
 option(ENABLE_JSON "Enable JSON support" ON)
 option(ENABLE_CURL "Enable libcurl support" ON)
 option(ENABLE_STATIC_LINKING "Enable static linking for self-contained binaries" OFF)
+option(BUILD_UNIVERSAL_BINARY "Build universal binary for macOS (Intel + Apple Silicon)" OFF)
 
 # Find required packages
 find_package(Threads REQUIRED)

@@ -179,11 +179,31 @@ else
 endif
 
 # Build universal binary for macOS (Intel + Apple Silicon)
+# Note: Universal binaries are best built on Apple Silicon Macs or in CI/CD
+# On Intel Macs, this will attempt to build but may fail if cross-compilation isn't set up
+# The option is available for future use when you have access to Apple Silicon Macs or CI/CD
 build-universal: $(BUILD_DIR)-dir
 ifeq ($(PLATFORM),macos)
-	@echo "Building universal binary (Intel + Apple Silicon)..."
-	cd $(BUILD_DIR) && cmake .. -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" && make -j$(PARALLEL_JOBS)
-	@echo "Universal binary built successfully"
+	@echo "=========================================="
+	@echo "Building universal binary (Intel + Apple Silicon)"
+	@echo "=========================================="
+	@echo "Note: This option is available for future use."
+	@echo "Universal binaries are typically built on:"
+	@echo "  - Apple Silicon Macs (can build both architectures)"
+	@echo "  - CI/CD systems with both architectures available"
+	@echo ""
+	@echo "On Intel Macs, this may fail if cross-compilation isn't configured."
+	@echo "The build will attempt to proceed, but may fall back to Intel-only."
+	@echo "=========================================="
+	@cd $(BUILD_DIR) && cmake .. -DBUILD_UNIVERSAL_BINARY=ON -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" && \
+		make -j$(PARALLEL_JOBS) || \
+		(echo "" && \
+		 echo "Warning: Universal binary build failed (expected on Intel Macs)." && \
+		 echo "This is normal - universal binaries should be built on Apple Silicon Macs or in CI/CD." && \
+		 echo "Falling back to Intel-only build for now..." && \
+		 cd $(BUILD_DIR) && cmake .. -DCMAKE_OSX_ARCHITECTURES="x86_64" && make -j$(PARALLEL_JOBS))
+	@echo ""
+	@echo "Build completed"
 else
 	@echo "Universal binary build is only supported on macOS"
 	@echo "Falling back to regular build..."
