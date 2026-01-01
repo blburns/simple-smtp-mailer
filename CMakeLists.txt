@@ -306,21 +306,18 @@ if(ENABLE_PACKAGING)
             set(CPACK_RPM_PACKAGE_ARCHITECTURE "armv7hl")
         endif()
         
-        # Set standardized package file names for Linux
-        # Format: {app_name}-{version}-{os_type}-{distribution}-{arch}.{ext}
-        set(CPACK_DEBIAN_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}-${OS_TYPE}-${DISTRIBUTION}-${ARCH}")
-        set(CPACK_RPM_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}-${OS_TYPE}-${DISTRIBUTION}-${ARCH}")
-        set(CPACK_ARCHIVE_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}-${OS_TYPE}-${DISTRIBUTION}-${ARCH}")
     endif()
 
     # Common package settings
     # Use standardized naming: {app_name}-{version}-{os_type}-{distribution}-{arch}
+    # CPack will add the appropriate extension (.deb, .rpm, .tar.gz, etc.)
     if(WIN32)
         set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}-${OS_TYPE}-${ARCH}")
     elseif(APPLE)
         set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}-${OS_TYPE}-${ARCH}")
     else()
         # Linux uses distribution-specific naming
+        # Format: {app_name}-{version}-{os_type}-{distribution}-{arch}
         set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}-${OS_TYPE}-${DISTRIBUTION}-${ARCH}")
     endif()
     set(CPACK_PACKAGE_INSTALL_DIRECTORY "${PROJECT_NAME}")
