@@ -312,8 +312,14 @@ if(ENABLE_PACKAGING)
         # DMG settings
         set(CPACK_DMG_VOLUME_NAME "${PROJECT_NAME}")
         set(CPACK_DMG_FORMAT "UDBZ")
-        set(CPACK_DMG_BACKGROUND_IMAGE "${CMAKE_CURRENT_SOURCE_DIR}/assets/dmg_background.png")
-        set(CPACK_DMG_DS_STORE "${CMAKE_CURRENT_SOURCE_DIR}/assets/DS_Store")
+        # Only set background image if it exists (optional)
+        if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/assets/dmg_background.png")
+            set(CPACK_DMG_BACKGROUND_IMAGE "${CMAKE_CURRENT_SOURCE_DIR}/assets/dmg_background.png")
+        endif()
+        # Only set DS_Store if it exists (optional - CPack can create DMG without it)
+        if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/assets/DS_Store")
+            set(CPACK_DMG_DS_STORE "${CMAKE_CURRENT_SOURCE_DIR}/assets/DS_Store")
+        endif()
 
         # PKG settings
         set(CPACK_PRODUCTBUILD_IDENTIFIER "com.blburns.${PROJECT_NAME}")
