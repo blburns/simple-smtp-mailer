@@ -328,6 +328,10 @@ if(ENABLE_PACKAGING)
         "*.lib"
     )
 
+    # Include CPack AFTER all CPACK variables are set
+    # CPack reads variables when include() is called, so they must be set first
+    include(CPack)
+
 endif()
 
 # Print configuration summary
