@@ -1,119 +1,128 @@
 # Centralized Release Workflow
 
-This document explains how to use the centralized release workflow for ssmtp-mailer, which allows you to collect packages from multiple build systems and release them all at once.
+This document explains how to use the centralized release workflow for simple-smtp-mailer, which allows you to collect packages from multiple build systems and release them all at once.
 
 ## Overview
 
-The centralized release workflow consists of two main components:
+The centralized release workflow consists of three main components:
 
-1. **Package Collection** (`scripts/collect-packages.sh`) - Run on each build system to collect packages
-2. **Centralized Release** (`scripts/centralized-release.sh`) - Run on your main system to create the GitHub release
+1. **Remote Build** (`automation/ansible/scripts/remote-build.sh`) - Build packages on remote VMs
+2. **Package Collection** (`automation/ansible/scripts/collect-packages.sh`) - Collect packages from remote VMs
+3. **Centralized Release** (`scripts/centralized-release.sh`) - Create GitHub release from centralized packages
 
 ## Workflow Steps
 
-### Step 1: Build Packages on Different Systems
+### Step 1: Build Packages on Remote VMs
 
-Build packages on each target platform:
-
-```bash
-# On macOS
-make release
-
-# On Linux (Debian/Ubuntu)
-./scripts/build-debian.sh
-
-# On Linux (Red Hat/CentOS)
-./scripts/build-redhat.sh
-
-# On Windows
-./scripts/build-windows.ps1
-```
-
-### Step 2: Collect Packages on Each System
-
-After building, run the collection script on each system:
+Use Ansible to build packages on remote VMs:
 
 ```bash
-# Collect packages and create summary
-./scripts/collect-packages.sh --all
+# Build packages on all remote VMs
+cd automation/ansible
+./scripts/remote-build.sh --packages
+
+# Or build on specific VMs
+ansible-playbook -i inventory-vmware.ini playbook-build.yml \
+  --limit BUILD_MACOS --extra-vars "create_packages=true"
 ```
 
 This will:
-- Create a `dist/collections/v0.2.0/` directory
-- Organize packages by platform (e.g., `macos-x86_64/`, `linux-debian/`)
-- Copy all packages from the local build
-- Create platform-specific information files
-- Generate a collection summary
+- Build the project on remote VMs
+- Create packages (DEB, RPM, DMG, PKG, source)
+- Run `organize-packages.sh` to move packages to `dist/centralized/v{VERSION}/` on each VM
 
-### Step 3: Transfer Packages to Centralized System
+### Step 2: Collect Packages from Remote VMs
 
-Transfer the entire `dist/collections/v0.2.0/` directory to your centralized release system. You can use:
-
-- **SCP/SFTP**: `scp -r dist/collections/v0.2.0/ user@central-system:/path/to/ssmtp-mailer/dist/`
-- **Git**: Commit and push the collection directory
-- **Cloud Storage**: Upload to Google Drive, Dropbox, etc.
-- **Direct Copy**: If building on the same machine
-
-### Step 4: Create Centralized Release
-
-On your centralized system, run:
+Collect packages from all remote VMs to your local system:
 
 ```bash
-# Scan for available packages
-./scripts/centralized-release.sh --scan
-
-# Create and publish GitHub release
-./scripts/centralized-release.sh --all
+# Collect packages from all VMs
+cd automation/ansible
+./scripts/collect-packages.sh
 ```
 
 This will:
-- Scan for all available packages
+- Fetch packages from `dist/centralized/v{VERSION}/` on each VM (preferred)
+- Fallback to `dist/` and `build/` directories if centralized doesn't exist
+- Organize packages locally into `dist/centralized/v{VERSION}/`
+- Remove hostname prefixes from package names
+- Display a summary of collected packages
+
+### Step 3: Create GitHub Release
+
+Create or update the GitHub release:
+
+```bash
+# Create/update GitHub release
+cd ../..
+./scripts/centralized-release.sh --release
+```
+
+This will:
+- Find packages in `dist/centralized/v{VERSION}/`
 - Create comprehensive release notes
-- Create a GitHub release (initially as draft)
+- Create or update GitHub release
 - Upload all packages to the release
-- Publish the release
+- Update Git tag to current HEAD if needed
 
 ## Directory Structure
 
 ```
-ssmtp-mailer/
+simple-smtp-mailer/
 ├── dist/                        # Standard distribution directory
-│   ├── releases/                # Local build releases
-│   │   └── v0.2.0/             # Version-specific releases
-│   │       ├── macos/           # macOS packages
-│   │       ├── linux/           # Linux packages
-│   │       ├── windows/         # Windows packages
-│   │       └── source/          # Source packages
-│   ├── collections/             # Package collections from build systems
-│   │   └── v0.2.0/             # Version-specific collections
-│   │       ├── COLLECTION_SUMMARY.md
-│   │       ├── macos-x86_64/    # macOS Intel packages
-│   │       ├── linux-debian/    # Debian/Ubuntu packages
-│   │       └── windows/         # Windows packages
+│   ├── linux/                   # Linux packages (temporary staging)
+│   │   ├── deb/                 # DEB packages
+│   │   └── rpm/                 # RPM packages
+│   ├── macos/                   # macOS packages (temporary staging)
+│   │   ├── dmg/                 # DMG packages
+│   │   └── pkg/                 # PKG packages
+│   ├── source/                  # Source packages (temporary staging)
 │   └── centralized/             # Final centralized release packages
-│       └── v0.2.0/             # Version-specific centralized release
+│       └── v0.2.0/              # Version-specific centralized release
+│           ├── *.deb            # DEB packages
+│           ├── *.rpm            # RPM packages
+│           ├── *.dmg            # DMG packages
+│           ├── *.pkg            # PKG packages
+│           ├── *-src.tar.gz     # Source tarballs
+│           └── *-src.zip        # Source ZIP files
+├── automation/ansible/
+│   ├── scripts/
+│   │   ├── remote-build.sh      # Remote build automation
+│   │   ├── collect-packages.sh  # Package collection from VMs
+│   │   └── organize-packages.sh # Package organization on VMs
+│   └── playbook-build.yml       # Ansible playbook for builds
 └── scripts/
-    ├── collect-packages.sh      # Package collection script
-    └── centralized-release.sh   # Centralized release script
+    └── centralized-release.sh   # GitHub release automation
 ```
 
 ## Script Usage
 
+### Remote Build Script
+
+```bash
+# Build on all remote VMs
+cd automation/ansible
+./scripts/remote-build.sh --packages
+
+# Build on specific VM
+ansible-playbook -i inventory-vmware.ini playbook-build.yml \
+  --limit BUILD_MACOS --extra-vars "create_packages=true"
+```
+
 ### Package Collection Script
 
 ```bash
-# Show help
-./scripts/collect-packages.sh --help
-
-# Collect packages from local build
-./scripts/collect-packages.sh --collect
-
-# Create collection summary
-./scripts/collect-packages.sh --summary
-
-# Do both (recommended)
-./scripts/collect-packages.sh --all
+# Collect packages from all remote VMs
+cd automation/ansible
+./scripts/collect-packages.sh
 ```
+
+The script will:
+- Check for packages in `dist/centralized/v{VERSION}/` on each VM (preferred)
+- Fallback to `dist/` and `build/` directories
+- Fetch all package types (DEB, RPM, DMG, PKG, source)
+- Organize packages locally into `dist/centralized/v{VERSION}/`
+- Remove hostname prefixes from package names
 
 ### Centralized Release Script
 
@@ -124,68 +133,69 @@ ssmtp-mailer/
 # Scan for available packages
 ./scripts/centralized-release.sh --scan
 
-# Collect packages from local release directory
-./scripts/centralized-release.sh --collect
-
-# Create GitHub release with existing packages
+# Create/update GitHub release
 ./scripts/centralized-release.sh --release
-
-# Run complete process (recommended)
-./scripts/centralized-release.sh --all
 ```
+
+The script will:
+- Find packages in `dist/centralized/v{VERSION}/`
+- Create comprehensive release notes
+- Create or update GitHub release
+- Upload all packages as release assets
+- Update Git tag to current HEAD if needed
 
 ## Example Workflow
 
-### On macOS Build System
+### Complete Workflow (Recommended)
 
 ```bash
-# 1. Build packages
-make release
+# 1. Build packages on all remote VMs
+cd automation/ansible
+./scripts/remote-build.sh --packages
 
-# 2. Collect packages
-./scripts/collect-packages.sh --all
+# 2. Collect packages from all VMs
+./scripts/collect-packages.sh
 
-# 3. Transfer to centralized system
-scp -r dist/collections/v0.2.0/ user@central-system:/path/to/ssmtp-mailer/dist/
+# 3. Create GitHub release
+cd ../..
+./scripts/centralized-release.sh --release
 ```
 
-### On Linux Build System
+### Manual Workflow (if needed)
 
 ```bash
-# 1. Build packages
-./scripts/build-debian.sh
+# 1. Build on specific VM
+cd automation/ansible
+ansible-playbook -i inventory-vmware.ini playbook-build.yml \
+  --limit BUILD_MACOS --extra-vars "create_packages=true"
 
 # 2. Collect packages
-./scripts/collect-packages.sh --all
+./scripts/collect-packages.sh
 
-# 3. Transfer to centralized system
-scp -r dist/collections/v0.2.0/ user@central-system:/path/to/ssmtp-mailer/dist/
-```
+# 3. Verify packages
+ls -la ../dist/centralized/v0.2.0/
 
-### On Centralized System
-
-```bash
-# 1. Ensure all packages are transferred
-ls -la dist/collections/v0.2.0/
-
-# 2. Create centralized release
-./scripts/centralized-release.sh --all
+# 4. Create release
+cd ../..
+./scripts/centralized-release.sh --release
 ```
 
 ## Prerequisites
 
-### On Build Systems
+### On Remote Build VMs
 
-- ssmtp-mailer source code
+- simple-smtp-mailer source code
 - Build dependencies installed
-- `scripts/collect-packages.sh` script
+- Ansible connectivity from control machine
+- `automation/ansible/scripts/organize-packages.sh` script (runs automatically)
 
-### On Centralized System
+### On Control Machine (Local)
 
-- ssmtp-mailer source code
+- simple-smtp-mailer source code
+- Ansible installed (`ansible-playbook` command)
+- SSH access to remote VMs
 - GitHub CLI (`gh`) installed and authenticated
-- All package collections transferred
-- `scripts/centralized-release.sh` script
+- `automation/ansible/inventory-vmware.ini` configured
 
 ## GitHub CLI Setup
 
@@ -209,8 +219,10 @@ gh auth login
 
 ### No Packages Found
 
-- Ensure packages were built successfully
-- Check that `dist/releases/v0.2.0/` exists
+- Ensure packages were built successfully on remote VMs
+- Check that `dist/centralized/v{VERSION}/` exists on remote VMs
+- Verify `organize-packages.sh` ran successfully (check Ansible playbook output)
+- Check fallback directories (`dist/` and `build/`) on remote VMs
 - Verify package file extensions are supported
 
 ### GitHub Release Issues
@@ -219,12 +231,13 @@ gh auth login
 - Ensure you have write access to the repository
 - Check if release tag already exists
 
-### Package Transfer Issues
+### Ansible Connection Issues
 
-- Verify network connectivity
-- Check file permissions
-- Ensure sufficient disk space
-- Use `rsync` for large transfers: `rsync -avz dist/collections/ user@system:/path/to/ssmtp-mailer/dist/`
+- Verify SSH connectivity to remote VMs: `ssh build@<vm-ip>`
+- Check Ansible inventory file: `automation/ansible/inventory-vmware.ini`
+- Test Ansible connection: `ansible all -i inventory-vmware.ini -m ping`
+- Verify SSH keys are configured correctly
+- Check Ansible inventory file syntax (no invalid `[hostname:vars]` sections)
 
 ## Benefits
 
@@ -237,12 +250,13 @@ gh auth login
 
 ## Best Practices
 
-1. **Always run collection script** after building packages
-2. **Verify package integrity** before transferring (checksums are included)
-3. **Test the centralized release script** with `--scan` first
-4. **Keep collection directories** for audit purposes
-5. **Use consistent naming** for package files across platforms
-6. **Document any custom build processes** in platform info files
+1. **Always run remote build script** with `--packages` flag to build and organize packages
+2. **Verify package collection** by checking `dist/centralized/v{VERSION}/` after collection
+3. **Test the centralized release script** with `--scan` first to verify packages are found
+4. **Keep centralized directories** for audit purposes
+5. **Use consistent versioning** across all platforms (check Makefile VERSION)
+6. **Update Git tag** if needed before creating release (script handles this automatically)
+7. **Review release notes** before publishing (script creates draft releases)
 
 ## Support
 

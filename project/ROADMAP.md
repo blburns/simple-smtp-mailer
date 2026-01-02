@@ -1,7 +1,7 @@
 # 🗺️ simple-smtp-mailer Development Roadmap
 
 **Version:** 0.2.0 → 1.0.0+
-**Last Updated:** December 2024
+**Last Updated:** January 2025
 **Status:** Active Development
 
 ## 📊 Current Development Status
@@ -9,7 +9,9 @@
 ### ✅ **Phase 1: Foundation (COMPLETED)**
 - **Core SMTP Implementation**: Complete RFC-compliant SMTP client
 - **Cross-Platform Build System**: CMake-based build with macOS, Linux, Windows support
-- **Package Distribution**: Professional installers (DMG, PKG, DEB, RPM, NSIS)
+- **Package Distribution**: Professional installers (DMG, PKG, DEB, RPM, NSIS, TGZ, ZIP)
+- **macOS Packaging**: Enhanced DMG/PKG with component-based installation
+- **Release Automation**: Centralized release workflow with Ansible
 - **OAuth2 Authentication Suite**: Multi-provider OAuth2 helper tools
 - **Configuration Management**: Comprehensive configuration system
 - **Documentation**: Complete documentation structure and guides
@@ -250,8 +252,20 @@
 
 ---
 
-**Last Updated**: December 2024
-**Next Review**: January 2025
+**Last Updated**: January 2025
+**Next Review**: February 2025
 **Maintainer**: blburns
+
+## 🎉 Recent Achievements (January 2025)
+
+### macOS Packaging
+- ✅ Enhanced DMG packages with embedded PKG installer
+- ✅ Improved PKG installer with component-based installation
+- ✅ Professional installer experience with proper resource files
+
+### Release Automation
+- ✅ Complete centralized release workflow
+- ✅ Automated package collection from remote VMs
+- ✅ GitHub release automation with asset upload
 
 *This roadmap is a living document and will be updated as development progresses.*

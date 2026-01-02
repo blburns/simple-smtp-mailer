@@ -1,6 +1,6 @@
 # Simple SMTP Mailer - Technical Debt
 
-**Date:** December 2024  
+**Date:** January 2025  
 **Current Version:** 0.2.0  
 **Purpose:** Track technical debt, known issues, and areas requiring improvement
 
@@ -308,5 +308,36 @@ This document tracks technical debt, known issues, code quality improvements, an
 
 ---
 
-**Last Updated**: December 2024
+## ✅ Recently Resolved (January 2025)
+
+### macOS Packaging Issues
+**Status:** ✅ **RESOLVED**  
+**Resolution Date:** January 2025
+
+**Issues Fixed:**
+- ✅ DMG package creation hanging (fixed by direct creation from temp directory)
+- ✅ PKG installer not showing package name (fixed with component definitions)
+- ✅ Resource file extension errors (fixed with proper file extensions)
+- ✅ DMG showing directories instead of installer (fixed by embedding PKG in DMG)
+- ✅ CPack component syntax errors (fixed by reordering COMPONENT keyword)
+
+**Impact:** Professional macOS packages with proper installer experience.
+
+---
+
+### Release Workflow Issues
+**Status:** ✅ **RESOLVED**  
+**Resolution Date:** January 2025
+
+**Issues Fixed:**
+- ✅ Package collection script not finding packages (fixed regex_search conditions)
+- ✅ Ansible inventory parsing errors (fixed invalid hostname:vars sections)
+- ✅ YAML indentation errors in generated playbooks (fixed task indentation)
+- ✅ Packages not copied to centralized directory (fixed organize_packages function)
+
+**Impact:** Streamlined release process with automated package collection.
+
+---
+
+**Last Updated**: January 2025
 

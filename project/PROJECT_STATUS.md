@@ -94,13 +94,19 @@ Simple SMTP Mailer is a high-performance, feature-rich SMTP mailer written in C+
 - ✅ **Configuration Examples**: Organized examples by use case
 - ✅ **Hot Reloading**: Configuration reloading via SIGHUP signal
 
-### 9. Build System
+### 9. Build System & Packaging
 - **CMake**: Modern CMake configuration with multi-platform support
 - **Makefile**: Traditional Makefile for build automation
 - **CPack**: Package generation for multiple platforms
-  - macOS: DMG, PKG
+  - macOS: DMG (with PKG installer), PKG (productbuild)
   - Linux: DEB, RPM, TGZ
   - Windows: NSIS installer
+  - Source: TGZ, ZIP
+- **Ansible Automation**: Remote build automation with package collection
+  - Remote build playbooks for Linux and macOS
+  - Package collection scripts (`collect-packages.sh`)
+  - Package organization scripts (`organize-packages.sh`)
+  - Centralized release workflow (`centralized-release.sh`)
 
 ### 10. Testing Infrastructure
 - ✅ **Google Test Integration**: Modern C++ testing framework
@@ -148,9 +154,38 @@ Simple SMTP Mailer is a high-performance, feature-rich SMTP mailer written in C+
 
 **Version**: 0.2.0  
 **Status**: Stable  
-**Release Date**: December 2024
+**Release Date**: January 2025
+
+## 📦 Recent Improvements (January 2025)
+
+### macOS Packaging Enhancements
+- ✅ **DMG Package**: Improved DMG creation with embedded PKG installer
+  - DMG now contains PKG installer, LICENSE, README, and docs directory
+  - Direct DMG creation from temporary directory (no mount/unmount issues)
+  - Professional installer experience
+- ✅ **PKG Package**: Enhanced PKG installer with proper component definitions
+  - Component-based installation (applications, development, config, service, tools, docs)
+  - Proper display names and package titles
+  - Resource files (LICENSE, README, Welcome) with supported extensions
+  - All components grouped into single package for simpler installation
+
+### Release Workflow Improvements
+- ✅ **Centralized Release System**: Complete automated release workflow
+  - Package collection from remote VMs via Ansible
+  - Automatic package organization into `dist/centralized/v{VERSION}/`
+  - GitHub release creation and asset upload
+  - Support for updating existing releases
+- ✅ **Package Organization**: Automated package organization on remote VMs
+  - `organize-packages.sh` script moves packages to centralized directory
+  - Removes hostname prefixes from package names
+  - Organizes by platform (Linux, macOS, source)
+- ✅ **Ansible Automation**: Enhanced build automation
+  - Remote build playbooks for all platforms
+  - Package collection with fallback directory support
+  - Inventory file fixes (removed invalid hostname:vars sections)
+  - Improved error handling and debug output
 
 ---
 
-**Last Updated**: December 2024
+**Last Updated**: January 2025
 
