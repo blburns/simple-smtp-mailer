@@ -16,10 +16,10 @@ Welcome to the comprehensive documentation for simple-smtp-mailer, a powerful an
 - **[Installation Overview](installation/README.md)** - Platform comparison and selection
 
 ### ⚙️ **Configuration**
-- **[Configuration Overview](configuration/dns-setup.md)** - Understanding configuration options
-- **[SSL/TLS Setup](configuration/ssl-setup-with-certbot.md)** - Secure email with SSL certificates
 - **[DNS Configuration](configuration/dns-setup.md)** - Email deliverability and SPF/DKIM
+- **[SSL/TLS Setup](configuration/ssl-setup-with-certbot.md)** - Secure email with SSL certificates
 - **[Service Accounts](configuration/service-account-setup-guide.md)** - Google Workspace and OAuth2 setup
+- **[Relay Setup](configuration/relay-setup-guide.md)** - Complete relay configuration
 
 ### 🏗️ **Architecture & Setup**
 - **[Architecture Overview](configuration/relay-architecture.md)** - System design and components
