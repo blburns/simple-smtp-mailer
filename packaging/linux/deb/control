@@ -8,7 +8,7 @@ Recommends: systemd
 Suggests: logrotate
 Conflicts: postfix, sendmail
 Provides: simple-smtp-mailer
-Maintainer: blburns <support@example.com>
+Maintainer: blburns <support@blburns.com>
 Homepage: https://github.com/blburns/simple-smtp-mailer
 Description: High-performance SMTP mailer with queue management and OAuth2 support
  simple-smtp-mailer is a modern, high-performance SMTP mailer with advanced
