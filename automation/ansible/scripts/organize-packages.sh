@@ -26,7 +26,7 @@ VERSION_DIR="$CENTRAL_RELEASE_DIR/v$VERSION"
 # Functions
 print_header() {
     echo -e "${BLUE}╔══════════════════════════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${BLUE}║              Organize Packages Script for simple-smtp-mailer v$VERSION              ║${NC}"
+    echo -e "${BLUE}║              Organize Packages Script for simple-smtp-mailer v$VERSION       ║${NC}"
     echo -e "${BLUE}╚══════════════════════════════════════════════════════════════════════════════╝${NC}"
     echo ""
 }

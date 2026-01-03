@@ -1,4 +1,4 @@
-# ssmtp-mailer Users Configuration
+# simple-smtp-mailer Users Configuration
 # This file defines user account configurations and permissions
 
 [user:contact@mailer.domain1.com]
@@ -19,7 +19,7 @@ template_address = false
 allowed_recipients = ["*@domain2.com", "partners@*"]
 allowed_domains = ["domain2.com", "partners.*"]
 
-[user:mailer@postal.domain3.com]
+[user:mailer@mailer.domain3.com]
 domain = domain3.com
 enabled = true
 can_send_from = true

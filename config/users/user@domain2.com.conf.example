@@ -1,12 +1,12 @@
-# User Configuration for user@example.com
+# User Configuration for user@domain2.com
 # This file configures permissions and settings for a specific user
 
-[user:user@example.com]
+[user:user@domain2.com]
 # Enable/disable this user
 enabled = true
 
 # Domain this user belongs to
-domain = example.com
+domain = domain2.com
 
 # Permissions
 can_send_from = true
@@ -19,7 +19,7 @@ template_address = false
 # allowed_types = notification, marketing, system
 
 # Allowed recipients (optional, empty means all recipients allowed)
-# allowed_recipients = admin@example.com, support@example.com
+# allowed_recipients = admin@domain2.com, support@domain2.com
 
 # Allowed domains to send to (optional, empty means all domains allowed)
-# allowed_domains = example.com, trusted-partner.com
+# allowed_domains = domain2.com, trusted-partner.com

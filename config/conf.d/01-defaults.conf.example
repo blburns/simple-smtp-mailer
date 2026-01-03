@@ -1,4 +1,4 @@
-# ssmtp-mailer Defaults Configuration
+# simple-smtp-mailer Defaults Configuration
 # This file contains global default values that can be overridden by domain-specific configs
 
 [defaults]

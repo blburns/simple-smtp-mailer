@@ -1,4 +1,4 @@
-# ssmtp-mailer Address Mapping Configuration
+# simple-smtp-mailer Address Mapping Configuration
 # This file defines routing rules for mapping from-addresses to SMTP accounts
 
 [route:contact@mailer.domain1.com]
@@ -15,45 +15,45 @@ smtp_account = mailer@domain2.com
 domain = domain2.com
 allowed_recipients = ["*@domain2.com", "partners@*"]
 
-[route:mailer@postal.domain3.com]
-from_addresses = ["mailer@postal.domain3.com"]
+[route:mailer@mailer.domain3.com]
+from_addresses = ["mailer@mailer.domain3.com"]
 to_domains = ["domain3.com", "customers.*"]
-smtp_account = mailer@postal.domain3.com
+smtp_account = mailer@mailer.domain3.com
 domain = domain3.com
 allowed_recipients = ["*@domain3.com", "customers@*"]
 
 [route:contact-legal@domain3.com]
 from_addresses = ["contact-legal@domain3.com"]
 to_domains = ["domain3.com", "legal.*", "customers.*"]
-smtp_account = mailer@postal.domain3.com
+smtp_account = mailer@mailer.domain3.com
 domain = domain3.com
 allowed_recipients = ["*@domain3.com", "legal@*", "customers@*"]
 
 [route:contact-privacy@domain3.com]
 from_addresses = ["contact-privacy@domain3.com"]
 to_domains = ["domain3.com", "privacy.*", "customers.*"]
-smtp_account = mailer@postal.domain3.com
+smtp_account = mailer@mailer.domain3.com
 domain = domain3.com
 allowed_recipients = ["*@domain3.com", "privacy@*", "customers@*"]
 
 [route:contact-general@domain3.com]
 from_addresses = ["contact-general@domain3.com"]
 to_domains = ["domain3.com", "general.*", "customers.*"]
-smtp_account = mailer@postal.domain3.com
+smtp_account = mailer@mailer.domain3.com
 domain = domain3.com
 allowed_recipients = ["*@domain3.com", "general@*", "customers@*"]
 
 [route:contact-support@domain3.com]
 from_addresses = ["contact-support@domain3.com"]
 to_domains = ["domain3.com", "support.*", "customers.*"]
-smtp_account = mailer@postal.domain3.com
+smtp_account = mailer@mailer.domain3.com
 domain = domain3.com
 allowed_recipients = ["*@domain3.com", "support@*", "customers@*"]
 
 [route:contact-sales@domain3.com]
 from_addresses = ["contact-sales@domain3.com"]
 to_domains = ["domain3.com", "sales.*", "customers.*"]
-smtp_account = mailer@postal.domain3.com
+smtp_account = mailer@mailer.domain3.com
 domain = domain3.com
 allowed_recipients = ["*@domain3.com", "sales@*", "customers@*"]
 

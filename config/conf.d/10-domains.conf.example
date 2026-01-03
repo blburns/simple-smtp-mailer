@@ -1,4 +1,4 @@
-# ssmtp-mailer Domains Configuration
+# simple-smtp-mailer Domains Configuration
 # This file defines domain-specific SMTP server configurations
 
 [domain:domain1.com]
@@ -32,9 +32,9 @@ enabled = true
 smtp_server = smtp.office365.com
 smtp_port = 587
 auth_method = username_password
-service_account = mailer@postal.domain3.com
-relay_account = mailer@postal.domain3.com
-username = mailer@postal.domain3.com
+service_account = mailer@mailer.domain3.com
+relay_account = mailer@mailer.domain3.com
+username = mailer@mailer.domain3.com
 password = your_password_here
 oauth2_token = 
 use_ssl = false

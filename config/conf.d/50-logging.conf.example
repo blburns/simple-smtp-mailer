@@ -1,4 +1,4 @@
-# ssmtp-mailer Logging Configuration
+# simple-smtp-mailer Logging Configuration
 # This file configures logging behavior and output formats
 
 [logging]
@@ -6,7 +6,7 @@
 log_level = info
 
 # Log file path
-log_file = /var/log/ssmtp-mailer.log
+log_file = /var/log/simple-smtp-mailer.log
 
 # Log format with placeholders
 log_format = "{timestamp} [{level}] [{thread}] {message}"

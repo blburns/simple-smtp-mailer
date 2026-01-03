@@ -1,185 +1,179 @@
-# Packaging Directory Structure
+# Packaging Templates
 
-This directory contains the packaging templates and skeleton files for creating RPM and DEB packages for simple-smtp-mailer.
+This directory contains templates for creating installers and packages for {PROJECT_NAME} across different platforms.
 
 ## Directory Structure
 
 ```
 packaging/
+├── macos/
+│   ├── pkg/                    # macOS PackageMaker (PKG) installer
+│   │   ├── Distribution.xml     # Package distribution configuration
+│   │   ├── PackageInfo.xml      # Package metadata
+│   │   └── scripts/
+│   │       └── postinstall      # Post-installation script
+│   └── dmg/                     # macOS Disk Image (DMG)
+│       └── create-dmg.sh        # DMG creation script
+├── windows/
+│   ├── nsis/                    # NSIS installer
+│   │   └── installer.nsi        # NSIS installer script
+│   └── msi/                     # Windows Installer (MSI)
+│       └── installer.wxs        # WiX installer script
 ├── linux/
-│   ├── deb/                    # Debian/Ubuntu package files
-│   │   ├── control             # DEB package control file
-│   │   ├── postinst            # Post-installation script
-│   │   ├── postrm              # Post-removal script
-│   │   └── prerm               # Pre-removal script
-│   └── rpm/                     # Red Hat/CentOS/Fedora package files
-│       ├── simple-smtp-mailer.spec  # RPM spec file
-│       ├── preinstall.sh       # Pre-installation script
-│       ├── postinstall.sh      # Post-installation script
-│       ├── preuninstall.sh     # Pre-uninstallation script
-│       └── postuninstall.sh    # Post-uninstallation script
-├── macos/                      # macOS packaging files
-└── windows/                    # Windows packaging files
+│   ├── deb/                     # Debian/Ubuntu packages
+│   │   ├── control              # Debian control file
+│   │   └── postinst             # Post-installation script with license
+│   └── rpm/                     # Red Hat/CentOS packages
+│       └── {PROJECT_NAME}.spec  # RPM spec file with license
+├── assets/
+│   ├── icons/                   # Installer icons and graphics
+│   │   ├── {PROJECT_NAME}.ico   # Windows icon
+│   │   ├── {PROJECT_NAME}.icns  # macOS icon
+│   │   ├── header.bmp           # NSIS header image
+│   │   ├── wizard.bmp           # NSIS wizard image
+│   │   ├── background.png       # PKG background
+│   │   └── dmg-background.png   # DMG background
+│   ├── welcome.html             # Welcome page for PKG
+│   ├── readme.html              # Read me page
+│   └── conclusion.html          # Installation complete page
+└── licenses/
+    ├── LICENSE.txt              # Plain text license
+    └── LICENSE.rtf               # Rich text license for Windows
 ```
 
-## Package Contents
+## Features
 
-### RPM Package Structure
+### License Acceptance
+- **macOS PKG**: License displayed and must be accepted
+- **Windows NSIS/MSI**: License page with acceptance required
+- **Linux DEB/RPM**: License displayed during installation with acceptance prompt
 
-The RPM package (`simple-smtp-mailer.spec`) installs:
+### Custom Icons and Graphics
+- Windows: `.ico` files for application and installer
+- macOS: `.icns` files for application, PNG for backgrounds
+- Custom header/wizard images for NSIS installers
+- DMG background images
 
-- **Binary**: `/usr/bin/simple-smtp-mailer`
-- **Configuration**: `/etc/simple-smtp-mailer/simple-smtp-mailer.conf.example`
-- **Configuration snippets**: `/etc/simple-smtp-mailer/conf.d/*.example`
-- **Systemd service**: `/usr/lib/systemd/system/simple-smtp-mailer.service`
-- **OAuth2 helper tools**: `/usr/share/simple-smtp-mailer/oauth2-helper/`
-- **Documentation**: `/usr/share/doc/simple-smtp-mailer/`
+### Platform-Specific Features
 
-**Dependencies**:
-- `openssl-libs >= 3.0`
-- `jsoncpp`
-- `libcurl`
-- `python3-requests`
+#### macOS PKG
+- Modern installer with welcome/readme/conclusion pages
+- License acceptance
+- Post-installation scripts
+- Service user creation
+- LaunchDaemon integration
 
-### DEB Package Structure
+#### macOS DMG
+- Custom background image
+- Applications symlink
+- License and README included
+- Compressed format (UDZO)
 
-The DEB package (`control`) installs:
+#### Windows NSIS
+- Modern UI with custom graphics
+- License acceptance page
+- Component selection
+- Start Menu shortcuts
+- Windows Service installation
+- Uninstaller included
 
-- **Binary**: `/usr/bin/simple-smtp-mailer`
-- **Configuration**: `/etc/simple-smtp-mailer/simple-smtp-mailer.conf.example`
-- **Configuration snippets**: `/etc/simple-smtp-mailer/conf.d/*.example`
-- **Systemd service**: `/lib/systemd/system/simple-smtp-mailer.service`
-- **OAuth2 helper tools**: `/usr/share/simple-smtp-mailer/oauth2-helper/`
-- **Documentation**: `/usr/share/doc/simple-smtp-mailer/`
+#### Windows MSI
+- WiX-based installer
+- License acceptance
+- Service installation
+- Registry entries
+- Upgrade support
 
-**Dependencies**:
-- `libssl3 (>= 3.0.0)`
-- `libjsoncpp25 (>= 1.9.0)`
-- `libcurl4 (>= 7.68.0)`
-- `libc6 (>= 2.31)`
-- `python3`
-- `python3-requests`
+#### Linux DEB
+- License acceptance during installation
+- Service user creation
+- Systemd integration
+- Configuration file installation
 
-## Building Packages
+#### Linux RPM
+- License acceptance in %pre section
+- Service user creation
+- Systemd integration
+- Proper file placement
 
-### Using CMake/CPack (Recommended)
+## Usage
 
+### Building Packages
+
+#### macOS PKG
 ```bash
-# Build the project
-make build
+# Build the project first
+mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+make
 
-# Create DEB package
-make package-deb
-
-# Create RPM package
-make package-rpm
+# Create package
+cpack -G PackageMaker
 ```
 
-### Manual RPM Build
-
+#### macOS DMG
 ```bash
-# Install build dependencies
-sudo yum install rpm-build rpmdevtools
-
-# Build RPM
-rpmbuild -ba packaging/linux/rpm/simple-smtp-mailer.spec
+# After creating PKG
+cd packaging/macos/dmg
+./create-dmg.sh 1.0.0
 ```
 
-### Manual DEB Build
-
+#### Windows NSIS
 ```bash
-# Install build dependencies
-sudo apt-get install dpkg-dev debhelper build-essential
+# Build NSIS installer
+makensis packaging/windows/nsis/installer.nsi
+```
 
-# Build DEB (requires proper Debian package structure)
+#### Windows MSI
+```bash
+# Build with WiX
+candle packaging/windows/msi/installer.wxs
+light installer.wixobj
+```
+
+#### Linux DEB
+```bash
+# Build Debian package
 dpkg-buildpackage -us -uc
 ```
 
-## Package File Locations
-
-After building, packages are located in:
-
-- **RPM**: `dist/simple-smtp-mailer-0.2.0-Linux.rpm`
-- **DEB**: `dist/simple-smtp-mailer-0.2.0-Linux.deb` (or similar naming)
-
-## Installation
-
-### Install RPM Package
-
+#### Linux RPM
 ```bash
-sudo rpm -ivh dist/simple-smtp-mailer-0.2.0-Linux.rpm
+# Build RPM package
+rpmbuild -ba packaging/linux/rpm/{PROJECT_NAME}.spec
 ```
 
-### Install DEB Package
+## Template Variables
 
-```bash
-sudo dpkg -i dist/simple-smtp-mailer-0.2.0-Linux.deb
-```
+Replace these placeholders in templates:
+- `{PROJECT_NAME}` - Project name (e.g., simple-dhcpd)
+- `{PROJECT_USER}` - Service user name (e.g., dhcpdev)
+- `{PROJECT_GROUP}` - Service group name
+- `{PROTOCOL}` - Protocol name (e.g., DHCP, NTP)
+- `${VERSION}` - Version number (set during build)
 
-## Troubleshooting
+## Icon Requirements
 
-### DEB Package Not Created
+### Windows
+- **Application Icon**: 256x256, `.ico` format
+- **Header Image**: 150x57, `.bmp` format
+- **Wizard Image**: 164x314, `.bmp` format
 
-If the DEB package is not being created:
+### macOS
+- **Application Icon**: 512x512, `.icns` format
+- **Background**: 620x418, `.png` format
+- **DMG Background**: 658x498, `.png` format
 
-1. **Check for required tools**:
-   ```bash
-   which dpkg-deb
-   # If missing: sudo apt-get install dpkg-dev
-   ```
+## License Files
 
-2. **Check CPack output**:
-   ```bash
-   cd build
-   cpack -G DEB -V
-   ```
-
-3. **Check file permissions**:
-   ```bash
-   ls -la build/*.deb
-   ```
-
-4. **Verify CMake configuration**:
-   ```bash
-   grep ENABLE_PACKAGING build/CMakeCache.txt
-   # Should show: ENABLE_PACKAGING:BOOL=ON
-   ```
-
-### RPM Package Not Created
-
-If the RPM package is not being created:
-
-1. **Check for required tools**:
-   ```bash
-   which rpmbuild
-   # If missing: sudo yum install rpm-build
-   ```
-
-2. **Check CPack output**:
-   ```bash
-   cd build
-   cpack -G RPM -V
-   ```
-
-## Package Metadata
-
-### Version Information
-
-Update version in:
-- `CMakeLists.txt`: `project(simple-smtp-mailer VERSION 0.2.0 ...)`
-- `packaging/linux/rpm/simple-smtp-mailer.spec`: `Version: 0.2.0`
-- `packaging/linux/deb/control`: `Version: 0.2.0`
-
-### Maintainer Information
-
-Update maintainer in:
-- `CMakeLists.txt`: `CPACK_PACKAGE_VENDOR` and `CPACK_PACKAGE_CONTACT`
-- `packaging/linux/rpm/simple-smtp-mailer.spec`: `%changelog` section
-- `packaging/linux/deb/control`: `Maintainer:` field
+- **LICENSE.txt**: Plain text license (for all platforms)
+- **LICENSE.rtf**: Rich text format license (for Windows MSI)
 
 ## Notes
 
 - All scripts must be executable (`chmod +x`)
-- Package files are templates - actual packages are built by CPack
-- The spec file and control file are reference implementations
-- CPack uses CMakeLists.txt settings for actual package creation
+- License files must be present in `packaging/licenses/`
+- Icon files must be present in `packaging/assets/icons/`
+- Update GUIDs in MSI/WiX templates with unique values
+- Test installers on clean systems before distribution
+
