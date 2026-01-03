@@ -3,7 +3,7 @@
 # Copyright 2024 blburns
 
 cmake_minimum_required(VERSION 3.16)
-project(simple-smtp-mailer VERSION 0.2.0 LANGUAGES CXX)
+project(simple-smtp-mailer VERSION 0.2.1 LANGUAGES CXX)
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
