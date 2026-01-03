@@ -1,6 +1,6 @@
-# Building ssmtp-mailer on macOS
+# Building simple-smtp-mailer on macOS
 
-This guide covers building and installing ssmtp-mailer on macOS Big Sur (11.0) and later versions, including support for both Intel and Apple Silicon Macs.
+This guide covers building and installing simple-smtp-mailer on macOS Big Sur (11.0) and later versions, including support for both Intel and Apple Silicon Macs.
 
 ## System Requirements
 
@@ -61,12 +61,12 @@ openssl version
 
 ### Quick Build
 
-The easiest way to build ssmtp-mailer on macOS is using the provided Makefile:
+The easiest way to build simple-smtp-mailer on macOS is using the provided Makefile:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/ssmtp-mailer.git
-cd ssmtp-mailer
+git clone https://github.com/yourusername/simple-smtp-mailer.git
+cd simple-smtp-mailer
 
 # Install dependencies (if not already installed)
 make deps
@@ -224,8 +224,8 @@ make uninstall
 After installation, configuration files are located at:
 
 ```
-/usr/local/etc/ssmtp-mailer/
-├── ssmtp-mailer.conf
+/usr/local/etc/simple-smtp-mailer/
+├── simple-smtp-mailer.conf
 ├── conf.d/
 ├── domains/
 ├── users/
@@ -238,7 +238,7 @@ After installation, configuration files are located at:
 Log files are written to:
 
 ```
-/usr/local/var/log/ssmtp-mailer.log
+/usr/local/var/log/simple-smtp-mailer.log
 ```
 
 ## Troubleshooting
@@ -287,18 +287,18 @@ Verify your build was successful:
 
 ```bash
 # Check executable architecture
-file build/bin/ssmtp-mailer
+file build/bin/simple-smtp-mailer
 
 # Expected output for universal binary:
-# build/bin/ssmtp-mailer: Mach-O universal binary with 2 architectures
-# build/bin/ssmtp-mailer (for architecture x86_64): Mach-O 64-bit executable x86_64
-# build/bin/ssmtp-mailer (for architecture arm64): Mach-O 64-bit executable arm64
+# build/bin/simple-smtp-mailer: Mach-O universal binary with 2 architectures
+# build/bin/simple-smtp-mailer (for architecture x86_64): Mach-O 64-bit executable x86_64
+# build/bin/simple-smtp-mailer (for architecture arm64): Mach-O 64-bit executable arm64
 
 # Check library architecture
-file build/lib/libssmtp-mailer.dylib
+file build/lib/libsimple-smtp-mailer.dylib
 
 # Run basic functionality test
-./build/bin/ssmtp-mailer --help
+./build/bin/simple-smtp-mailer --help
 ```
 
 ### Performance Optimization
@@ -358,7 +358,7 @@ cd build && ctest --verbose
 
 ### Keychain Integration
 
-ssmtp-mailer can integrate with macOS Keychain for secure credential storage:
+simple-smtp-mailer can integrate with macOS Keychain for secure credential storage:
 
 ```bash
 # Enable Keychain integration
@@ -381,7 +381,7 @@ Register with macOS Launch Services for system integration:
 ```bash
 # Install and register
 sudo make install
-sudo launchctl load /usr/local/etc/ssmtp-mailer/ssmtp-mailer.plist
+sudo launchctl load /usr/local/etc/simple-smtp-mailer/simple-smtp-mailer.plist
 ```
 
 ## Distribution
@@ -403,14 +403,14 @@ For distribution outside your organization, consider code signing:
 
 ```bash
 # Sign the executable (requires Apple Developer account)
-codesign --force --sign "Developer ID Application: Your Name" build/bin/ssmtp-mailer
+codesign --force --sign "Developer ID Application: Your Name" build/bin/simple-smtp-mailer
 
 # Sign the library
-codesign --force --sign "Developer ID Application: Your Name" build/lib/libssmtp-mailer.dylib
+codesign --force --sign "Developer ID Application: Your Name" build/lib/libsimple-smtp-mailer.dylib
 
 # Verify signatures
-codesign --verify build/bin/ssmtp-mailer
-codesign --verify build/lib/libssmtp-mailer.dylib
+codesign --verify build/bin/simple-smtp-mailer
+codesign --verify build/lib/libsimple-smtp-mailer.dylib
 ```
 
 ### Notarization
@@ -419,10 +419,10 @@ For macOS Catalina and later, consider notarizing your application:
 
 ```bash
 # Notarize the application (requires Apple Developer account)
-xcrun altool --notarize-app --primary-bundle-id "com.example.ssmtp-mailer" \
+xcrun altool --notarize-app --primary-bundle-id "com.example.simple-smtp-mailer" \
     --username "your-apple-id@example.com" \
     --password "app-specific-password" \
-    --file dist/ssmtp-mailer-0.2.0.dmg
+    --file dist/simple-smtp-mailer-0.2.0.dmg
 ```
 
 ## Support
@@ -430,8 +430,8 @@ xcrun altool --notarize-app --primary-bundle-id "com.example.ssmtp-mailer" \
 For additional help with macOS builds:
 
 - Check the [main README](../README.md) for general information
-- Review [GitHub Issues](https://github.com/yourusername/ssmtp-mailer/issues) for known problems
-- Join [GitHub Discussions](https://github.com/yourusername/ssmtp-mailer/discussions) for community support
+- Review [GitHub Issues](https://github.com/yourusername/simple-smtp-mailer/issues) for known problems
+- Join [GitHub Discussions](https://github.com/yourusername/simple-smtp-mailer/discussions) for community support
 
 ## Version Compatibility
 
@@ -443,4 +443,4 @@ For additional help with macOS builds:
 | Sonoma (14.0) | ✅ | ✅ | Full support |
 | Sequoia (15.0) | ✅ | ✅ | Full support |
 
-**Note**: While ssmtp-mailer may work on earlier macOS versions, only Big Sur 11.0+ is officially supported and tested.
+**Note**: While simple-smtp-mailer may work on earlier macOS versions, only Big Sur 11.0+ is officially supported and tested.

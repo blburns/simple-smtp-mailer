@@ -1,6 +1,6 @@
 # Build Scripts Guide
 
-This guide covers the specialized build scripts available for different platforms in the ssmtp-mailer project.
+This guide covers the specialized build scripts available for different platforms in the simple-smtp-mailer project.
 
 ## Makefile Integration
 

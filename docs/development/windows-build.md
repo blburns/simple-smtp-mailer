@@ -1,6 +1,6 @@
-# Building ssmtp-mailer on Windows
+# Building simple-smtp-mailer on Windows
 
-This guide explains how to build and use ssmtp-mailer on Windows systems.
+This guide explains how to build and use simple-smtp-mailer on Windows systems.
 
 ## Prerequisites
 
@@ -46,8 +46,8 @@ This guide explains how to build and use ssmtp-mailer on Windows systems.
 
 2. **Clone and Build**:
    ```cmd
-   git clone https://github.com/your-repo/ssmtp-mailer.git
-   cd ssmtp-mailer
+   git clone https://github.com/your-repo/simple-smtp-mailer.git
+   cd simple-smtp-mailer
    mkdir build
    cd build
    
@@ -82,9 +82,9 @@ This guide explains how to build and use ssmtp-mailer on Windows systems.
 
 After successful build, you'll find:
 
-- **Executable**: `build\bin\Release\ssmtp-mailer.exe`
-- **Library**: `build\lib\Release\ssmtp-mailer.dll`
-- **Import Library**: `build\lib\Release\ssmtp-mailer.lib`
+- **Executable**: `build\bin\Release\simple-smtp-mailer.exe`
+- **Library**: `build\lib\Release\simple-smtp-mailer.dll`
+- **Import Library**: `build\lib\Release\simple-smtp-mailer.lib`
 
 ## Creating Windows Installer
 
@@ -101,18 +101,18 @@ This will create an NSIS installer in the build directory.
 
 ### Default Configuration Paths
 
-- **Config Directory**: `%APPDATA%\ssmtp-mailer\config`
-- **Log Directory**: `%APPDATA%\ssmtp-mailer\logs`
+- **Config Directory**: `%APPDATA%\simple-smtp-mailer\config`
+- **Log Directory**: `%APPDATA%\simple-smtp-mailer\logs`
 
 ### Sample Configuration
 
 Copy the example configuration files:
 
 ```cmd
-mkdir "%APPDATA%\ssmtp-mailer\config"
-copy config\ssmtp-mailer.conf.example "%APPDATA%\ssmtp-mailer\config\ssmtp-mailer.conf"
-copy config\domains\example.com.conf.example "%APPDATA%\ssmtp-mailer\config\domains\example.com.conf"
-copy config\users\user@example.com.conf.example "%APPDATA%\ssmtp-mailer\config\users\user@example.com.conf"
+mkdir "%APPDATA%\simple-smtp-mailer\config"
+copy config\simple-smtp-mailer.conf.example "%APPDATA%\simple-smtp-mailer\config\simple-smtp-mailer.conf"
+copy config\domains\example.com.conf.example "%APPDATA%\simple-smtp-mailer\config\domains\example.com.conf"
+copy config\users\user@example.com.conf.example "%APPDATA%\simple-smtp-mailer\config\users\user@example.com.conf"
 ```
 
 ## Usage
@@ -121,16 +121,16 @@ copy config\users\user@example.com.conf.example "%APPDATA%\ssmtp-mailer\config\u
 
 ```cmd
 # Show help
-ssmtp-mailer.exe --help
+simple-smtp-mailer.exe --help
 
 # Test configuration
-ssmtp-mailer.exe config
+simple-smtp-mailer.exe config
 
 # Test SMTP connection
-ssmtp-mailer.exe test
+simple-smtp-mailer.exe test
 
 # Send email
-ssmtp-mailer.exe send --from user@example.com --to recipient@domain.com --subject "Test" --body "Hello World"
+simple-smtp-mailer.exe send --from user@example.com --to recipient@domain.com --subject "Test" --body "Hello World"
 ```
 
 ### Environment Variables

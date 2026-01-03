@@ -1,16 +1,16 @@
 # Windows Installation Guide
 
-This guide covers installing ssmtp-mailer on Windows systems using various methods and supporting Windows 10, Windows 11, and Windows Server.
+This guide covers installing simple-smtp-mailer on Windows systems using various methods and supporting Windows 10, Windows 11, and Windows Server.
 
 ## 🚀 Quick Installation
 
 ### Windows Installer (Recommended)
 ```bash
 # Download latest MSI installer
-curl -L -o ssmtp-mailer.msi "https://github.com/blburns/ssmtp-mailer/releases/latest/download/ssmtp-mailer_windows_x64.msi"
+curl -L -o simple-smtp-mailer.msi "https://github.com/blburns/simple-smtp-mailer/releases/latest/download/simple-smtp-mailer_windows_x64.msi"
 
 # Install using msiexec
-msiexec /i ssmtp-mailer.msi /quiet
+msiexec /i simple-smtp-mailer.msi /quiet
 
 # Or double-click the MSI file in Windows Explorer
 # Then follow the installation wizard
@@ -22,11 +22,11 @@ msiexec /i ssmtp-mailer.msi /quiet
 # Run PowerShell as Administrator and execute:
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 
-# Install ssmtp-mailer
-choco install ssmtp-mailer
+# Install simple-smtp-mailer
+choco install simple-smtp-mailer
 
 # Verify installation
-ssmtp-mailer --version
+simple-smtp-mailer --version
 ```
 
 ### WSL (Windows Subsystem for Linux)
@@ -48,22 +48,22 @@ wsl
 #### Download and Install
 ```bash
 # Download latest release
-curl -L -o ssmtp-mailer.msi "https://github.com/blburns/ssmtp-mailer/releases/latest/download/ssmtp-mailer_windows_x64.msi"
+curl -L -o simple-smtp-mailer.msi "https://github.com/blburns/simple-smtp-mailer/releases/latest/download/simple-smtp-mailer_windows_x64.msi"
 
 # Install using command line
-msiexec /i ssmtp-mailer.msi /quiet
+msiexec /i simple-smtp-mailer.msi /quiet
 
 # Or install with logging
-msiexec /i ssmtp-mailer.msi /quiet /l*v install.log
+msiexec /i simple-smtp-mailer.msi /quiet /l*v install.log
 ```
 
 #### Verify Installation
 ```bash
 # Check version
-ssmtp-mailer --version
+simple-smtp-mailer --version
 
 # Check binary location
-where ssmtp-mailer
+where simple-smtp-mailer
 
 # Check Windows Programs and Features
 # Control Panel > Programs > Programs and Features
@@ -72,10 +72,10 @@ where ssmtp-mailer
 #### Update Package
 ```bash
 # Uninstall old version
-msiexec /x ssmtp-mailer.msi /quiet
+msiexec /x simple-smtp-mailer.msi /quiet
 
 # Install new version
-msiexec /i ssmtp-mailer.msi /quiet
+msiexec /i simple-smtp-mailer.msi /quiet
 ```
 
 ### Chocolatey Installation
@@ -87,23 +87,23 @@ msiexec /i ssmtp-mailer.msi /quiet
 # Install Chocolatey (if not already installed)
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 
-# Install ssmtp-mailer
-choco install ssmtp-mailer
+# Install simple-smtp-mailer
+choco install simple-smtp-mailer
 
 # Verify installation
-ssmtp-mailer --version
+simple-smtp-mailer --version
 ```
 
 #### Verify Installation
 ```bash
 # Check version
-ssmtp-mailer --version
+simple-smtp-mailer --version
 
 # Check binary location
-where ssmtp-mailer
+where simple-smtp-mailer
 
 # Check Chocolatey info
-choco info ssmtp-mailer
+choco info simple-smtp-mailer
 ```
 
 #### Update via Chocolatey
@@ -111,8 +111,8 @@ choco info ssmtp-mailer
 # Update Chocolatey
 choco upgrade all
 
-# Upgrade ssmtp-mailer
-choco upgrade ssmtp-mailer
+# Upgrade simple-smtp-mailer
+choco upgrade simple-smtp-mailer
 ```
 
 ### WSL Installation
@@ -139,7 +139,7 @@ wsl --list --online
 wsl --install -d Debian
 ```
 
-#### Install ssmtp-mailer in WSL
+#### Install simple-smtp-mailer in WSL
 ```bash
 # Open WSL terminal
 wsl
@@ -199,8 +199,8 @@ git --version
 #### Method 1: Using Visual Studio
 ```bash
 # Clone the repository
-git clone https://github.com/blburns/ssmtp-mailer.git
-cd ssmtp-mailer
+git clone https://github.com/blburns/simple-smtp-mailer.git
+cd simple-smtp-mailer
 
 # Open Developer Command Prompt for VS 2022
 # Start > Visual Studio 2022 > Developer Command Prompt for VS 2022
@@ -219,8 +219,8 @@ cmake --build . --config Release
 #### Method 2: Using CMake Command Line
 ```bash
 # Clone the repository
-git clone https://github.com/blburns/ssmtp-mailer.git
-cd ssmtp-mailer
+git clone https://github.com/blburns/simple-smtp-mailer.git
+cd simple-smtp-mailer
 
 # Create build directory
 mkdir build
@@ -284,12 +284,12 @@ cmake .. -DCMAKE_C_FLAGS="%CMAKE_C_FLAGS%" -DCMAKE_CXX_FLAGS="%CMAKE_CXX_FLAGS%"
 ### Create Required Directories
 ```bash
 # Create configuration and log directories
-mkdir "C:\ProgramData\ssmtp-mailer"
-mkdir "C:\ProgramData\ssmtp-mailer\logs"
-mkdir "C:\ProgramData\ssmtp-mailer\spool"
+mkdir "C:\ProgramData\simple-smtp-mailer"
+mkdir "C:\ProgramData\simple-smtp-mailer\logs"
+mkdir "C:\ProgramData\simple-smtp-mailer\spool"
 
 # Set permissions (run as Administrator)
-icacls "C:\ProgramData\ssmtp-mailer" /grant Users:F /T
+icacls "C:\ProgramData\simple-smtp-mailer" /grant Users:F /T
 ```
 
 ### Install OAuth2 Helper Tools
@@ -310,20 +310,20 @@ python tools/oauth2-helper/oauth2-helper.py gmail
 ### Basic Configuration
 ```bash
 # Create configuration file
-echo { > "C:\ProgramData\ssmtp-mailer\config.json"
-echo   "smtp": { >> "C:\ProgramData\ssmtp-mailer\config.json"
-echo     "host": "smtp.gmail.com", >> "C:\ProgramData\ssmtp-mailer\config.json"
-echo     "port": 587, >> "C:\ProgramData\ssmtp-mailer\config.json"
-echo     "security": "tls", >> "C:\ProgramData\ssmtp-mailer\config.json"
-echo     "auth": { >> "C:\ProgramData\ssmtp-mailer\config.json"
-echo       "type": "oauth2", >> "C:\ProgramData\ssmtp-mailer\config.json"
-echo       "client_id": "YOUR_CLIENT_ID", >> "C:\ProgramData\ssmtp-mailer\config.json"
-echo       "client_secret": "YOUR_CLIENT_SECRET", >> "C:\ProgramData\ssmtp-mailer\config.json"
-echo       "refresh_token": "YOUR_REFRESH_TOKEN", >> "C:\ProgramData\ssmtp-mailer\config.json"
-echo       "user": "your-email@gmail.com" >> "C:\ProgramData\ssmtp-mailer\config.json"
-echo     } >> "C:\ProgramData\ssmtp-mailer\config.json"
-echo   } >> "C:\ProgramData\ssmtp-mailer\config.json"
-echo } >> "C:\ProgramData\ssmtp-mailer\config.json"
+echo { > "C:\ProgramData\simple-smtp-mailer\config.json"
+echo   "smtp": { >> "C:\ProgramData\simple-smtp-mailer\config.json"
+echo     "host": "smtp.gmail.com", >> "C:\ProgramData\simple-smtp-mailer\config.json"
+echo     "port": 587, >> "C:\ProgramData\simple-smtp-mailer\config.json"
+echo     "security": "tls", >> "C:\ProgramData\simple-smtp-mailer\config.json"
+echo     "auth": { >> "C:\ProgramData\simple-smtp-mailer\config.json"
+echo       "type": "oauth2", >> "C:\ProgramData\simple-smtp-mailer\config.json"
+echo       "client_id": "YOUR_CLIENT_ID", >> "C:\ProgramData\simple-smtp-mailer\config.json"
+echo       "client_secret": "YOUR_CLIENT_SECRET", >> "C:\ProgramData\simple-smtp-mailer\config.json"
+echo       "refresh_token": "YOUR_REFRESH_TOKEN", >> "C:\ProgramData\simple-smtp-mailer\config.json"
+echo       "user": "your-email@gmail.com" >> "C:\ProgramData\simple-smtp-mailer\config.json"
+echo     } >> "C:\ProgramData\simple-smtp-mailer\config.json"
+echo   } >> "C:\ProgramData\simple-smtp-mailer\config.json"
+echo } >> "C:\ProgramData\simple-smtp-mailer\config.json"
 ```
 
 ## 🧪 Testing Installation
@@ -331,29 +331,29 @@ echo } >> "C:\ProgramData\ssmtp-mailer\config.json"
 ### Basic Tests
 ```bash
 # Test binary
-ssmtp-mailer --version
-ssmtp-mailer --help
+simple-smtp-mailer --version
+simple-smtp-mailer --help
 
 # Test configuration
-ssmtp-mailer test --config "C:\ProgramData\ssmtp-mailer\config.json"
+simple-smtp-mailer test --config "C:\ProgramData\simple-smtp-mailer\config.json"
 
 # Test SMTP connection
-ssmtp-mailer test --config "C:\ProgramData\ssmtp-mailer\config.json" --smtp
+simple-smtp-mailer test --config "C:\ProgramData\simple-smtp-mailer\config.json" --smtp
 ```
 
 ### Email Tests
 ```bash
 # Send test email
-ssmtp-mailer send ^
-  --config "C:\ProgramData\ssmtp-mailer\config.json" ^
+simple-smtp-mailer send ^
+  --config "C:\ProgramData\simple-smtp-mailer\config.json" ^
   --from "your-email@gmail.com" ^
   --to "test@example.com" ^
-  --subject "Test from ssmtp-mailer" ^
-  --body "Hello from ssmtp-mailer!"
+  --subject "Test from simple-smtp-mailer" ^
+  --body "Hello from simple-smtp-mailer!"
 
 # Test with HTML
-ssmtp-mailer send ^
-  --config "C:\ProgramData\ssmtp-mailer\config.json" ^
+simple-smtp-mailer send ^
+  --config "C:\ProgramData\simple-smtp-mailer\config.json" ^
   --from "your-email@gmail.com" ^
   --to "test@example.com" ^
   --subject "HTML Test" ^
@@ -365,13 +365,13 @@ ssmtp-mailer send ^
 
 ### Common Issues
 
-#### "Command not found: ssmtp-mailer"
+#### "Command not found: simple-smtp-mailer"
 ```bash
 # Check if binary exists
-dir "C:\Program Files\ssmtp-mailer\ssmtp-mailer.exe"
+dir "C:\Program Files\simple-smtp-mailer\simple-smtp-mailer.exe"
 
 # Add to PATH
-setx PATH "%PATH%;C:\Program Files\ssmtp-mailer"
+setx PATH "%PATH%;C:\Program Files\simple-smtp-mailer"
 
 # Restart command prompt
 ```
@@ -382,7 +382,7 @@ setx PATH "%PATH%;C:\Program Files\ssmtp-mailer"
 # Right-click Command Prompt > Run as administrator
 
 # Check file permissions
-icacls "C:\ProgramData\ssmtp-mailer\config.json"
+icacls "C:\ProgramData\simple-smtp-mailer\config.json"
 ```
 
 #### "Build failed"
@@ -433,18 +433,18 @@ systeminfo
 wmic product get name,version
 
 # Check file locations
-where ssmtp-mailer
-dir "C:\Program Files\ssmtp-mailer"
+where simple-smtp-mailer
+dir "C:\Program Files\simple-smtp-mailer"
 
 # Check configuration
-type "C:\ProgramData\ssmtp-mailer\config.json"
+type "C:\ProgramData\simple-smtp-mailer\config.json"
 ```
 
 ## 📚 Next Steps
 
 ### Configuration
-- **[Configuration Overview](../configuration/README.md)** - Understanding configuration options
-- **[SSL/TLS Setup](../configuration/ssl-setup.md)** - Secure email transmission
+- **[Configuration Overview](../configuration/dns-setup.md)** - Understanding configuration options
+- **[SSL/TLS Setup](../configuration/ssl-setup-with-certbot.md)** - Secure email transmission
 - **[DNS Configuration](../configuration/dns-setup.md)** - Email deliverability
 
 ### OAuth2 Setup
@@ -453,8 +453,8 @@ type "C:\ProgramData\ssmtp-mailer\config.json"
 - **[Office 365 Setup](../oauth2/office365-oauth2-setup.md)** - Office 365 OAuth2 configuration
 
 ### Architecture
-- **[Architecture Overview](../architecture/README.md)** - System design and components
-- **[Relay Setup](../architecture/relay-setup.md)** - Email relay configuration
+- **[Architecture Overview](../configuration/relay-architecture.md)** - System design and components
+- **[Relay Setup](../configuration/relay-setup-guide.md)** - Email relay configuration
 
 ## 🆘 Getting Help
 
@@ -475,4 +475,4 @@ type "C:\ProgramData\ssmtp-mailer\config.json"
 
 ---
 
-*ssmtp-mailer is now installed on your Windows system! Next, set up OAuth2 authentication and configure your email relay system.*
+*simple-smtp-mailer is now installed on your Windows system! Next, set up OAuth2 authentication and configure your email relay system.*

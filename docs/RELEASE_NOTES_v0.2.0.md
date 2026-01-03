@@ -1,8 +1,8 @@
-# ssmtp-mailer v0.2.0 Release Notes
+# simple-smtp-mailer v0.2.0 Release Notes
 
 ## 🎉 What's New in v0.2.0
 
-This is a **major release** that transforms ssmtp-mailer from a basic SMTP tool into a **professional, cross-platform package distribution system** with enterprise-grade features.
+This is a **major release** that transforms simple-smtp-mailer from a basic SMTP tool into a **professional, cross-platform package distribution system** with enterprise-grade features.
 
 ## ✨ Major Features
 
@@ -57,12 +57,12 @@ make package-all          # Build organized packages for all platforms
 
 ### **Debian/Ubuntu (.deb)**
 - **Dependencies**: libssl3, libcurl4, libjsoncpp25
-- **Installation**: `sudo dpkg -i ssmtp-mailer-0.2.0-*.deb`
+- **Installation**: `sudo dpkg -i simple-smtp-mailer-0.2.0-*.deb`
 - **Features**: System integration, automatic dependency resolution
 
 ### **Red Hat/CentOS/Fedora (.rpm)**
 - **Dependencies**: openssl, libcurl, jsoncpp
-- **Installation**: `sudo rpm -i ssmtp-mailer-0.2.0-*.rpm`
+- **Installation**: `sudo rpm -i simple-smtp-mailer-0.2.0-*.rpm`
 - **Features**: Enterprise package management, SELinux support
 
 ### **Generic (.tar.gz)**
@@ -111,16 +111,16 @@ make package-all          # Build organized packages for all platforms
 ## 📁 File Structure
 
 ```
-ssmtp-mailer-0.2.0/
+simple-smtp-mailer-0.2.0/
 ├── bin/                    # Executables
 ├── lib/                    # Libraries
 ├── include/                # Header files
-├── etc/ssmtp-mailer/       # Configuration files
-├── share/ssmtp-mailer/     # Documentation and tools
+├── etc/simple-smtp-mailer/       # Configuration files
+├── share/simple-smtp-mailer/     # Documentation and tools
 │   ├── docs/              # Complete documentation
 │   ├── oauth2-helper/     # OAuth2 authentication tools
 │   └── examples/          # Usage examples
-└── var/log/ssmtp-mailer/  # Log files
+└── var/log/simple-smtp-mailer/  # Log files
 ```
 
 ## 🚀 Getting Started
@@ -128,7 +128,7 @@ ssmtp-mailer-0.2.0/
 ### **Quick Installation**
 ```bash
 # Linux (Debian/Ubuntu)
-sudo dpkg -i ssmtp-mailer-0.2.0-*.deb
+sudo dpkg -i simple-smtp-mailer-0.2.0-*.deb
 
 # macOS
 # Double-click DMG file and drag to Applications
@@ -149,10 +149,10 @@ sudo dpkg -i ssmtp-mailer-0.2.0-*.deb
 ### **Configuration**
 ```bash
 # Edit configuration
-sudo nano /etc/ssmtp-mailer/config.conf
+sudo nano /etc/simple-smtp-mailer/config.conf
 
 # Start service
-sudo systemctl start ssmtp-mailer
+sudo systemctl start simple-smtp-mailer
 ```
 
 ## 🔄 Migration from Previous Versions
@@ -220,8 +220,8 @@ Special thanks to the open source community for the excellent tools and librarie
 ## 📞 Support & Community
 
 - **Documentation**: [docs/](docs/) directory
-- **Issues**: [GitHub Issues](https://github.com/blburns/ssmtp-mailer/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/blburns/ssmtp-mailer/discussions)
+- **Issues**: [GitHub Issues](https://github.com/blburns/simple-smtp-mailer/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/blburns/simple-smtp-mailer/discussions)
 - **Email**: support@blburns.com
 
 ## 📄 License
@@ -230,6 +230,6 @@ This project is licensed under the **Apache License, Version 2.0** - see the [LI
 
 ---
 
-**🎉 Download ssmtp-mailer v0.2.0 now and experience the future of SMTP mailer packages!**
+**🎉 Download simple-smtp-mailer v0.2.0 now and experience the future of SMTP mailer packages!**
 
-*Built with ❤️ and ☕ by the ssmtp-mailer team*
+*Built with ❤️ and ☕ by the simple-smtp-mailer team*

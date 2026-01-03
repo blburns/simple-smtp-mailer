@@ -14,7 +14,7 @@ OAuth2 (Open Authorization 2.0) is an industry-standard protocol for authorizati
 ### OAuth2 Roles
 
 1. **Resource Owner**: The user (you) who owns the email account
-2. **Client**: Your mail relay application (ssmtp-mailer)
+2. **Client**: Your mail relay application (simple-smtp-mailer)
 3. **Authorization Server**: The email provider (Gmail, Office 365, etc.)
 4. **Resource Server**: The email service that stores your emails
 
@@ -100,11 +100,11 @@ Scopes define what permissions your application requests:
 - **Document why each scope is needed**
 - **Review and update scopes regularly**
 
-## 🏗️ OAuth2 Architecture in ssmtp-mailer
+## 🏗️ OAuth2 Architecture in simple-smtp-mailer
 
 ```
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│   User/Admin   │    │  ssmtp-mailer    │    │  Email Provider │
+│   User/Admin   │    │  simple-smtp-mailer    │    │  Email Provider │
 │                 │    │                  │    │                 │
 │ 1. Configure   │───▶│ 2. OAuth2 Flow   │───▶│ 3. Authorization│
 │    OAuth2      │    │                  │    │                 │
@@ -115,7 +115,7 @@ Scopes define what permissions your application requests:
                        └──────────────────┘
 ```
 
-## 🔧 OAuth2 Components in ssmtp-mailer
+## 🔧 OAuth2 Components in simple-smtp-mailer
 
 ### 1. OAuth2 Helper Tools
 - **Python scripts** for each provider
@@ -194,14 +194,14 @@ Generate tokens using our automated tools:
 python3 tools/oauth2-helper/oauth2-helper.py [provider]
 ```
 
-### 4. Configure ssmtp-mailer
+### 4. Configure simple-smtp-mailer
 Use the generated tokens in your configuration.
 
 ## 📚 Next Steps
 
 - **Read your provider's specific guide** for detailed setup
 - **Use the helper tools** to generate tokens
-- **Configure ssmtp-mailer** with OAuth2 authentication
+- **Configure simple-smtp-mailer** with OAuth2 authentication
 - **Test your setup** with sample emails
 - **Monitor authentication** and token refresh
 

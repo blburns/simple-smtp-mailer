@@ -1,6 +1,6 @@
 # Advanced Features
 
-The ssmtp-mailer library provides a comprehensive set of advanced features for enterprise-grade email sending applications.
+The simple-smtp-mailer library provides a comprehensive set of advanced features for enterprise-grade email sending applications.
 
 ## Table of Contents
 
@@ -41,7 +41,7 @@ burst_limit = 1000
 ### Usage Example
 
 ```cpp
-#include "ssmtp-mailer/rate_limiter.hpp"
+#include "simple-smtp-mailer/rate_limiter.hpp"
 
 // Create rate limiter
 ssmtp_mailer::RateLimitConfig config;
@@ -104,7 +104,7 @@ webhook_secret_required = true
 ### Usage Example
 
 ```cpp
-#include "ssmtp-mailer/webhook_handler.hpp"
+#include "simple-smtp-mailer/webhook_handler.hpp"
 
 // Create webhook processor
 ssmtp_mailer::WebhookConfig config;
@@ -177,7 +177,7 @@ template.variables.push_back(ssmtp_mailer::TemplateVariable("company_name", "Def
 ### Usage Example
 
 ```cpp
-#include "ssmtp-mailer/template_manager.hpp"
+#include "simple-smtp-mailer/template_manager.hpp"
 
 // Create template manager
 auto engine = ssmtp_mailer::TemplateFactory::createEngine("Simple");
@@ -249,7 +249,7 @@ analytics_max_events_in_memory = 10000
 ### Usage Example
 
 ```cpp
-#include "ssmtp-mailer/analytics.hpp"
+#include "simple-smtp-mailer/analytics.hpp"
 
 // Create analytics manager
 ssmtp_mailer::AnalyticsConfig config;
@@ -551,7 +551,7 @@ sender_email = your-email@fastmail.com
 ### Token Management
 
 ```cpp
-#include "ssmtp-mailer/api_client.hpp"
+#include "simple-smtp-mailer/api_client.hpp"
 
 // OAuth2 token validation
 bool isValidToken(const std::string& token) {
@@ -576,7 +576,7 @@ void refreshTokenIfNeeded(ssmtp_mailer::APIClientConfig& config) {
 
 ## Conclusion
 
-The advanced features of ssmtp-mailer provide enterprise-grade capabilities for:
+The advanced features of simple-smtp-mailer provide enterprise-grade capabilities for:
 
 - **Scalability**: Rate limiting and connection pooling
 - **Reliability**: Fallback mechanisms and retry logic
@@ -585,4 +585,4 @@ The advanced features of ssmtp-mailer provide enterprise-grade capabilities for:
 - **Security**: Authentication and data protection
 - **Modern Authentication**: OAuth2 support for enhanced security
 
-These features make ssmtp-mailer suitable for production environments requiring high performance, reliability, and observability.
+These features make simple-smtp-mailer suitable for production environments requiring high performance, reliability, and observability.

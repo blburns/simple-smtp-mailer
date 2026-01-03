@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide helps you resolve common OAuth2 authentication issues when setting up ssmtp-mailer with various email providers. It covers error messages, debugging steps, and solutions for the most frequently encountered problems.
+This guide helps you resolve common OAuth2 authentication issues when setting up simple-smtp-mailer with various email providers. It covers error messages, debugging steps, and solutions for the most frequently encountered problems.
 
 ## 🚨 Common Error Categories
 
@@ -498,7 +498,7 @@ ulimit -a
 4. **Test with minimal configuration**
 
 ### Where to Get Help
-1. **GitHub Issues**: [ssmtp-mailer repository](https://github.com/blburns/ssmtp-mailer/issues)
+1. **GitHub Issues**: [simple-smtp-mailer repository](https://github.com/blburns/simple-smtp-mailer/issues)
 2. **Provider Support**: Official documentation and support channels
 3. **Community Forums**: Stack Overflow, provider-specific forums
 4. **Local System Administrator**: For enterprise environments

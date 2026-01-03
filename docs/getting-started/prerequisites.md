@@ -1,6 +1,6 @@
 # Prerequisites
 
-Before installing ssmtp-mailer, ensure your system meets these requirements and has the necessary dependencies installed.
+Before installing simple-smtp-mailer, ensure your system meets these requirements and has the necessary dependencies installed.
 
 ## 🖥️ System Requirements
 
@@ -138,29 +138,29 @@ export REQUESTS_CA_BUNDLE="/path/to/ca-bundle.crt"
 ### Directory Permissions
 ```bash
 # Create required directories
-sudo mkdir -p /etc/ssmtp-mailer
-sudo mkdir -p /var/log/ssmtp-mailer
-sudo mkdir -p /var/spool/ssmtp-mailer
+sudo mkdir -p /etc/simple-smtp-mailer
+sudo mkdir -p /var/log/simple-smtp-mailer
+sudo mkdir -p /var/spool/simple-smtp-mailer
 
 # Set ownership
-sudo chown $USER:$USER /etc/ssmtp-mailer
-sudo chown $USER:$USER /var/log/ssmtp-mailer
-sudo chown $USER:$USER /var/spool/ssmtp-mailer
+sudo chown $USER:$USER /etc/simple-smtp-mailer
+sudo chown $USER:$USER /var/log/simple-smtp-mailer
+sudo chown $USER:$USER /var/spool/simple-smtp-mailer
 
 # Set permissions
-sudo chmod 755 /etc/ssmtp-mailer
-sudo chmod 755 /var/log/ssmtp-mailer
-sudo chmod 755 /var/spool/ssmtp-mailer
+sudo chmod 755 /etc/simple-smtp-mailer
+sudo chmod 755 /var/log/simple-smtp-mailer
+sudo chmod 755 /var/spool/simple-smtp-mailer
 ```
 
 ### File Permissions
 ```bash
 # Configuration files
-chmod 600 /etc/ssmtp-mailer/config.json
-chmod 600 /etc/ssmtp-mailer/oauth2_tokens.json
+chmod 600 /etc/simple-smtp-mailer/config.json
+chmod 600 /etc/simple-smtp-mailer/oauth2_tokens.json
 
 # Log files
-chmod 644 /var/log/ssmtp-mailer/*.log
+chmod 644 /var/log/simple-smtp-mailer/*.log
 
 # OAuth2 token files
 chmod 600 oauth2_tokens.json
@@ -241,12 +241,12 @@ brew install python3
 ### Permission Denied
 ```bash
 # Fix directory permissions
-sudo chown -R $USER:$USER /etc/ssmtp-mailer
-sudo chown -R $USER:$USER /var/log/ssmtp-mailer
+sudo chown -R $USER:$USER /etc/simple-smtp-mailer
+sudo chown -R $USER:$USER /var/log/simple-smtp-mailer
 
 # Fix file permissions
-chmod 600 /etc/ssmtp-mailer/*.json
-chmod 644 /var/log/ssmtp-mailer/*.log
+chmod 600 /etc/simple-smtp-mailer/*.json
+chmod 644 /var/log/simple-smtp-mailer/*.log
 ```
 
 ### Network Connectivity Issues
@@ -313,8 +313,8 @@ Once you've verified all prerequisites are met:
 1. **Choose your platform** from [Installation Guides](../installation/README.md)
 2. **Follow the installation** instructions for your platform
 3. **Set up OAuth2** authentication using [OAuth2 Guides](../oauth2/README.md)
-4. **Configure your email relay** following [Configuration Guides](../configuration/README.md)
+4. **Configure your email relay** following [Configuration Guides](../configuration/dns-setup.md)
 
 ---
 
-*Having trouble with prerequisites? Check the [troubleshooting guide](../oauth2/oauth2-troubleshooting.md) or [open an issue](https://github.com/blburns/ssmtp-mailer/issues) on GitHub.*
+*Having trouble with prerequisites? Check the [troubleshooting guide](../oauth2/oauth2-troubleshooting.md) or [open an issue](https://github.com/blburns/simple-smtp-mailer/issues) on GitHub.*

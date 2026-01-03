@@ -1,13 +1,13 @@
-# ssmtp-mailer CLI Documentation
+# simple-smtp-mailer CLI Documentation
 
-The ssmtp-mailer CLI provides comprehensive configuration management for the ssmtp-mailer application. This document describes all available commands and their usage.
+The simple-smtp-mailer CLI provides comprehensive configuration management for the simple-smtp-mailer application. This document describes all available commands and their usage.
 
 ## Overview
 
-The CLI is accessed through the main `ssmtp-mailer` command with the `cli` subcommand:
+The CLI is accessed through the main `simple-smtp-mailer` command with the `cli` subcommand:
 
 ```bash
-ssmtp-mailer cli <command> [options]
+simple-smtp-mailer cli <command> [options]
 ```
 
 ## Quick Start
@@ -17,7 +17,7 @@ ssmtp-mailer cli <command> [options]
 For first-time setup, use the interactive wizard:
 
 ```bash
-ssmtp-mailer cli setup-wizard
+simple-smtp-mailer cli setup-wizard
 ```
 
 This will guide you through:
@@ -32,7 +32,7 @@ This will guide you through:
 
 ```bash
 # Add a domain with Gmail SMTP
-ssmtp-mailer cli config-domain-add example.com \
+simple-smtp-mailer cli config-domain-add example.com \
   --smtp-server smtp.gmail.com \
   --port 587 \
   --auth-method LOGIN \
@@ -40,26 +40,26 @@ ssmtp-mailer cli config-domain-add example.com \
   --password your_app_password
 
 # List all domains
-ssmtp-mailer cli config-domain-list
+simple-smtp-mailer cli config-domain-list
 
 # Show domain details
-ssmtp-mailer cli config-domain-show example.com
+simple-smtp-mailer cli config-domain-show example.com
 ```
 
 ### User Management
 
 ```bash
 # Add a user
-ssmtp-mailer cli config-user-add user@example.com \
+simple-smtp-mailer cli config-user-add user@example.com \
   --domain example.com \
   --can-send-from true \
   --can-send-to true
 
 # List users
-ssmtp-mailer cli config-user-list
+simple-smtp-mailer cli config-user-list
 
 # List users for specific domain
-ssmtp-mailer cli config-user-list --domain example.com
+simple-smtp-mailer cli config-user-list --domain example.com
 ```
 
 ## Command Reference
@@ -70,7 +70,7 @@ ssmtp-mailer cli config-user-list --domain example.com
 
 **Add Domain**
 ```bash
-ssmtp-mailer cli config-domain-add <domain> [options]
+simple-smtp-mailer cli config-domain-add <domain> [options]
 ```
 
 Options:
@@ -84,19 +84,19 @@ Options:
 
 **List Domains**
 ```bash
-ssmtp-mailer cli config-domain-list
+simple-smtp-mailer cli config-domain-list
 ```
 
 **Show Domain**
 ```bash
-ssmtp-mailer cli config-domain-show <domain>
+simple-smtp-mailer cli config-domain-show <domain>
 ```
 
 #### User Management
 
 **Add User**
 ```bash
-ssmtp-mailer cli config-user-add <email> [options]
+simple-smtp-mailer cli config-user-add <email> [options]
 ```
 
 Options:
@@ -109,14 +109,14 @@ Options:
 
 **List Users**
 ```bash
-ssmtp-mailer cli config-user-list [--domain <domain>]
+simple-smtp-mailer cli config-user-list [--domain <domain>]
 ```
 
 #### Global Configuration
 
 **Show Global Config**
 ```bash
-ssmtp-mailer cli config-global-show
+simple-smtp-mailer cli config-global-show
 ```
 
 ### Authentication Commands
@@ -125,29 +125,29 @@ ssmtp-mailer cli config-global-show
 
 **Setup OAuth2**
 ```bash
-ssmtp-mailer cli auth-oauth2-setup --provider <google|microsoft> --domain <domain>
+simple-smtp-mailer cli auth-oauth2-setup --provider <google|microsoft> --domain <domain>
 ```
 
 **Test OAuth2**
 ```bash
-ssmtp-mailer cli auth-oauth2-test --domain <domain>
+simple-smtp-mailer cli auth-oauth2-test --domain <domain>
 ```
 
 #### Service Account Management
 
 **Add Service Account**
 ```bash
-ssmtp-mailer cli auth-service-account-add --domain <domain> --file <json-file>
+simple-smtp-mailer cli auth-service-account-add --domain <domain> --file <json-file>
 ```
 
 **List Service Accounts**
 ```bash
-ssmtp-mailer cli auth-service-account-list
+simple-smtp-mailer cli auth-service-account-list
 ```
 
 **Test Service Account**
 ```bash
-ssmtp-mailer cli auth-service-account-test --domain <domain>
+simple-smtp-mailer cli auth-service-account-test --domain <domain>
 ```
 
 ### Template Commands
@@ -156,41 +156,41 @@ ssmtp-mailer cli auth-service-account-test --domain <domain>
 
 **Create Template**
 ```bash
-ssmtp-mailer cli template-create <name> --subject <subject> --body <body> [--html <html>]
+simple-smtp-mailer cli template-create <name> --subject <subject> --body <body> [--html <html>]
 ```
 
 **List Templates**
 ```bash
-ssmtp-mailer cli template-list
+simple-smtp-mailer cli template-list
 ```
 
 **Show Template**
 ```bash
-ssmtp-mailer cli template-show <name>
+simple-smtp-mailer cli template-show <name>
 ```
 
 **Test Template**
 ```bash
-ssmtp-mailer cli template-test <name> --to <email> [--from <email>]
+simple-smtp-mailer cli template-test <name> --to <email> [--from <email>]
 ```
 
 #### Address Templates
 
 **Create Address Template**
 ```bash
-ssmtp-mailer cli template-address-create <pattern> --domain <domain> --types <types>
+simple-smtp-mailer cli template-address-create <pattern> --domain <domain> --types <types>
 ```
 
 Example:
 ```bash
-ssmtp-mailer cli template-address-create contact-{type}@example.com \
+simple-smtp-mailer cli template-address-create contact-{type}@example.com \
   --domain example.com \
   --types "legal,privacy,general,support,sales"
 ```
 
 **List Address Templates**
 ```bash
-ssmtp-mailer cli template-address-list
+simple-smtp-mailer cli template-address-list
 ```
 
 ### Validation Commands
@@ -199,24 +199,24 @@ ssmtp-mailer cli template-address-list
 
 **Validate Configuration**
 ```bash
-ssmtp-mailer cli validate-config [--fix] [--verbose]
+simple-smtp-mailer cli validate-config [--fix] [--verbose]
 ```
 
 **Test Connections**
 ```bash
-ssmtp-mailer cli test-connections [--smtp-only] [--api-only] [--domain <domain>]
+simple-smtp-mailer cli test-connections [--smtp-only] [--api-only] [--domain <domain>]
 ```
 
 #### Backup and Restore
 
 **Backup Configuration**
 ```bash
-ssmtp-mailer cli config-backup [--file <backup-file>]
+simple-smtp-mailer cli config-backup [--file <backup-file>]
 ```
 
 **Restore Configuration**
 ```bash
-ssmtp-mailer cli config-restore --file <backup-file>
+simple-smtp-mailer cli config-restore --file <backup-file>
 ```
 
 ### Setup Commands
@@ -225,12 +225,12 @@ ssmtp-mailer cli config-restore --file <backup-file>
 
 **Run Setup Wizard**
 ```bash
-ssmtp-mailer cli setup-wizard
+simple-smtp-mailer cli setup-wizard
 ```
 
 **Setup Domain Interactively**
 ```bash
-ssmtp-mailer cli setup-domain <domain>
+simple-smtp-mailer cli setup-domain <domain>
 ```
 
 ## Configuration File Structure
@@ -238,8 +238,8 @@ ssmtp-mailer cli setup-domain <domain>
 The CLI creates and manages configuration files in the following structure:
 
 ```
-/etc/ssmtp-mailer/
-├── ssmtp-mailer.conf          # Global configuration
+/etc/simple-smtp-mailer/
+├── simple-smtp-mailer.conf          # Global configuration
 ├── domains/                   # Domain configurations
 │   ├── example.com.conf
 │   └── example.com.service-account.conf
@@ -265,10 +265,10 @@ The CLI creates and manages configuration files in the following structure:
 
 ```bash
 # 1. Run setup wizard
-ssmtp-mailer cli setup-wizard
+simple-smtp-mailer cli setup-wizard
 
 # 2. Add a domain
-ssmtp-mailer cli config-domain-add example.com \
+simple-smtp-mailer cli config-domain-add example.com \
   --smtp-server smtp.gmail.com \
   --port 587 \
   --auth-method LOGIN \
@@ -276,62 +276,62 @@ ssmtp-mailer cli config-domain-add example.com \
   --password your_app_password
 
 # 3. Add users
-ssmtp-mailer cli config-user-add mailer@example.com \
+simple-smtp-mailer cli config-user-add mailer@example.com \
   --domain example.com
 
-ssmtp-mailer cli config-user-add admin@example.com \
+simple-smtp-mailer cli config-user-add admin@example.com \
   --domain example.com \
   --allowed-recipients "support@example.com,customers@*"
 
 # 4. Create email templates
-ssmtp-mailer cli template-create welcome \
+simple-smtp-mailer cli template-create welcome \
   --subject "Welcome to {{service_name}}!" \
   --body "Hello {{user_name}}, welcome to our service!" \
   --html "<h1>Welcome!</h1><p>Hello {{user_name}}, welcome to our service!</p>"
 
 # 5. Create address templates
-ssmtp-mailer cli template-address-create contact-{type}@example.com \
+simple-smtp-mailer cli template-address-create contact-{type}@example.com \
   --domain example.com \
   --types "legal,privacy,general,support,sales"
 
 # 6. Validate configuration
-ssmtp-mailer cli validate-config --verbose
+simple-smtp-mailer cli validate-config --verbose
 
 # 7. Test connections
-ssmtp-mailer cli test-connections
+simple-smtp-mailer cli test-connections
 ```
 
 ### OAuth2 Setup Example
 
 ```bash
 # 1. Setup OAuth2 for Google
-ssmtp-mailer cli auth-oauth2-setup \
+simple-smtp-mailer cli auth-oauth2-setup \
   --provider google \
   --domain example.com
 
 # 2. Follow the instructions to complete OAuth2 flow
 # 3. Test the configuration
-ssmtp-mailer cli auth-oauth2-test --domain example.com
+simple-smtp-mailer cli auth-oauth2-test --domain example.com
 ```
 
 ### Service Account Setup Example
 
 ```bash
 # 1. Add service account
-ssmtp-mailer cli auth-service-account-add \
+simple-smtp-mailer cli auth-service-account-add \
   --domain example.com \
   --file /path/to/service-account.json
 
 # 2. Test service account
-ssmtp-mailer cli auth-service-account-test --domain example.com
+simple-smtp-mailer cli auth-service-account-test --domain example.com
 ```
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Permission Denied**: Ensure you have write permissions to `/etc/ssmtp-mailer/`
-2. **Configuration Not Found**: Run `ssmtp-mailer cli setup-wizard` first
+1. **Permission Denied**: Ensure you have write permissions to `/etc/simple-smtp-mailer/`
+2. **Configuration Not Found**: Run `simple-smtp-mailer cli setup-wizard` first
 3. **OAuth2 Setup Failed**: Check that client ID and secret are correct
 4. **Service Account Invalid**: Verify the JSON file is valid and has required fields
 
@@ -340,7 +340,7 @@ ssmtp-mailer cli auth-service-account-test --domain example.com
 Use the `--verbose` flag for detailed output:
 
 ```bash
-ssmtp-mailer cli validate-config --verbose
+simple-smtp-mailer cli validate-config --verbose
 ```
 
 ### Configuration Validation
@@ -348,7 +348,7 @@ ssmtp-mailer cli validate-config --verbose
 Always validate your configuration after making changes:
 
 ```bash
-ssmtp-mailer cli validate-config
+simple-smtp-mailer cli validate-config
 ```
 
 ### Testing Connections
@@ -356,7 +356,7 @@ ssmtp-mailer cli validate-config
 Test all connections to ensure everything is working:
 
 ```bash
-ssmtp-mailer cli test-connections
+simple-smtp-mailer cli test-connections
 ```
 
 ## Advanced Usage
@@ -382,38 +382,38 @@ Address templates support pattern matching with `{type}` placeholders:
 
 ## Daemon Mode
 
-ssmtp-mailer can run as a background daemon for continuous email processing:
+simple-smtp-mailer can run as a background daemon for continuous email processing:
 
 ```bash
 # Start daemon
-ssmtp-mailer --daemon
+simple-smtp-mailer --daemon
 
 # Check daemon status
-ssmtp-mailer --status
+simple-smtp-mailer --status
 
 # Stop daemon
-ssmtp-mailer --stop
+simple-smtp-mailer --stop
 
 # Reload configuration
-ssmtp-mailer --reload
+simple-smtp-mailer --reload
 ```
 
 For complete daemon documentation, see [Daemon Mode Guide](../features/daemon-mode.md).
 
 ## Integration
 
-The CLI integrates seamlessly with the main ssmtp-mailer application. Once configured through the CLI, you can use the regular ssmtp-mailer commands:
+The CLI integrates seamlessly with the main simple-smtp-mailer application. Once configured through the CLI, you can use the regular simple-smtp-mailer commands:
 
 ```bash
 # Send email using configured settings
-ssmtp-mailer send \
+simple-smtp-mailer send \
   --from user@example.com \
   --to recipient@domain.com \
   --subject "Hello" \
   --body "Hello World!"
 
 # Send using API
-ssmtp-mailer send-api \
+simple-smtp-mailer send-api \
   --provider sendgrid \
   --from user@example.com \
   --to recipient@domain.com \
@@ -431,6 +431,6 @@ ssmtp-mailer send-api \
 ## Support
 
 For additional help:
-- Run `ssmtp-mailer cli --help` for general help
-- Run `ssmtp-mailer cli <command> --help` for command-specific help
-- Check the main documentation in `/usr/local/share/ssmtp-mailer/docs/`
+- Run `simple-smtp-mailer cli --help` for general help
+- Run `simple-smtp-mailer cli <command> --help` for command-specific help
+- Check the main documentation in `/usr/local/share/simple-smtp-mailer/docs/`

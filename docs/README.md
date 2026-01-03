@@ -1,6 +1,6 @@
-# ssmtp-mailer Documentation
+# simple-smtp-mailer Documentation
 
-Welcome to the comprehensive documentation for ssmtp-mailer, a powerful and secure email relay system with OAuth2 authentication support.
+Welcome to the comprehensive documentation for simple-smtp-mailer, a powerful and secure email relay system with OAuth2 authentication support.
 
 ## 📚 Documentation Structure
 
@@ -16,15 +16,14 @@ Welcome to the comprehensive documentation for ssmtp-mailer, a powerful and secu
 - **[Installation Overview](installation/README.md)** - Platform comparison and selection
 
 ### ⚙️ **Configuration**
-- **[Configuration Overview](configuration/README.md)** - Understanding configuration options
-- **[SSL/TLS Setup](configuration/ssl-setup.md)** - Secure email with SSL certificates
+- **[Configuration Overview](configuration/dns-setup.md)** - Understanding configuration options
+- **[SSL/TLS Setup](configuration/ssl-setup-with-certbot.md)** - Secure email with SSL certificates
 - **[DNS Configuration](configuration/dns-setup.md)** - Email deliverability and SPF/DKIM
-- **[Service Accounts](configuration/service-accounts.md)** - Google Workspace and OAuth2 setup
+- **[Service Accounts](configuration/service-account-setup-guide.md)** - Google Workspace and OAuth2 setup
 
 ### 🏗️ **Architecture & Setup**
-- **[Architecture Overview](architecture/README.md)** - System design and components
-- **[Relay Architecture](architecture/relay-architecture.md)** - Email relay system design
-- **[Relay Setup Guide](architecture/relay-setup.md)** - Complete relay configuration
+- **[Architecture Overview](configuration/relay-architecture.md)** - System design and components
+- **[Relay Setup Guide](configuration/relay-setup-guide.md)** - Complete relay configuration
 
 ### 🔐 **OAuth2 Authentication**
 - **[OAuth2 Overview](oauth2/README.md)** - Complete OAuth2 authentication guide
@@ -33,7 +32,7 @@ Welcome to the comprehensive documentation for ssmtp-mailer, a powerful and secu
 - **[Token Management](oauth2/token-management.md)** - Managing OAuth2 tokens
 
 ### 🛠️ **Development & Building**
-- **[Development Overview](development/README.md)** - Building from source
+- **[Build Scripts](development/build-scripts.md)** - Automated build processes
 - **[Build Scripts](development/build-scripts.md)** - Automated build processes
 - **[Ansible Remote Build](development/ansible-remote-build.md)** - Build on remote VMs with Ansible
 - **[Linux Build Guide](development/linux-build.md)** - Manual Linux build instructions
@@ -56,8 +55,8 @@ Select the installation guide for your operating system:
 - **macOS**: [macOS Installation](installation/macos.md)
 - **Windows**: [Windows Installation](installation/windows.md)
 
-### 2. Install ssmtp-mailer
-Follow the platform-specific installation guide to get ssmtp-mailer running on your system.
+### 2. Install simple-smtp-mailer
+Follow the platform-specific installation guide to get simple-smtp-mailer running on your system.
 
 ### 3. Configure OAuth2 (Recommended)
 Set up secure OAuth2 authentication:
@@ -70,7 +69,7 @@ python3 tools/oauth2-helper/oauth2-helper.py gmail
 ```
 
 ### 4. Configure Email Relay
-Follow the [relay setup guide](architecture/relay-setup.md) to configure your email relay system.
+Follow the [relay setup guide](configuration/relay-setup-guide.md) to configure your email relay system.
 
 ### 5. Start Daemon Mode (Production)
 For production deployments, run as a background daemon:
@@ -89,7 +88,7 @@ See the [Daemon Mode Guide](features/daemon-mode.md) for complete documentation.
 
 ## 📖 How to Use This Documentation
 
-1. **Start with Getting Started** if you're new to ssmtp-mailer
+1. **Start with Getting Started** if you're new to simple-smtp-mailer
 2. **Choose your platform** from the installation guides
 3. **Configure OAuth2** for secure authentication
 4. **Set up email relay** following the architecture guides
@@ -107,13 +106,13 @@ See the [Daemon Mode Guide](features/daemon-mode.md) for complete documentation.
 ### Popular Guides
 - **[Gmail OAuth2 Setup](oauth2/gmail-oauth2-setup.md)** - Most popular OAuth2 provider
 - **[Linux Installation](installation/linux.md)** - Most common deployment platform
-- **[SSL Setup with Let's Encrypt](configuration/ssl-setup.md)** - Free SSL certificates
-- **[Relay Setup](architecture/relay-setup.md)** - Complete email relay configuration
+- **[SSL Setup with Let's Encrypt](configuration/ssl-setup-with-certbot.md)** - Free SSL certificates
+- **[Relay Setup](configuration/relay-setup-guide.md)** - Complete email relay configuration
 
 ### Advanced Topics
 - **[OAuth2 Security](oauth2/oauth2-security.md)** - Security best practices
-- **[Service Account Setup](configuration/service-accounts.md)** - Enterprise authentication
-- **[Architecture Design](architecture/relay-architecture.md)** - System design principles
+- **[Service Account Setup](configuration/service-account-setup-guide.md)** - Enterprise authentication
+- **[Architecture Design](configuration/relay-architecture.md)** - System design principles
 
 ## 📋 Documentation Status
 
@@ -130,7 +129,7 @@ See the [Daemon Mode Guide](features/daemon-mode.md) for complete documentation.
 
 ## 🤝 Contributing
 
-This documentation is maintained as part of the ssmtp-mailer project. To contribute:
+This documentation is maintained as part of the simple-smtp-mailer project. To contribute:
 
 1. **Fork the repository**
 2. **Make your changes** to the documentation
@@ -143,4 +142,4 @@ This documentation is licensed under the Apache License, Version 2.0. See the [L
 
 ---
 
-*For updates and contributions, please visit our [GitHub repository](https://github.com/blburns/ssmtp-mailer).*
+*For updates and contributions, please visit our [GitHub repository](https://github.com/blburns/simple-smtp-mailer).*

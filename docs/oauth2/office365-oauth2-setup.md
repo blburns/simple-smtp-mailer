@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide covers setting up OAuth2 authentication for Office 365 and Microsoft 365 with ssmtp-mailer. Microsoft's modern authentication system uses OAuth2 for secure, token-based access to email services.
+This guide covers setting up OAuth2 authentication for Office 365 and Microsoft 365 with simple-smtp-mailer. Microsoft's modern authentication system uses OAuth2 for secure, token-based access to email services.
 
 ## 🔐 Authentication Methods
 
@@ -106,7 +106,7 @@ python3 tools/oauth2-helper/python/office365-oauth2-helper.py
    - `refresh_token` (long-lived, for renewing access)
    - `expires_in` (seconds until access token expires)
 
-### Step 3: Using Tokens in ssmtp-mailer
+### Step 3: Using Tokens in simple-smtp-mailer
 
 #### 3.1 Configuration
 ```json
@@ -222,7 +222,7 @@ curl -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
 openssl s_client -connect smtp.office365.com:587 -starttls smtp
 
 # Test with your mailer application
-ssmtp-mailer test
+simple-smtp-mailer test
 ```
 
 ### 3. Monitor Usage
@@ -301,7 +301,7 @@ ssmtp-mailer test
 ### Community Resources
 - [Microsoft Q&A](https://docs.microsoft.com/en-us/answers/)
 - [Stack Overflow](https://stackoverflow.com/questions/tagged/azure-active-directory)
-- [GitHub Issues](https://github.com/blburns/ssmtp-mailer/issues)
+- [GitHub Issues](https://github.com/blburns/simple-smtp-mailer/issues)
 
 ## 📋 Summary
 

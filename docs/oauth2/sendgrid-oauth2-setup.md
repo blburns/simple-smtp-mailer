@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide covers setting up OAuth2 authentication for SendGrid with ssmtp-mailer. SendGrid is a popular email delivery service that provides reliable email infrastructure for transactional and marketing emails.
+This guide covers setting up OAuth2 authentication for SendGrid with simple-smtp-mailer. SendGrid is a popular email delivery service that provides reliable email infrastructure for transactional and marketing emails.
 
 ## 🔐 Authentication Methods
 
@@ -92,7 +92,7 @@ python3 tools/oauth2-helper/python/sendgrid-oauth2-helper.py
    - `refresh_token` (long-lived, for renewing access)
    - `expires_in` (seconds until access token expires)
 
-### Step 3: Using Tokens in ssmtp-mailer
+### Step 3: Using Tokens in simple-smtp-mailer
 
 #### 3.1 Configuration
 ```json
@@ -240,7 +240,7 @@ curl -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
 openssl s_client -connect smtp.sendgrid.net:587 -starttls smtp
 
 # Test with your mailer application
-ssmtp-mailer test
+simple-smtp-mailer test
 ```
 
 ### 3. Monitor Usage
@@ -321,7 +321,7 @@ ssmtp-mailer test
 ### Community Resources
 - [SendGrid Community](https://community.sendgrid.com/)
 - [Stack Overflow](https://stackoverflow.com/questions/tagged/sendgrid)
-- [GitHub Issues](https://github.com/blburns/ssmtp-mailer/issues)
+- [GitHub Issues](https://github.com/blburns/simple-smtp-mailer/issues)
 
 ### Related Tools
 - [SendGrid Email Testing](https://sendgrid.com/docs/ui/sending-email/test-email/)

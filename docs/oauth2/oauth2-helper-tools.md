@@ -2,7 +2,7 @@
 
 ## Overview
 
-ssmtp-mailer includes comprehensive OAuth2 helper tools that automate the process of setting up OAuth2 authentication for various email providers. These tools handle the entire OAuth2 flow, from authorization to token generation and storage.
+simple-smtp-mailer includes comprehensive OAuth2 helper tools that automate the process of setting up OAuth2 authentication for various email providers. These tools handle the entire OAuth2 flow, from authorization to token generation and storage.
 
 ## 🛠️ Available Tools
 
@@ -195,7 +195,7 @@ curl -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
 ### Test SMTP Connection
 ```bash
 # Test with your mailer application
-ssmtp-mailer test
+simple-smtp-mailer test
 
 # Or test manually with openssl
 openssl s_client -connect smtp.gmail.com:587 -starttls smtp
@@ -262,10 +262,10 @@ python3 tools/oauth2-helper/oauth2-helper.py gmail \
     --non-interactive
 ```
 
-## 🔗 Integration with ssmtp-mailer
+## 🔗 Integration with simple-smtp-mailer
 
 ### Configuration Files
-Use the generated tokens in your ssmtp-mailer configuration:
+Use the generated tokens in your simple-smtp-mailer configuration:
 
 ```json
 {
@@ -308,10 +308,10 @@ For detailed setup instructions for each provider:
 ## 🔄 Token Refresh
 
 ### Automatic Refresh
-ssmtp-mailer automatically handles token refresh using the refresh token:
+simple-smtp-mailer automatically handles token refresh using the refresh token:
 
 1. **Access token expires** (usually 1 hour)
-2. **ssmtp-mailer detects** expiration
+2. **simple-smtp-mailer detects** expiration
 3. **Uses refresh token** to get new access token
 4. **Continues operation** seamlessly
 
@@ -329,7 +329,7 @@ The OAuth2 helper tools provide a complete solution for setting up OAuth2 authen
 - ✅ **Multiple provider support** (8 providers)
 - ✅ **Cross-platform compatibility**
 - ✅ **Secure token management**
-- ✅ **Easy integration** with ssmtp-mailer
+- ✅ **Easy integration** with simple-smtp-mailer
 - ✅ **Comprehensive error handling**
 
 **Start with**: `python3 tools/oauth2-helper/oauth2-helper.py --list`

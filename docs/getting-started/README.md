@@ -1,6 +1,6 @@
-# Getting Started with ssmtp-mailer
+# Getting Started with simple-smtp-mailer
 
-Welcome to ssmtp-mailer! This guide will help you get started with installation and basic configuration.
+Welcome to simple-smtp-mailer! This guide will help you get started with installation and basic configuration.
 
 ## 🚀 Quick Start Options
 
@@ -11,8 +11,8 @@ Install pre-built packages for your platform:
 - **[Windows](../installation/windows.md)** - Windows installer
 
 ### Option 2: Build from Source
-Build ssmtp-mailer from source code:
-- **[Development Guide](../development/README.md)** - Complete build instructions
+Build simple-smtp-mailer from source code:
+- **[Development Guide](../development/build-scripts.md)** - Complete build instructions
 - **[Build Scripts](../development/build-scripts.md)** - Automated build processes
 
 ## 🔧 Prerequisites
@@ -41,7 +41,7 @@ Build ssmtp-mailer from source code:
 
 ### During Installation
 - [ ] **Download** appropriate package for your platform
-- [ ] **Install** ssmtp-mailer system-wide
+- [ ] **Install** simple-smtp-mailer system-wide
 - [ ] **Verify installation** with basic commands
 - [ ] **Set up OAuth2** authentication
 - [ ] **Configure email relay** settings
@@ -62,20 +62,20 @@ Build ssmtp-mailer from source code:
 4. **Use OAuth2 helpers** for authentication
 
 ### For Developers
-1. **Review** [Architecture Overview](../architecture/README.md)
-2. **Build from source** using [Development Guide](../development/README.md)
+1. **Review** [Architecture Overview](../configuration/relay-architecture.md)
+2. **Build from source** using [Development Guide](../development/build-scripts.md)
 3. **Customize configuration** for your needs
 4. **Contribute** to the project
 
 ### For System Administrators
-1. **Plan deployment** using [Architecture Guide](../architecture/README.md)
+1. **Plan deployment** using [Architecture Guide](../configuration/relay-architecture.md)
 2. **Install on target systems** following [Installation Guides](../installation/README.md)
-3. **Configure for production** using [Configuration Guides](../configuration/README.md)
+3. **Configure for production** using [Configuration Guides](../configuration/dns-setup.md)
 4. **Set up monitoring** and maintenance procedures
 
 ### For Enterprise Users
 1. **Review** [OAuth2 Security](../oauth2/oauth2-security.md) best practices
-2. **Set up service accounts** using [Service Account Guide](../configuration/service-accounts.md)
+2. **Set up service accounts** using [Service Account Guide](../configuration/service-account-setup-guide.md)
 3. **Configure domain-wide delegation** for Google Workspace
 4. **Implement monitoring** and alerting systems
 
@@ -115,14 +115,14 @@ Configure secure authentication:
 
 ### 3. Configuration
 Set up your email relay system:
-- **[Configuration Overview](../configuration/README.md)**
-- **[SSL/TLS Setup](../configuration/ssl-setup.md)**
+- **[Configuration Overview](../configuration/dns-setup.md)**
+- **[SSL/TLS Setup](../configuration/ssl-setup-with-certbot.md)**
 - **[DNS Configuration](../configuration/dns-setup.md)**
 
 ### 4. Architecture
 Understand system design:
-- **[Architecture Overview](../architecture/README.md)**
-- **[Relay Setup](../architecture/relay-setup.md)**
+- **[Architecture Overview](../configuration/relay-architecture.md)**
+- **[Relay Setup](../configuration/relay-setup-guide.md)**
 - **[System Design](../architecture/relay-architecture.md)**
 
 ## 🆘 Getting Help
@@ -159,7 +159,7 @@ Understand system design:
 - **Enterprise environments** with compliance needs
 
 ### Q: Can I use this in production?
-**A**: Yes! ssmtp-mailer is designed for:
+**A**: Yes! simple-smtp-mailer is designed for:
 - **Production email relay** systems
 - **High-volume** email sending
 - **Enterprise** deployments
@@ -174,4 +174,4 @@ Understand system design:
 
 ---
 
-*Ready to get started? Choose your platform from the [Installation Guides](../installation/README.md) and begin your ssmtp-mailer journey!*
+*Ready to get started? Choose your platform from the [Installation Guides](../installation/README.md) and begin your simple-smtp-mailer journey!*

@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide covers building the ssmtp-mailer application on Linux systems. The application is designed to work on most modern Linux distributions and can be built using either CMake or the provided build scripts.
+This guide covers building the simple-smtp-mailer application on Linux systems. The application is designed to work on most modern Linux distributions and can be built using either CMake or the provided build scripts.
 
 ## Prerequisites
 
@@ -81,8 +81,8 @@ The project includes build scripts that handle dependencies and build configurat
 #### Quick Build
 ```bash
 # Clone the repository
-git clone https://github.com/your-repo/ssmtp-mailer.git
-cd ssmtp-mailer
+git clone https://github.com/your-repo/simple-smtp-mailer.git
+cd simple-smtp-mailer
 
 # Make build script executable
 chmod +x scripts/build-linux.sh
@@ -158,7 +158,7 @@ sudo apt build-dep .
 dpkg-buildpackage -b -uc -us
 
 # Install the package
-sudo dpkg -i ../ssmtp-mailer_*.deb
+sudo dpkg -i ../simple-smtp-mailer_*.deb
 ```
 
 #### RPM Package (CentOS/RHEL/Fedora)
@@ -172,7 +172,7 @@ sudo dnf install rpm-build rpmdevtools
 rpmdev-setuptree
 
 # Build RPM
-rpmbuild -ba packaging/rpm/ssmtp-mailer.spec
+rpmbuild -ba packaging/rpm/simple-smtp-mailer.spec
 ```
 
 ## Distribution-Specific Instructions
@@ -305,7 +305,7 @@ make -j$(nproc)
 ```bash
 cmake .. \
   -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_INSTALL_PREFIX=/opt/ssmtp-mailer \
+  -DCMAKE_INSTALL_PREFIX=/opt/simple-smtp-mailer \
   -DENABLE_TESTS=OFF \
   -DENABLE_DOCS=OFF
 ```
@@ -323,20 +323,20 @@ cmake .. \
 ```bash
 cmake .. \
   -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_INSTALL_PREFIX=/home/user/ssmtp-mailer \
-  -DCMAKE_INSTALL_SYSCONFDIR=/home/user/ssmtp-mailer/config \
-  -DCMAKE_INSTALL_LOCALSTATEDIR=/home/user/ssmtp-mailer/var
+  -DCMAKE_INSTALL_PREFIX=/home/user/simple-smtp-mailer \
+  -DCMAKE_INSTALL_SYSCONFDIR=/home/user/simple-smtp-mailer/config \
+  -DCMAKE_INSTALL_LOCALSTATEDIR=/home/user/simple-smtp-mailer/var
 ```
 
 ## Build Output
 
 ### Executables
-- `ssmtp-mailer` - Main application binary
-- `ssmtp-mailer-test` - Test suite (if enabled)
+- `simple-smtp-mailer` - Main application binary
+- `simple-smtp-mailer-test` - Test suite (if enabled)
 
 ### Libraries
-- `libssmtp-mailer.a` - Static library
-- `libssmtp-mailer.so` - Shared library (if enabled)
+- `libsimple-smtp-mailer.a` - Static library
+- `libsimple-smtp-mailer.so` - Shared library (if enabled)
 
 ### Configuration Files
 - Configuration examples in `config/` directory
@@ -350,10 +350,10 @@ cmake .. \
 sudo make install
 
 # Default installation paths:
-# - Binary: /usr/local/bin/ssmtp-mailer
-# - Config: /usr/local/etc/ssmtp-mailer/
+# - Binary: /usr/local/bin/simple-smtp-mailer
+# - Config: /usr/local/etc/simple-smtp-mailer/
 # - Libraries: /usr/local/lib/
-# - Headers: /usr/local/include/ssmtp-mailer/
+# - Headers: /usr/local/include/simple-smtp-mailer/
 ```
 
 ### User Installation
@@ -370,11 +370,11 @@ source ~/.bashrc
 ### Custom Installation
 ```bash
 # Install to custom location
-cmake .. -DCMAKE_INSTALL_PREFIX=/opt/ssmtp-mailer
+cmake .. -DCMAKE_INSTALL_PREFIX=/opt/simple-smtp-mailer
 make install
 
 # Create symlinks
-sudo ln -s /opt/ssmtp-mailer/bin/ssmtp-mailer /usr/local/bin/
+sudo ln -s /opt/simple-smtp-mailer/bin/simple-smtp-mailer /usr/local/bin/
 ```
 
 ## Post-Installation
@@ -382,35 +382,35 @@ sudo ln -s /opt/ssmtp-mailer/bin/ssmtp-mailer /usr/local/bin/
 ### Create Configuration Directory
 ```bash
 # Create configuration directory
-sudo mkdir -p /etc/ssmtp-mailer/{domains,users,mappings}
+sudo mkdir -p /etc/simple-smtp-mailer/{domains,users,mappings}
 
 # Set permissions
-sudo chown -R $USER:$USER /etc/ssmtp-mailer
+sudo chown -R $USER:$USER /etc/simple-smtp-mailer
 ```
 
 ### Systemd Service (Optional)
 ```bash
 # Copy systemd service file
-sudo cp packaging/systemd/ssmtp-mailer.service /etc/systemd/system/
+sudo cp packaging/systemd/simple-smtp-mailer.service /etc/systemd/system/
 
 # Enable and start service
-sudo systemctl enable ssmtp-mailer
-sudo systemctl start ssmtp-mailer
+sudo systemctl enable simple-smtp-mailer
+sudo systemctl start simple-smtp-mailer
 
 # Check status
-sudo systemctl status ssmtp-mailer
+sudo systemctl status simple-smtp-mailer
 ```
 
 ### Verify Installation
 ```bash
 # Check version
-ssmtp-mailer --version
+simple-smtp-mailer --version
 
 # Test configuration
-ssmtp-mailer config
+simple-smtp-mailer config
 
 # Test SMTP connection
-ssmtp-mailer test
+simple-smtp-mailer test
 ```
 
 ## Troubleshooting
@@ -528,12 +528,12 @@ cmake .. -DCMAKE_BUILD_TYPE=Release \
 ### Runtime Security
 ```bash
 # Run as non-root user
-sudo useradd -r -s /bin/false ssmtp-mailer
-sudo chown -R ssmtp-mailer:ssmtp-mailer /etc/ssmtp-mailer
+sudo useradd -r -s /bin/false simple-smtp-mailer
+sudo chown -R simple-smtp-mailer:simple-smtp-mailer /etc/simple-smtp-mailer
 
 # Set proper file permissions
-sudo chmod 755 /etc/ssmtp-mailer
-sudo chmod 600 /etc/ssmtp-mailer/*.conf
+sudo chmod 755 /etc/simple-smtp-mailer
+sudo chmod 600 /etc/simple-smtp-mailer/*.conf
 ```
 
 ## Maintenance

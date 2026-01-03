@@ -109,13 +109,13 @@ domain = domain1.com
 
 ```bash
 # Test configuration
-ssmtp-mailer config
+simple-smtp-mailer config
 
 # Test SMTP connection
-ssmtp-mailer test
+simple-smtp-mailer test
 
 # Send test email
-ssmtp-mailer send \
+simple-smtp-mailer send \
   --from contact-general@mailer.domain1.com \
   --to test@example.com \
   --subject "Test" \

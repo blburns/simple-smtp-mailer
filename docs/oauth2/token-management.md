@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide covers the complete lifecycle of OAuth2 tokens in ssmtp-mailer, from generation and storage to refresh and security. Proper token management is crucial for maintaining secure, uninterrupted email operations.
+This guide covers the complete lifecycle of OAuth2 tokens in simple-smtp-mailer, from generation and storage to refresh and security. Proper token management is crucial for maintaining secure, uninterrupted email operations.
 
 ## 🔑 Understanding OAuth2 Tokens
 
@@ -124,20 +124,20 @@ source .env
 #### HashiCorp Vault
 ```bash
 # Store tokens in Vault
-vault kv put secret/ssmtp-mailer/gmail \
+vault kv put secret/simple-smtp-mailer/gmail \
   client_id="your-client-id" \
   client_secret="your-client-secret" \
   refresh_token="your-refresh-token"
 
 # Retrieve tokens
-vault kv get secret/ssmtp-mailer/gmail
+vault kv get secret/simple-smtp-mailer/gmail
 ```
 
 #### AWS Secrets Manager
 ```bash
 # Store tokens in AWS Secrets Manager
 aws secretsmanager create-secret \
-  --name "ssmtp-mailer/gmail" \
+  --name "simple-smtp-mailer/gmail" \
   --description "Gmail OAuth2 tokens" \
   --secret-string '{
     "client_id": "your-client-id",
@@ -146,7 +146,7 @@ aws secretsmanager create-secret \
   }'
 
 # Retrieve tokens
-aws secretsmanager get-secret-value --secret-id "ssmtp-mailer/gmail"
+aws secretsmanager get-secret-value --secret-id "simple-smtp-mailer/gmail"
 ```
 
 #### Azure Key Vault
@@ -168,7 +168,7 @@ az keyvault secret set \
 ### Automatic Refresh
 
 #### How It Works
-1. **ssmtp-mailer detects** access token expiration
+1. **simple-smtp-mailer detects** access token expiration
 2. **Uses refresh token** to request new access token
 3. **Provider returns** new access token and optional new refresh token
 4. **Operation continues** seamlessly
@@ -269,17 +269,17 @@ history -d $((HISTCMD-1))
 #### User Permissions
 ```bash
 # Restrict file access to application user
-sudo chown ssmtp-mailer:ssmtp-mailer /etc/ssmtp-mailer/oauth2/
-sudo chmod 700 /etc/ssmtp-mailer/oauth2/
-sudo chmod 600 /etc/ssmtp-mailer/oauth2/*.json
+sudo chown simple-smtp-mailer:simple-smtp-mailer /etc/simple-smtp-mailer/oauth2/
+sudo chmod 700 /etc/simple-smtp-mailer/oauth2/
+sudo chmod 600 /etc/simple-smtp-mailer/oauth2/*.json
 ```
 
 #### Application Isolation
 ```bash
 # Run application in isolated environment
-sudo systemd-run --user --unit=ssmtp-mailer \
+sudo systemd-run --user --unit=simple-smtp-mailer \
   --setenv=GMAIL_REFRESH_TOKEN="your-token" \
-  ssmtp-mailer
+  simple-smtp-mailer
 ```
 
 ### Monitoring and Auditing
@@ -287,7 +287,7 @@ sudo systemd-run --user --unit=ssmtp-mailer \
 #### Token Usage Monitoring
 ```bash
 # Monitor token refresh attempts
-tail -f /var/log/ssmtp-mailer/oauth2.log
+tail -f /var/log/simple-smtp-mailer/oauth2.log
 
 # Check token expiration
 jq '.expires_at' oauth2_tokens.json | xargs -I {} date -d {} +%s
@@ -296,7 +296,7 @@ jq '.expires_at' oauth2_tokens.json | xargs -I {} date -d {} +%s
 #### Security Auditing
 ```bash
 # Audit file access
-sudo auditctl -w /etc/ssmtp-mailer/oauth2/ -p wa -k oauth2-access
+sudo auditctl -w /etc/simple-smtp-mailer/oauth2/ -p wa -k oauth2-access
 
 # Check for unauthorized access
 ausearch -k oauth2-access
@@ -349,12 +349,12 @@ python3 tools/oauth2-helper/oauth2-helper.py gmail
 
 # Update configuration files
 # Restart services
-sudo systemctl restart ssmtp-mailer
+sudo systemctl restart simple-smtp-mailer
 ```
 
 ## 🔧 Configuration Management
 
-### ssmtp-mailer Configuration
+### simple-smtp-mailer Configuration
 
 #### JSON Configuration
 ```json
@@ -471,8 +471,8 @@ curl -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
 
 #### Test SMTP Authentication
 ```bash
-# Test with ssmtp-mailer
-ssmtp-mailer test --config config.json
+# Test with simple-smtp-mailer
+simple-smtp-mailer test --config config.json
 
 # Test with manual SMTP
 openssl s_client -connect smtp.gmail.com:587 -starttls smtp
@@ -487,7 +487,7 @@ jq '.expires_at = "2024-01-01T00:00:00Z"' oauth2_tokens.json > temp.json
 mv temp.json oauth2_tokens.json
 
 # Test automatic refresh
-ssmtp-mailer send --config config.json
+simple-smtp-mailer send --config config.json
 ```
 
 ## 📋 Summary

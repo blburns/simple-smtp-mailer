@@ -2,7 +2,7 @@
 
 ## Overview
 
-ssmtp-mailer now supports three new email providers with OAuth2 authentication:
+simple-smtp-mailer now supports three new email providers with OAuth2 authentication:
 
 - **ProtonMail** - Privacy-focused email service
 - **Zoho Mail** - Business email and collaboration platform  
@@ -57,7 +57,7 @@ ProtonMail is a privacy-focused email service that provides end-to-end encryptio
 ### Usage Example
 
 ```cpp
-#include "ssmtp-mailer/api_client.hpp"
+#include "simple-smtp-mailer/api_client.hpp"
 
 // Create ProtonMail API client configuration
 ssmtp_mailer::APIClientConfig config;
@@ -80,7 +80,7 @@ ssmtp_mailer::Email email;
 email.from = "your-email@protonmail.com";
 email.to = {"recipient@example.com"};
 email.subject = "Test from ProtonMail";
-email.body = "Hello from ProtonMail via ssmtp-mailer!";
+email.body = "Hello from ProtonMail via simple-smtp-mailer!";
 
 auto result = client->sendEmail(email);
 if (result.success) {
@@ -137,7 +137,7 @@ Zoho Mail is a business email solution that provides professional email hosting 
 ### Usage Example
 
 ```cpp
-#include "ssmtp-mailer/api_client.hpp"
+#include "simple-smtp-mailer/api_client.hpp"
 
 // Create Zoho Mail API client configuration
 ssmtp_mailer::APIClientConfig config;
@@ -161,7 +161,7 @@ ssmtp_mailer::Email email;
 email.from = "your-email@yourdomain.com";
 email.to = {"recipient@example.com"};
 email.subject = "Test from Zoho Mail";
-email.body = "Hello from Zoho Mail via ssmtp-mailer!";
+email.body = "Hello from Zoho Mail via simple-smtp-mailer!";
 email.html_body = "<h1>Hello from Zoho Mail!</h1><p>This email supports HTML.</p>";
 
 auto result = client->sendEmail(email);
@@ -218,7 +218,7 @@ Fastmail is a professional email hosting service known for its speed, reliabilit
 ### Usage Example
 
 ```cpp
-#include "ssmtp-mailer/api_client.hpp"
+#include "simple-smtp-mailer/api_client.hpp"
 
 // Create Fastmail API client configuration
 ssmtp_mailer::APIClientConfig config;
@@ -243,7 +243,7 @@ email.from = "your-email@fastmail.com";
 email.to = {"recipient@example.com"};
 email.cc = {"cc@example.com"};
 email.subject = "Test from Fastmail";
-email.body = "Hello from Fastmail via ssmtp-mailer!";
+email.body = "Hello from Fastmail via simple-smtp-mailer!";
 email.html_body = "<h1>Hello from Fastmail!</h1><p>This email supports HTML.</p>";
 email.attachments = {"/path/to/document.pdf"};
 
@@ -328,9 +328,9 @@ Enable verbose logging for troubleshooting:
 
 ```bash
 # Test API connection with verbose output
-ssmtp-mailer --verbose test-api --provider protonmail
-ssmtp-mailer --verbose test-api --provider zoho-mail
-ssmtp-mailer --verbose test-api --provider fastmail
+simple-smtp-mailer --verbose test-api --provider protonmail
+simple-smtp-mailer --verbose test-api --provider zoho-mail
+simple-smtp-mailer --verbose test-api --provider fastmail
 ```
 
 ### Provider Support
@@ -389,6 +389,6 @@ The new OAuth2 integrations provide:
 - **Better Reliability** - Improved deliverability
 - **Professional Features** - Business-grade capabilities
 
-These integrations make ssmtp-mailer a comprehensive solution for both traditional SMTP and modern API-based email sending, with strong support for OAuth2 authentication across multiple providers.
+These integrations make simple-smtp-mailer a comprehensive solution for both traditional SMTP and modern API-based email sending, with strong support for OAuth2 authentication across multiple providers.
 
 For more information, see the [OAuth2 Overview](../oauth2/oauth2-overview.md) and [Provider-Specific Setup Guides](../oauth2/README.md).

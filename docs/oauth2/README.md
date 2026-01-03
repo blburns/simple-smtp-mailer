@@ -1,6 +1,6 @@
 # OAuth2 Authentication Documentation
 
-Welcome to the comprehensive OAuth2 authentication documentation for ssmtp-mailer. This section covers all supported email providers and their OAuth2 setup processes.
+Welcome to the comprehensive OAuth2 authentication documentation for simple-smtp-mailer. This section covers all supported email providers and their OAuth2 setup processes.
 
 ## 📚 Available Guides
 
@@ -52,8 +52,8 @@ python3 tools/oauth2-helper/oauth2-helper.py fastmail
 # ... and more
 ```
 
-### 4. Configure ssmtp-mailer
-Use the generated tokens in your ssmtp-mailer configuration.
+### 4. Configure simple-smtp-mailer
+Use the generated tokens in your simple-smtp-mailer configuration.
 
 ## 🔧 Prerequisites
 
@@ -88,4 +88,4 @@ OAuth2 credentials provide access to your email account. Always:
 
 ---
 
-*This documentation is maintained as part of the ssmtp-mailer project. For updates and contributions, please visit our [GitHub repository](https://github.com/blburns/ssmtp-mailer).*
+*This documentation is maintained as part of the simple-smtp-mailer project. For updates and contributions, please visit our [GitHub repository](https://github.com/blburns/simple-smtp-mailer).*

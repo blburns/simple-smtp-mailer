@@ -1,19 +1,19 @@
 # Quick Start Guide
 
-Get ssmtp-mailer up and running in under 10 minutes! This guide covers the fastest path to a working email relay system.
+Get simple-smtp-mailer up and running in under 10 minutes! This guide covers the fastest path to a working email relay system.
 
 ## ⚡ Super Quick Start (5 minutes)
 
-### 1. Install ssmtp-mailer
+### 1. Install simple-smtp-mailer
 ```bash
 # Linux (Ubuntu/Debian)
-curl -L -o ssmtp-mailer.deb "https://github.com/blburns/ssmtp-mailer/releases/latest/download/ssmtp-mailer_amd64.deb"
-sudo dpkg -i ssmtp-mailer.deb
+curl -L -o simple-smtp-mailer.deb "https://github.com/blburns/simple-smtp-mailer/releases/latest/download/simple-smtp-mailer_amd64.deb"
+sudo dpkg -i simple-smtp-mailer.deb
 
 # macOS
-curl -L -o ssmtp-mailer.dmg "https://github.com/blburns/ssmtp-mailer/releases/latest/download/ssmtp-mailer_macos.dmg"
-hdiutil attach ssmtp-mailer.dmg
-sudo installer -pkg /Volumes/ssmtp-mailer/ssmtp-mailer.pkg -target /
+curl -L -o simple-smtp-mailer.dmg "https://github.com/blburns/simple-smtp-mailer/releases/latest/download/simple-smtp-mailer_macos.dmg"
+hdiutil attach simple-smtp-mailer.dmg
+sudo installer -pkg /Volumes/simple-smtp-mailer/simple-smtp-mailer.pkg -target /
 ```
 
 ### 2. Set up OAuth2 (Gmail)
@@ -29,11 +29,11 @@ python3 tools/oauth2-helper/oauth2-helper.py gmail
 ### 3. Test Email Sending
 ```bash
 # Test with sample email
-ssmtp-mailer send \
+simple-smtp-mailer send \
   --from "your-email@gmail.com" \
   --to "test@example.com" \
-  --subject "Test from ssmtp-mailer" \
-  --body "Hello from ssmtp-mailer!"
+  --subject "Test from simple-smtp-mailer" \
+  --body "Hello from simple-smtp-mailer!"
 ```
 
 ## 🚀 Standard Quick Start (10 minutes)
@@ -43,8 +43,8 @@ ssmtp-mailer send \
 # Check Python version
 python3 --version  # Should be 3.6+
 
-# Check if ssmtp-mailer is installed
-ssmtp-mailer --version
+# Check if simple-smtp-mailer is installed
+simple-smtp-mailer --version
 
 # Check available OAuth2 providers
 python3 tools/oauth2-helper/oauth2-helper.py --list
@@ -70,16 +70,16 @@ python3 tools/oauth2-helper/oauth2-helper.py office365
 python3 tools/oauth2-helper/oauth2-helper.py sendgrid
 ```
 
-### Step 2: Configure ssmtp-mailer
+### Step 2: Configure simple-smtp-mailer
 
 #### Create Configuration File
 ```bash
 # Create config directory
-sudo mkdir -p /etc/ssmtp-mailer
-sudo chown $USER:$USER /etc/ssmtp-mailer
+sudo mkdir -p /etc/simple-smtp-mailer
+sudo chown $USER:$USER /etc/simple-smtp-mailer
 
 # Create configuration file
-cat > /etc/ssmtp-mailer/config.json << 'EOF'
+cat > /etc/simple-smtp-mailer/config.json << 'EOF'
 {
   "smtp": {
     "host": "smtp.gmail.com",
@@ -101,7 +101,7 @@ EOF
 ```bash
 # Replace placeholders with actual values from OAuth2 helper
 # Edit the config.json file with your credentials
-nano /etc/ssmtp-mailer/config.json
+nano /etc/simple-smtp-mailer/config.json
 ```
 
 ### Step 3: Test Your Setup
@@ -109,22 +109,22 @@ nano /etc/ssmtp-mailer/config.json
 #### Basic Test
 ```bash
 # Test configuration
-ssmtp-mailer test --config /etc/ssmtp-mailer/config.json
+simple-smtp-mailer test --config /etc/simple-smtp-mailer/config.json
 
 # Send test email
-ssmtp-mailer send \
-  --config /etc/ssmtp-mailer/config.json \
+simple-smtp-mailer send \
+  --config /etc/simple-smtp-mailer/config.json \
   --from "your-email@gmail.com" \
   --to "your-email@gmail.com" \
-  --subject "ssmtp-mailer Test" \
-  --body "If you receive this, ssmtp-mailer is working!"
+  --subject "simple-smtp-mailer Test" \
+  --body "If you receive this, simple-smtp-mailer is working!"
 ```
 
 #### Advanced Test
 ```bash
 # Test with HTML content
-ssmtp-mailer send \
-  --config /etc/ssmtp-mailer/config.json \
+simple-smtp-mailer send \
+  --config /etc/simple-smtp-mailer/config.json \
   --from "your-email@gmail.com" \
   --to "test@example.com" \
   --subject "HTML Test" \
@@ -132,8 +132,8 @@ ssmtp-mailer send \
   --html
 
 # Test with attachments
-ssmtp-mailer send \
-  --config /etc/ssmtp-mailer/config.json \
+simple-smtp-mailer send \
+  --config /etc/simple-smtp-mailer/config.json \
   --from "your-email@gmail.com" \
   --to "test@example.com" \
   --subject "Attachment Test" \
@@ -178,7 +178,7 @@ ssmtp-mailer send \
   },
   "logging": {
     "level": "info",
-    "file": "/var/log/ssmtp-mailer/ssmtp-mailer.log"
+    "file": "/var/log/simple-smtp-mailer/simple-smtp-mailer.log"
   },
   "queue": {
     "enabled": true,
@@ -193,28 +193,28 @@ ssmtp-mailer send \
 ### Configuration Testing
 ```bash
 # Test configuration syntax
-ssmtp-mailer test --config /etc/ssmtp-mailer/config.json
+simple-smtp-mailer test --config /etc/simple-smtp-mailer/config.json
 
 # Test SMTP connection
-ssmtp-mailer test --config /etc/ssmtp-mailer/config.json --smtp
+simple-smtp-mailer test --config /etc/simple-smtp-mailer/config.json --smtp
 
 # Test OAuth2 authentication
-ssmtp-mailer test --config /etc/ssmtp-mailer/config.json --auth
+simple-smtp-mailer test --config /etc/simple-smtp-mailer/config.json --auth
 ```
 
 ### Email Testing
 ```bash
 # Simple text email
-ssmtp-mailer send \
-  --config /etc/ssmtp-mailer/config.json \
+simple-smtp-mailer send \
+  --config /etc/simple-smtp-mailer/config.json \
   --from "your-email@gmail.com" \
   --to "test@example.com" \
   --subject "Test" \
   --body "Hello World"
 
 # HTML email
-ssmtp-mailer send \
-  --config /etc/ssmtp-mailer/config.json \
+simple-smtp-mailer send \
+  --config /etc/simple-smtp-mailer/config.json \
   --from "your-email@gmail.com" \
   --to "test@example.com" \
   --subject "HTML Test" \
@@ -222,8 +222,8 @@ ssmtp-mailer send \
   --html
 
 # Email with attachment
-ssmtp-mailer send \
-  --config /etc/ssmtp-mailer/config.json \
+simple-smtp-mailer send \
+  --config /etc/simple-smtp-mailer/config.json \
   --from "your-email@gmail.com" \
   --to "test@example.com" \
   --subject "File Test" \
@@ -233,12 +233,12 @@ ssmtp-mailer send \
 
 ## 🚨 Common Issues & Quick Fixes
 
-### "Command not found: ssmtp-mailer"
+### "Command not found: simple-smtp-mailer"
 ```bash
 # Add to PATH or use full path
 export PATH="/usr/local/bin:$PATH"
 # or
-/usr/local/bin/ssmtp-mailer --version
+/usr/local/bin/simple-smtp-mailer --version
 ```
 
 ### "OAuth2 authentication failed"
@@ -262,8 +262,8 @@ sudo ufw status
 ### "Permission denied"
 ```bash
 # Fix file permissions
-sudo chown $USER:$USER /etc/ssmtp-mailer/config.json
-chmod 600 /etc/ssmtp-mailer/config.json
+sudo chown $USER:$USER /etc/simple-smtp-mailer/config.json
+chmod 600 /etc/simple-smtp-mailer/config.json
 ```
 
 ## 📚 Next Steps
@@ -286,15 +286,15 @@ chmod 600 /etc/ssmtp-mailer/config.json
 ## 🆘 Need Help?
 
 ### Quick Troubleshooting
-1. **Check logs**: `tail -f /var/log/ssmtp-mailer/ssmtp-mailer.log`
-2. **Verify config**: `ssmtp-mailer test --config /etc/ssmtp-mailer/config.json`
+1. **Check logs**: `tail -f /var/log/simple-smtp-mailer/simple-smtp-mailer.log`
+2. **Verify config**: `simple-smtp-mailer test --config /etc/simple-smtp-mailer/config.json`
 3. **Test OAuth2**: Regenerate tokens if needed
 4. **Check network**: Verify connectivity to SMTP servers
 
 ### Documentation
 - **[Installation Guides](../installation/README.md)** - Platform-specific setup
 - **[OAuth2 Setup](../oauth2/README.md)** - Authentication configuration
-- **[Configuration Guide](../configuration/README.md)** - Advanced settings
+- **[Configuration Guide](../configuration/dns-setup.md)** - Advanced settings
 - **[Troubleshooting](../oauth2/oauth2-troubleshooting.md)** - Common issues
 
 ### Community Support
@@ -303,4 +303,4 @@ chmod 600 /etc/ssmtp-mailer/config.json
 
 ---
 
-*You're all set! ssmtp-mailer is now running and ready to send emails. For advanced configuration and production deployment, check out the [full documentation](../README.md).*
+*You're all set! simple-smtp-mailer is now running and ready to send emails. For advanced configuration and production deployment, check out the [full documentation](../README.md).*

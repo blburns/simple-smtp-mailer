@@ -1,6 +1,6 @@
-# SSL/TLS Quick Reference for ssmtp-mailer
+# SSL/TLS Quick Reference for simple-smtp-mailer
 
-Quick commands and configurations for SSL/TLS setup with Certbot and ssmtp-mailer.
+Quick commands and configurations for SSL/TLS setup with Certbot and simple-smtp-mailer.
 
 ## Quick Commands
 
@@ -58,9 +58,9 @@ sudo certbot renew
 
 ## Configuration Files
 
-### ssmtp-mailer SSL Configuration
+### simple-smtp-mailer SSL Configuration
 ```ini
-# /etc/ssmtp-mailer/ssmtp-mailer.conf
+# /etc/simple-smtp-mailer/simple-smtp-mailer.conf
 [smtp]
 host = mail.yourdomain.com
 port = 587
@@ -86,8 +86,8 @@ certbot renew --quiet --no-self-upgrade
 
 if [ $? -eq 0 ]; then
     if [ -f /var/lib/letsencrypt/.renewal_attempted ]; then
-        echo "Certificates renewed, reloading ssmtp-mailer..."
-        sudo systemctl reload ssmtp-mailer
+        echo "Certificates renewed, reloading simple-smtp-mailer..."
+        sudo systemctl reload simple-smtp-mailer
     fi
 fi
 ```
@@ -102,8 +102,8 @@ fi
 
 ### Test SSL Connection
 ```bash
-# Test with ssmtp-mailer
-ssmtp-mailer test --config /etc/ssmtp-mailer/ssmtp-mailer.conf
+# Test with simple-smtp-mailer
+simple-smtp-mailer test --config /etc/simple-smtp-mailer/simple-smtp-mailer.conf
 
 # Test with OpenSSL
 openssl s_client -connect mail.yourdomain.com:587 -starttls smtp
@@ -127,7 +127,7 @@ openssl x509 -in /etc/letsencrypt/live/mail.yourdomain.com/chain.pem -text -noou
 ```bash
 # Permission denied
 sudo chmod 640 /etc/letsencrypt/live/mail.yourdomain.com/privkey.pem
-sudo chown root:ssmtp-mailer /etc/letsencrypt/live/mail.yourdomain.com/privkey.pem
+sudo chown root:simple-smtp-mailer /etc/letsencrypt/live/mail.yourdomain.com/privkey.pem
 
 # Certificate expired
 sudo certbot renew --force-renewal
@@ -142,10 +142,10 @@ openssl s_client -connect mail.yourdomain.com:587 -starttls smtp -debug
 ### Debug Commands
 ```bash
 # Enable verbose logging
-ssmtp-mailer -V test --config /etc/ssmtp-mailer/ssmtp-mailer.conf
+simple-smtp-mailer -V test --config /etc/simple-smtp-mailer/simple-smtp-mailer.conf
 
 # Check system logs
-sudo journalctl -u ssmtp-mailer -f
+sudo journalctl -u simple-smtp-mailer -f
 
 # Check certificate details
 sudo certbot certificates --verbose
@@ -154,7 +154,7 @@ sudo certbot certificates --verbose
 ## Security Checklist
 
 - [ ] Private key permissions set to 640
-- [ ] Private key owned by root:ssmtp-mailer
+- [ ] Private key owned by root:simple-smtp-mailer
 - [ ] Certificate directory permissions set to 750
 - [ ] Automatic renewal configured and tested
 - [ ] Firewall rules configured for SMTP ports

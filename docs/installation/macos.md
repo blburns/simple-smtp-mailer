@@ -1,49 +1,49 @@
 # macOS Installation Guide
 
-This guide covers installing ssmtp-mailer on macOS systems using various methods and supporting both Intel and Apple Silicon Macs.
+This guide covers installing simple-smtp-mailer on macOS systems using various methods and supporting both Intel and Apple Silicon Macs.
 
 ## 🚀 Quick Installation
 
 ### DMG Installer (Recommended)
 ```bash
 # Download latest DMG package
-curl -L -o ssmtp-mailer.dmg "https://github.com/blburns/ssmtp-mailer/releases/latest/download/ssmtp-mailer_macos.dmg"
+curl -L -o simple-smtp-mailer.dmg "https://github.com/blburns/simple-smtp-mailer/releases/latest/download/simple-smtp-mailer_macos.dmg"
 
 # Mount DMG
-hdiutil attach ssmtp-mailer.dmg
+hdiutil attach simple-smtp-mailer.dmg
 
 # Install package
-sudo installer -pkg /Volumes/ssmtp-mailer/ssmtp-mailer.pkg -target /
+sudo installer -pkg /Volumes/simple-smtp-mailer/simple-smtp-mailer.pkg -target /
 
 # Unmount DMG
-hdiutil detach /Volumes/ssmtp-mailer
+hdiutil detach /Volumes/simple-smtp-mailer
 
 # Verify installation
-ssmtp-mailer --version
+simple-smtp-mailer --version
 ```
 
 ### Homebrew Installation
 ```bash
 # Add custom tap (if available)
-brew tap blburns/ssmtp-mailer
+brew tap blburns/simple-smtp-mailer
 
-# Install ssmtp-mailer
-brew install ssmtp-mailer
+# Install simple-smtp-mailer
+brew install simple-smtp-mailer
 
 # Verify installation
-ssmtp-mailer --version
+simple-smtp-mailer --version
 ```
 
 ### PKG Installer
 ```bash
 # Download latest PKG package
-curl -L -o ssmtp-mailer.pkg "https://github.com/blburns/ssmtp-mailer/releases/latest/download/ssmtp-mailer_macos.pkg"
+curl -L -o simple-smtp-mailer.pkg "https://github.com/blburns/simple-smtp-mailer/releases/latest/download/simple-smtp-mailer_macos.pkg"
 
 # Install package
-sudo installer -pkg ssmtp-mailer.pkg -target /
+sudo installer -pkg simple-smtp-mailer.pkg -target /
 
 # Verify installation
-ssmtp-mailer --version
+simple-smtp-mailer --version
 ```
 
 ## 📦 Package Installation
@@ -53,37 +53,37 @@ ssmtp-mailer --version
 #### Download and Install
 ```bash
 # Download latest release
-curl -L -o ssmtp-mailer.dmg "https://github.com/blburns/ssmtp-mailer/releases/latest/download/ssmtp-mailer_macos.dmg"
+curl -L -o simple-smtp-mailer.dmg "https://github.com/blburns/simple-smtp-mailer/releases/latest/download/simple-smtp-mailer_macos.dmg"
 
 # Mount DMG
-hdiutil attach ssmtp-mailer.dmg
+hdiutil attach simple-smtp-mailer.dmg
 
 # Install package
-sudo installer -pkg /Volumes/ssmtp-mailer/ssmtp-mailer.pkg -target /
+sudo installer -pkg /Volumes/simple-smtp-mailer/simple-smtp-mailer.pkg -target /
 
 # Unmount DMG
-hdiutil detach /Volumes/ssmtp-mailer
+hdiutil detach /Volumes/simple-smtp-mailer
 ```
 
 #### Verify Installation
 ```bash
 # Check version
-ssmtp-mailer --version
+simple-smtp-mailer --version
 
 # Check binary location
-which ssmtp-mailer
+which simple-smtp-mailer
 
 # Check package info
-pkgutil --info com.ssmtp-mailer.ssmtp-mailer
+pkgutil --info com.simple-smtp-mailer.simple-smtp-mailer
 ```
 
 #### Update Package
 ```bash
 # Remove old version
-sudo pkgutil --forget com.ssmtp-mailer.ssmtp-mailer
+sudo pkgutil --forget com.simple-smtp-mailer.simple-smtp-mailer
 
 # Install new version
-sudo installer -pkg ssmtp-mailer.pkg -target /
+sudo installer -pkg simple-smtp-mailer.pkg -target /
 ```
 
 ### PKG Installer
@@ -91,25 +91,25 @@ sudo installer -pkg ssmtp-mailer.pkg -target /
 #### Download and Install
 ```bash
 # Download latest release
-curl -L -o ssmtp-mailer.pkg "https://github.com/blburns/ssmtp-mailer/releases/latest/download/ssmtp-mailer_macos.pkg"
+curl -L -o simple-smtp-mailer.pkg "https://github.com/blburns/simple-smtp-mailer/releases/latest/download/simple-smtp-mailer_macos.pkg"
 
 # Install package
-sudo installer -pkg ssmtp-mailer.pkg -target /
+sudo installer -pkg simple-smtp-mailer.pkg -target /
 
 # Verify installation
-ssmtp-mailer --version
+simple-smtp-mailer --version
 ```
 
 #### Verify Installation
 ```bash
 # Check version
-ssmtp-mailer --version
+simple-smtp-mailer --version
 
 # Check binary location
-which ssmtp-mailer
+which simple-smtp-mailer
 
 # Check package info
-pkgutil --info com.ssmtp-mailer.ssmtp-mailer
+pkgutil --info com.simple-smtp-mailer.simple-smtp-mailer
 ```
 
 ### Homebrew Installation
@@ -126,20 +126,20 @@ else
     eval "$(/usr/local/bin/brew shellenv)"
 fi
 
-# Install ssmtp-mailer
-brew install ssmtp-mailer
+# Install simple-smtp-mailer
+brew install simple-smtp-mailer
 ```
 
 #### Verify Installation
 ```bash
 # Check version
-ssmtp-mailer --version
+simple-smtp-mailer --version
 
 # Check binary location
-which ssmtp-mailer
+which simple-smtp-mailer
 
 # Check Homebrew info
-brew info ssmtp-mailer
+brew info simple-smtp-mailer
 ```
 
 #### Update via Homebrew
@@ -147,8 +147,8 @@ brew info ssmtp-mailer
 # Update Homebrew
 brew update
 
-# Upgrade ssmtp-mailer
-brew upgrade ssmtp-mailer
+# Upgrade simple-smtp-mailer
+brew upgrade simple-smtp-mailer
 ```
 
 ## 🛠️ Build from Source
@@ -197,8 +197,8 @@ openssl version
 #### Method 1: Using Makefile (Recommended)
 ```bash
 # Clone the repository
-git clone https://github.com/blburns/ssmtp-mailer.git
-cd ssmtp-mailer
+git clone https://github.com/blburns/simple-smtp-mailer.git
+cd simple-smtp-mailer
 
 # Install dependencies
 make deps
@@ -214,8 +214,8 @@ make build-arm64      # Apple Silicon Macs only
 #### Method 2: Using macOS Build Script
 ```bash
 # Clone the repository
-git clone https://github.com/blburns/ssmtp-mailer.git
-cd ssmtp-mailer
+git clone https://github.com/blburns/simple-smtp-mailer.git
+cd simple-smtp-mailer
 
 # Make script executable
 chmod +x scripts/build-macos.sh
@@ -234,8 +234,8 @@ chmod +x scripts/build-macos.sh
 #### Method 3: Manual CMake Build
 ```bash
 # Clone the repository
-git clone https://github.com/blburns/ssmtp-mailer.git
-cd ssmtp-mailer
+git clone https://github.com/blburns/simple-smtp-mailer.git
+cd simple-smtp-mailer
 
 # Create build directory
 mkdir build && cd build
@@ -295,19 +295,19 @@ cmake .. -DCMAKE_C_FLAGS="$CFLAGS" -DCMAKE_CXX_FLAGS="$CXXFLAGS"
 ### Create Required Directories
 ```bash
 # Create configuration and log directories
-sudo mkdir -p /etc/ssmtp-mailer
-sudo mkdir -p /var/log/ssmtp-mailer
-sudo mkdir -p /var/spool/ssmtp-mailer
+sudo mkdir -p /etc/simple-smtp-mailer
+sudo mkdir -p /var/log/simple-smtp-mailer
+sudo mkdir -p /var/spool/simple-smtp-mailer
 
 # Set ownership
-sudo chown $USER:$USER /etc/ssmtp-mailer
-sudo chown $USER:$USER /var/log/ssmtp-mailer
-sudo chown $USER:$USER /var/spool/ssmtp-mailer
+sudo chown $USER:$USER /etc/simple-smtp-mailer
+sudo chown $USER:$USER /var/log/simple-smtp-mailer
+sudo chown $USER:$USER /var/spool/simple-smtp-mailer
 
 # Set permissions
-sudo chmod 755 /etc/ssmtp-mailer
-sudo chmod 755 /var/log/ssmtp-mailer
-sudo chmod 755 /var/spool/ssmtp-mailer
+sudo chmod 755 /etc/simple-smtp-mailer
+sudo chmod 755 /var/log/simple-smtp-mailer
+sudo chmod 755 /var/spool/simple-smtp-mailer
 ```
 
 ### Install OAuth2 Helper Tools
@@ -325,7 +325,7 @@ python3 tools/oauth2-helper/oauth2-helper.py gmail
 ### Basic Configuration
 ```bash
 # Create configuration file
-cat > /etc/ssmtp-mailer/config.json << 'EOF'
+cat > /etc/simple-smtp-mailer/config.json << 'EOF'
 {
   "smtp": {
     "host": "smtp.gmail.com",
@@ -343,7 +343,7 @@ cat > /etc/ssmtp-mailer/config.json << 'EOF'
 EOF
 
 # Set secure permissions
-chmod 600 /etc/ssmtp-mailer/config.json
+chmod 600 /etc/simple-smtp-mailer/config.json
 ```
 
 ## 🧪 Testing Installation
@@ -351,29 +351,29 @@ chmod 600 /etc/ssmtp-mailer/config.json
 ### Basic Tests
 ```bash
 # Test binary
-ssmtp-mailer --version
-ssmtp-mailer --help
+simple-smtp-mailer --version
+simple-smtp-mailer --help
 
 # Test configuration
-ssmtp-mailer test --config /etc/ssmtp-mailer/config.json
+simple-smtp-mailer test --config /etc/simple-smtp-mailer/config.json
 
 # Test SMTP connection
-ssmtp-mailer test --config /etc/ssmtp-mailer/config.json --smtp
+simple-smtp-mailer test --config /etc/simple-smtp-mailer/config.json --smtp
 ```
 
 ### Email Tests
 ```bash
 # Send test email
-ssmtp-mailer send \
-  --config /etc/ssmtp-mailer/config.json \
+simple-smtp-mailer send \
+  --config /etc/simple-smtp-mailer/config.json \
   --from "your-email@gmail.com" \
   --to "test@example.com" \
-  --subject "Test from ssmtp-mailer" \
-  --body "Hello from ssmtp-mailer!"
+  --subject "Test from simple-smtp-mailer" \
+  --body "Hello from simple-smtp-mailer!"
 
 # Test with HTML
-ssmtp-mailer send \
-  --config /etc/ssmtp-mailer/config.json \
+simple-smtp-mailer send \
+  --config /etc/simple-smtp-mailer/config.json \
   --from "your-email@gmail.com" \
   --to "test@example.com" \
   --subject "HTML Test" \
@@ -385,26 +385,26 @@ ssmtp-mailer send \
 
 ### Common Issues
 
-#### "Command not found: ssmtp-mailer"
+#### "Command not found: simple-smtp-mailer"
 ```bash
 # Check if binary exists
-ls -la /usr/local/bin/ssmtp-mailer
+ls -la /usr/local/bin/simple-smtp-mailer
 
 # Add to PATH
 export PATH="/usr/local/bin:$PATH"
 
 # Check package installation
-pkgutil --info com.ssmtp-mailer.ssmtp-mailer
+pkgutil --info com.simple-smtp-mailer.simple-smtp-mailer
 ```
 
 #### "Permission denied"
 ```bash
 # Fix ownership
-sudo chown $USER:$USER /etc/ssmtp-mailer/config.json
+sudo chown $USER:$USER /etc/simple-smtp-mailer/config.json
 
 # Fix permissions
-chmod 600 /etc/ssmtp-mailer/config.json
-chmod 755 /usr/local/bin/ssmtp-mailer
+chmod 600 /etc/simple-smtp-mailer/config.json
+chmod 755 /usr/local/bin/simple-smtp-mailer
 ```
 
 #### "Build failed"
@@ -459,21 +459,21 @@ uname -m
 arch
 
 # Check installed packages
-pkgutil --info com.ssmtp-mailer.ssmtp-mailer
+pkgutil --info com.simple-smtp-mailer.simple-smtp-mailer
 
 # Check file locations
-which ssmtp-mailer
-ls -la /usr/local/bin/ssmtp-mailer
+which simple-smtp-mailer
+ls -la /usr/local/bin/simple-smtp-mailer
 
 # Check configuration
-cat /etc/ssmtp-mailer/config.json
+cat /etc/simple-smtp-mailer/config.json
 ```
 
 ## 📚 Next Steps
 
 ### Configuration
-- **[Configuration Overview](../configuration/README.md)** - Understanding configuration options
-- **[SSL/TLS Setup](../configuration/ssl-setup.md)** - Secure email transmission
+- **[Configuration Overview](../configuration/dns-setup.md)** - Understanding configuration options
+- **[SSL/TLS Setup](../configuration/ssl-setup-with-certbot.md)** - Secure email transmission
 - **[DNS Configuration](../configuration/dns-setup.md)** - Email deliverability
 
 ### OAuth2 Setup
@@ -482,8 +482,8 @@ cat /etc/ssmtp-mailer/config.json
 - **[Office 365 Setup](../oauth2/office365-oauth2-setup.md)** - Office 365 OAuth2 configuration
 
 ### Architecture
-- **[Architecture Overview](../architecture/README.md)** - System design and components
-- **[Relay Setup](../architecture/relay-setup.md)** - Email relay configuration
+- **[Architecture Overview](../configuration/relay-architecture.md)** - System design and components
+- **[Relay Setup](../configuration/relay-setup-guide.md)** - Email relay configuration
 
 ## 🆘 Getting Help
 
@@ -504,4 +504,4 @@ cat /etc/ssmtp-mailer/config.json
 
 ---
 
-*ssmtp-mailer is now installed on your macOS system! Next, set up OAuth2 authentication and configure your email relay system.*
+*simple-smtp-mailer is now installed on your macOS system! Next, set up OAuth2 authentication and configure your email relay system.*

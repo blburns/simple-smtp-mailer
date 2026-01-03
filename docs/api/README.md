@@ -2,7 +2,7 @@
 
 ## Overview
 
-ssmtp-mailer now supports sending emails via REST APIs in addition to traditional SMTP. This provides several advantages:
+simple-smtp-mailer now supports sending emails via REST APIs in addition to traditional SMTP. This provides several advantages:
 
 - **Higher reliability** - API services have better deliverability
 - **Faster sending** - No need to establish SMTP connections
@@ -46,20 +46,20 @@ sender_name = Your Company Name
 
 ```bash
 # Send email via API
-ssmtp-mailer send-api --provider sendgrid \
+simple-smtp-mailer send-api --provider sendgrid \
   --from sender@yourdomain.com \
   --to recipient@example.com \
   --subject "Test Email" \
   --body "Hello from API!"
 
 # Test API connection
-ssmtp-mailer test-api --provider sendgrid
+simple-smtp-mailer test-api --provider sendgrid
 ```
 
 ### 3. Programmatic Usage
 
 ```cpp
-#include "ssmtp-mailer/unified_mailer.hpp"
+#include "simple-smtp-mailer/unified_mailer.hpp"
 
 // Create unified mailer configuration
 ssmtp_mailer::UnifiedMailerConfig config;
@@ -369,7 +369,7 @@ auto results = mailer.sendBatch(emails);
 Enable verbose logging to troubleshoot issues:
 
 ```bash
-ssmtp-mailer --verbose test-api --provider sendgrid
+simple-smtp-mailer --verbose test-api --provider sendgrid
 ```
 
 ### Provider Logs
@@ -413,7 +413,7 @@ password = app_password
 
 ### Overview
 
-ssmtp-mailer now supports three new email providers with OAuth2 authentication:
+simple-smtp-mailer now supports three new email providers with OAuth2 authentication:
 
 - **ProtonMail** - Privacy-focused email service with end-to-end encryption
 - **Zoho Mail** - Business email and collaboration platform

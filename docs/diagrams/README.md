@@ -34,6 +34,6 @@ To view these diagrams:
 ## Related Documentation
 
 - [User Guide](../getting-started/README.md) - Getting started guide
-- [Configuration Guide](../configuration/README.md) - Configuration options
+- [Configuration Guide](../configuration/dns-setup.md) - Configuration options
 - [API Documentation](../api/README.md) - API reference
 

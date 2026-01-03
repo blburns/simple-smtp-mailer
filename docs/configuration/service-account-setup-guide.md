@@ -137,7 +137,7 @@ This guide provides detailed, step-by-step instructions for setting up Google Se
 
 ```bash
 # Make sure you're in the project directory
-cd ~/ssmtp-mailer
+cd ~/simple-smtp-mailer
 
 # Make the script executable
 chmod +x scripts/setup-service-account.sh
@@ -160,8 +160,8 @@ The script will guide you through:
 ### 4.3 What the Script Creates
 
 ```
-/etc/ssmtp-mailer/
-├── ssmtp-mailer.conf              # Main configuration
+/etc/simple-smtp-mailer/
+├── simple-smtp-mailer.conf              # Main configuration
 ├── service-accounts/               # Service account JSON files
 │   └── domain1-service-account.json
 ├── domains/                        # Domain configurations
@@ -180,24 +180,24 @@ If you prefer to configure manually instead of using the script:
 ### 5.1 Create Configuration Directory
 
 ```bash
-sudo mkdir -p /etc/ssmtp-mailer/{service-accounts,domains,users,mappings}
-sudo chown -R $USER:$USER /etc/ssmtp-mailer
-sudo chmod 700 /etc/ssmtp-mailer/service-accounts
+sudo mkdir -p /etc/simple-smtp-mailer/{service-accounts,domains,users,mappings}
+sudo chown -R $USER:$USER /etc/simple-smtp-mailer
+sudo chmod 700 /etc/simple-smtp-mailer/service-accounts
 ```
 
 ### 5.2 Place Service Account JSON
 
 ```bash
 # Copy your downloaded JSON file
-cp ~/Downloads/your-service-account.json /etc/ssmtp-mailer/service-accounts/domain1-service-account.json
+cp ~/Downloads/your-service-account.json /etc/simple-smtp-mailer/service-accounts/domain1-service-account.json
 
 # Set secure permissions
-chmod 600 /etc/ssmtp-mailer/service-accounts/domain1-service-account.json
+chmod 600 /etc/simple-smtp-mailer/service-accounts/domain1-service-account.json
 ```
 
 ### 5.3 Create Domain Configuration
 
-Create `/etc/ssmtp-mailer/domains/domain1.com.conf`:
+Create `/etc/simple-smtp-mailer/domains/domain1.com.conf`:
 
 ```ini
 [domain:domain1.com]
@@ -207,7 +207,7 @@ smtp_port = 587
 
 # Service Account Authentication
 auth_method = SERVICE_ACCOUNT
-service_account_file = /etc/ssmtp-mailer/service-accounts/domain1-service-account.json
+service_account_file = /etc/simple-smtp-mailer/service-accounts/domain1-service-account.json
 service_account_user = mail-relay@domain1.com
 
 # Remote relay account (Gmail account being impersonated)
@@ -220,17 +220,17 @@ use_starttls = true
 
 ### 5.4 Create Main Configuration
 
-Create `/etc/ssmtp-mailer/ssmtp-mailer.conf`:
+Create `/etc/simple-smtp-mailer/simple-smtp-mailer.conf`:
 
 ```ini
 [global]
 default_hostname = mailer.domain1.com
 default_from = noreply@mailer.domain1.com
-config_dir = /etc/ssmtp-mailer
-domains_dir = /etc/ssmtp-mailer/domains
-users_dir = /etc/ssmtp-mailer/users
-mappings_dir = /etc/ssmtp-mailer/mappings
-log_file = /var/log/ssmtp-mailer.log
+config_dir = /etc/simple-smtp-mailer
+domains_dir = /etc/simple-smtp-mailer/domains
+users_dir = /etc/simple-smtp-mailer/users
+mappings_dir = /etc/simple-smtp-mailer/mappings
+log_file = /var/log/simple-smtp-mailer.log
 log_level = INFO
 max_connections = 10
 connection_timeout = 30
@@ -240,7 +240,7 @@ enable_rate_limiting = true
 rate_limit_per_minute = 100
 
 # Service Account Configuration
-service_accounts_dir = /etc/ssmtp-mailer/service-accounts
+service_accounts_dir = /etc/simple-smtp-mailer/service-accounts
 ```
 
 ## Step 6: Testing and Validation
@@ -249,20 +249,20 @@ service_accounts_dir = /etc/ssmtp-mailer/service-accounts
 
 ```bash
 # Test the configuration
-./bin/ssmtp-mailer config
+./bin/simple-smtp-mailer config
 
 # Test SMTP connections
-./bin/ssmtp-mailer test
+./bin/simple-smtp-mailer test
 
 # Check service account authentication
-./bin/ssmtp-mailer test --domain domain1.com
+./bin/simple-smtp-mailer test --domain domain1.com
 ```
 
 ### 6.2 Send Test Email
 
 ```bash
 # Send a test email
-./bin/ssmtp-mailer send \
+./bin/simple-smtp-mailer send \
   --from contact-general@mailer.domain1.com \
   --to test@example.com \
   --subject "Service Account Test" \
@@ -273,11 +273,11 @@ service_accounts_dir = /etc/ssmtp-mailer/service-accounts
 
 ```bash
 # Watch the logs in real-time
-tail -f /var/log/ssmtp-mailer.log
+tail -f /var/log/simple-smtp-mailer.log
 
 # Check for authentication success
-grep "Service Account" /var/log/ssmtp-mailer.log
-grep "JWT" /var/log/ssmtp-mailer.log
+grep "Service Account" /var/log/simple-smtp-mailer.log
+grep "JWT" /var/log/simple-smtp-mailer.log
 ```
 
 ## Step 7: Multiple Domain Setup
@@ -294,7 +294,7 @@ For multiple domains, repeat the process:
 ### 7.2 Example Multi-Domain Structure
 
 ```
-/etc/ssmtp-mailer/
+/etc/simple-smtp-mailer/
 ├── service-accounts/
 │   ├── domain1-service-account.json
 │   ├── domain2-service-account.json
@@ -317,13 +317,13 @@ Each domain can have different settings:
 # domain1.com.conf
 [domain:domain1.com]
 auth_method = SERVICE_ACCOUNT
-service_account_file = /etc/ssmtp-mailer/service-accounts/domain1-service-account.json
+service_account_file = /etc/simple-smtp-mailer/service-accounts/domain1-service-account.json
 service_account_user = mail-relay@domain1.com
 
 # domain2.com.conf
 [domain:domain2.com]
 auth_method = SERVICE_ACCOUNT
-service_account_file = /etc/ssmtp-mailer/service-accounts/domain2-service-account.json
+service_account_file = /etc/simple-smtp-mailer/service-accounts/domain2-service-account.json
 service_account_user = mail-relay@domain2.com
 ```
 
@@ -379,13 +379,13 @@ service_account_user = mail-relay@domain2.com
 
 ```bash
 # Check service account JSON validity
-cat /etc/ssmtp-mailer/service-accounts/domain1-service-account.json | jq .
+cat /etc/simple-smtp-mailer/service-accounts/domain1-service-account.json | jq .
 
 # Verify file permissions
-ls -la /etc/ssmtp-mailer/service-accounts/
+ls -la /etc/simple-smtp-mailer/service-accounts/
 
 # Test JWT creation manually
-./bin/ssmtp-mailer debug --service-account domain1.com
+./bin/simple-smtp-mailer debug --service-account domain1.com
 
 # Check Google Cloud Console logs
 # Go to: APIs & Services > Credentials > Service Accounts > [Your Account] > Logs
@@ -414,13 +414,13 @@ ls -la /etc/ssmtp-mailer/service-accounts/
 
 ```bash
 # Service account JSON files should be 600
-chmod 600 /etc/ssmtp-mailer/service-accounts/*.json
+chmod 600 /etc/simple-smtp-mailer/service-accounts/*.json
 
 # Configuration directory should be 700
-chmod 700 /etc/ssmtp-mailer/service-accounts/
+chmod 700 /etc/simple-smtp-mailer/service-accounts/
 
 # Only root or mail user should access
-sudo chown root:mail /etc/ssmtp-mailer/service-accounts/
+sudo chown root:mail /etc/simple-smtp-mailer/service-accounts/
 ```
 
 ### 2. Key Rotation
@@ -448,16 +448,16 @@ sudo chown root:mail /etc/ssmtp-mailer/service-accounts/
 ```bash
 # Daily monitoring script
 #!/bin/bash
-./bin/ssmtp-mailer test --domain domain1.com
-./bin/ssmtp-mailer test --domain domain2.com
-./bin/ssmtp-mailer test --domain domain3.com
+./bin/simple-smtp-mailer test --domain domain1.com
+./bin/simple-smtp-mailer test --domain domain2.com
+./bin/simple-smtp-mailer test --domain domain3.com
 ```
 
 ### 2. Log Rotation
 
 ```bash
-# Configure logrotate for /var/log/ssmtp-mailer.log
-/var/log/ssmtp-mailer.log {
+# Configure logrotate for /var/log/simple-smtp-mailer.log
+/var/log/simple-smtp-mailer.log {
     daily
     rotate 30
     compress

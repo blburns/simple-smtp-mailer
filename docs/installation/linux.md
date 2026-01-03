@@ -1,49 +1,49 @@
 # Linux Installation Guide
 
-This guide covers installing ssmtp-mailer on Linux systems using various methods and distributions.
+This guide covers installing simple-smtp-mailer on Linux systems using various methods and distributions.
 
 ## 🚀 Quick Installation
 
 ### Ubuntu/Debian (Recommended)
 ```bash
 # Download latest .deb package
-curl -L -o ssmtp-mailer.deb "https://github.com/blburns/ssmtp-mailer/releases/latest/download/ssmtp-mailer_amd64.deb"
+curl -L -o simple-smtp-mailer.deb "https://github.com/blburns/simple-smtp-mailer/releases/latest/download/simple-smtp-mailer_amd64.deb"
 
 # Install package
-sudo dpkg -i ssmtp-mailer.deb
+sudo dpkg -i simple-smtp-mailer.deb
 
 # Fix dependencies if needed
 sudo apt install -f
 
 # Verify installation
-ssmtp-mailer --version
+simple-smtp-mailer --version
 ```
 
 ### CentOS/RHEL/Rocky Linux
 ```bash
 # Download latest .rpm package
-curl -L -o ssmtp-mailer.rpm "https://github.com/blburns/ssmtp-mailer/releases/latest/download/ssmtp-mailer_x86_64.rpm"
+curl -L -o simple-smtp-mailer.rpm "https://github.com/blburns/simple-smtp-mailer/releases/latest/download/simple-smtp-mailer_x86_64.rpm"
 
 # Install package
-sudo rpm -i ssmtp-mailer.rpm
+sudo rpm -i simple-smtp-mailer.rpm
 
 # Verify installation
-ssmtp-mailer --version
+simple-smtp-mailer --version
 ```
 
 ### Generic Linux (.tar.gz)
 ```bash
 # Download latest .tar.gz package
-curl -L -o ssmtp-mailer.tar.gz "https://github.com/blburns/ssmtp-mailer/releases/latest/download/ssmtp-mailer_linux_x86_64.tar.gz"
+curl -L -o simple-smtp-mailer.tar.gz "https://github.com/blburns/simple-smtp-mailer/releases/latest/download/simple-smtp-mailer_linux_x86_64.tar.gz"
 
 # Extract package
-tar -xzf ssmtp-mailer.tar.gz
+tar -xzf simple-smtp-mailer.tar.gz
 
 # Move to system directory
-sudo mv ssmtp-mailer /usr/local/bin/
+sudo mv simple-smtp-mailer /usr/local/bin/
 
 # Verify installation
-ssmtp-mailer --version
+simple-smtp-mailer --version
 ```
 
 ## 📦 Package Installation
@@ -53,10 +53,10 @@ ssmtp-mailer --version
 #### Download and Install
 ```bash
 # Download latest release
-curl -L -o ssmtp-mailer.deb "https://github.com/blburns/ssmtp-mailer/releases/latest/download/ssmtp-mailer_amd64.deb"
+curl -L -o simple-smtp-mailer.deb "https://github.com/blburns/simple-smtp-mailer/releases/latest/download/simple-smtp-mailer_amd64.deb"
 
 # Install package
-sudo dpkg -i ssmtp-mailer.deb
+sudo dpkg -i simple-smtp-mailer.deb
 
 # Fix any dependency issues
 sudo apt install -f
@@ -65,22 +65,22 @@ sudo apt install -f
 #### Verify Installation
 ```bash
 # Check version
-ssmtp-mailer --version
+simple-smtp-mailer --version
 
 # Check binary location
-which ssmtp-mailer
+which simple-smtp-mailer
 
 # Check package status
-dpkg -l | grep ssmtp-mailer
+dpkg -l | grep simple-smtp-mailer
 ```
 
 #### Update Package
 ```bash
 # Remove old version
-sudo dpkg -r ssmtp-mailer
+sudo dpkg -r simple-smtp-mailer
 
 # Install new version
-sudo dpkg -i ssmtp-mailer.deb
+sudo dpkg -i simple-smtp-mailer.deb
 sudo apt install -f
 ```
 
@@ -89,35 +89,35 @@ sudo apt install -f
 #### Download and Install
 ```bash
 # Download latest release
-curl -L -o ssmtp-mailer.rpm "https://github.com/blburns/ssmtp-mailer/releases/latest/download/ssmtp-mailer_x86_64.rpm"
+curl -L -o simple-smtp-mailer.rpm "https://github.com/blburns/simple-smtp-mailer/releases/latest/download/simple-smtp-mailer_x86_64.rpm"
 
 # Install package
-sudo rpm -i ssmtp-mailer.rpm
+sudo rpm -i simple-smtp-mailer.rpm
 
 # Check for conflicts
-rpm -q ssmtp-mailer
+rpm -q simple-smtp-mailer
 ```
 
 #### Verify Installation
 ```bash
 # Check version
-ssmtp-mailer --version
+simple-smtp-mailer --version
 
 # Check binary location
-which ssmtp-mailer
+which simple-smtp-mailer
 
 # Check package info
-rpm -qi ssmtp-mailer
+rpm -qi simple-smtp-mailer
 ```
 
 #### Update Package
 ```bash
 # Upgrade package
-sudo rpm -U ssmtp-mailer.rpm
+sudo rpm -U simple-smtp-mailer.rpm
 
 # Or remove and reinstall
-sudo rpm -e ssmtp-mailer
-sudo rpm -i ssmtp-mailer.rpm
+sudo rpm -e simple-smtp-mailer
+sudo rpm -i simple-smtp-mailer.rpm
 ```
 
 ### Alpine Linux (.tar.gz)
@@ -125,25 +125,25 @@ sudo rpm -i ssmtp-mailer.rpm
 #### Download and Install
 ```bash
 # Download latest release
-curl -L -o ssmtp-mailer.tar.gz "https://github.com/blburns/ssmtp-mailer/releases/latest/download/ssmtp-mailer_linux_x86_64.tar.gz"
+curl -L -o simple-smtp-mailer.tar.gz "https://github.com/blburns/simple-smtp-mailer/releases/latest/download/simple-smtp-mailer_linux_x86_64.tar.gz"
 
 # Extract package
-tar -xzf ssmtp-mailer.tar.gz
+tar -xzf simple-smtp-mailer.tar.gz
 
 # Move to system directory
-sudo mv ssmtp-mailer /usr/local/bin/
+sudo mv simple-smtp-mailer /usr/local/bin/
 
 # Make executable
-sudo chmod +x /usr/local/bin/ssmtp-mailer
+sudo chmod +x /usr/local/bin/simple-smtp-mailer
 ```
 
 #### Verify Installation
 ```bash
 # Check version
-ssmtp-mailer --version
+simple-smtp-mailer --version
 
 # Check binary location
-which ssmtp-mailer
+which simple-smtp-mailer
 ```
 
 ## 🛠️ Build from Source
@@ -219,8 +219,8 @@ apk add pkgconfig
 #### Method 1: Using Build Scripts (Recommended)
 ```bash
 # Clone the repository
-git clone https://github.com/blburns/ssmtp-mailer.git
-cd ssmtp-mailer
+git clone https://github.com/blburns/simple-smtp-mailer.git
+cd simple-smtp-mailer
 
 # Make build script executable
 chmod +x scripts/build-linux.sh
@@ -244,8 +244,8 @@ chmod +x scripts/build-linux.sh
 #### Method 2: Manual CMake Build
 ```bash
 # Clone the repository
-git clone https://github.com/blburns/ssmtp-mailer.git
-cd ssmtp-mailer
+git clone https://github.com/blburns/simple-smtp-mailer.git
+cd simple-smtp-mailer
 
 # Create build directory
 mkdir build && cd build
@@ -298,19 +298,19 @@ cmake .. -DCMAKE_C_FLAGS="$CFLAGS" -DCMAKE_CXX_FLAGS="$CXXFLAGS"
 ### Create Required Directories
 ```bash
 # Create configuration and log directories
-sudo mkdir -p /etc/ssmtp-mailer
-sudo mkdir -p /var/log/ssmtp-mailer
-sudo mkdir -p /var/spool/ssmtp-mailer
+sudo mkdir -p /etc/simple-smtp-mailer
+sudo mkdir -p /var/log/simple-smtp-mailer
+sudo mkdir -p /var/spool/simple-smtp-mailer
 
 # Set ownership
-sudo chown $USER:$USER /etc/ssmtp-mailer
-sudo chown $USER:$USER /var/log/ssmtp-mailer
-sudo chown $USER:$USER /var/spool/ssmtp-mailer
+sudo chown $USER:$USER /etc/simple-smtp-mailer
+sudo chown $USER:$USER /var/log/simple-smtp-mailer
+sudo chown $USER:$USER /var/spool/simple-smtp-mailer
 
 # Set permissions
-sudo chmod 755 /etc/ssmtp-mailer
-sudo chmod 755 /var/log/ssmtp-mailer
-sudo chmod 755 /var/spool/ssmtp-mailer
+sudo chmod 755 /etc/simple-smtp-mailer
+sudo chmod 755 /var/log/simple-smtp-mailer
+sudo chmod 755 /var/spool/simple-smtp-mailer
 ```
 
 ### Install OAuth2 Helper Tools
@@ -328,7 +328,7 @@ python3 tools/oauth2-helper/oauth2-helper.py gmail
 ### Basic Configuration
 ```bash
 # Create configuration file
-cat > /etc/ssmtp-mailer/config.json << 'EOF'
+cat > /etc/simple-smtp-mailer/config.json << 'EOF'
 {
   "smtp": {
     "host": "smtp.gmail.com",
@@ -346,7 +346,7 @@ cat > /etc/ssmtp-mailer/config.json << 'EOF'
 EOF
 
 # Set secure permissions
-chmod 600 /etc/ssmtp-mailer/config.json
+chmod 600 /etc/simple-smtp-mailer/config.json
 ```
 
 ## 🧪 Testing Installation
@@ -354,29 +354,29 @@ chmod 600 /etc/ssmtp-mailer/config.json
 ### Basic Tests
 ```bash
 # Test binary
-ssmtp-mailer --version
-ssmtp-mailer --help
+simple-smtp-mailer --version
+simple-smtp-mailer --help
 
 # Test configuration
-ssmtp-mailer test --config /etc/ssmtp-mailer/config.json
+simple-smtp-mailer test --config /etc/simple-smtp-mailer/config.json
 
 # Test SMTP connection
-ssmtp-mailer test --config /etc/ssmtp-mailer/config.json --smtp
+simple-smtp-mailer test --config /etc/simple-smtp-mailer/config.json --smtp
 ```
 
 ### Email Tests
 ```bash
 # Send test email
-ssmtp-mailer send \
-  --config /etc/ssmtp-mailer/config.json \
+simple-smtp-mailer send \
+  --config /etc/simple-smtp-mailer/config.json \
   --from "your-email@gmail.com" \
   --to "test@example.com" \
-  --subject "Test from ssmtp-mailer" \
-  --body "Hello from ssmtp-mailer!"
+  --subject "Test from simple-smtp-mailer" \
+  --body "Hello from simple-smtp-mailer!"
 
 # Test with HTML
-ssmtp-mailer send \
-  --config /etc/ssmtp-mailer/config.json \
+simple-smtp-mailer send \
+  --config /etc/simple-smtp-mailer/config.json \
   --from "your-email@gmail.com" \
   --to "test@example.com" \
   --subject "HTML Test" \
@@ -388,27 +388,27 @@ ssmtp-mailer send \
 
 ### Common Issues
 
-#### "Command not found: ssmtp-mailer"
+#### "Command not found: simple-smtp-mailer"
 ```bash
 # Check if binary exists
-ls -la /usr/local/bin/ssmtp-mailer
+ls -la /usr/local/bin/simple-smtp-mailer
 
 # Add to PATH
 export PATH="/usr/local/bin:$PATH"
 
 # Check package installation
-dpkg -l | grep ssmtp-mailer  # Ubuntu/Debian
-rpm -q ssmtp-mailer          # CentOS/RHEL
+dpkg -l | grep simple-smtp-mailer  # Ubuntu/Debian
+rpm -q simple-smtp-mailer          # CentOS/RHEL
 ```
 
 #### "Permission denied"
 ```bash
 # Fix ownership
-sudo chown $USER:$USER /etc/ssmtp-mailer/config.json
+sudo chown $USER:$USER /etc/simple-smtp-mailer/config.json
 
 # Fix permissions
-chmod 600 /etc/ssmtp-mailer/config.json
-chmod 755 /usr/local/bin/ssmtp-mailer
+chmod 600 /etc/simple-smtp-mailer/config.json
+chmod 755 /usr/local/bin/simple-smtp-mailer
 ```
 
 #### "Build failed"
@@ -444,22 +444,22 @@ uname -a
 cat /etc/os-release
 
 # Check installed packages
-dpkg -l | grep ssmtp-mailer  # Ubuntu/Debian
-rpm -qa | grep ssmtp-mailer  # CentOS/RHEL
+dpkg -l | grep simple-smtp-mailer  # Ubuntu/Debian
+rpm -qa | grep simple-smtp-mailer  # CentOS/RHEL
 
 # Check file locations
-which ssmtp-mailer
-ls -la /usr/local/bin/ssmtp-mailer
+which simple-smtp-mailer
+ls -la /usr/local/bin/simple-smtp-mailer
 
 # Check configuration
-cat /etc/ssmtp-mailer/config.json
+cat /etc/simple-smtp-mailer/config.json
 ```
 
 ## 📚 Next Steps
 
 ### Configuration
-- **[Configuration Overview](../configuration/README.md)** - Understanding configuration options
-- **[SSL/TLS Setup](../configuration/ssl-setup.md)** - Secure email transmission
+- **[Configuration Overview](../configuration/dns-setup.md)** - Understanding configuration options
+- **[SSL/TLS Setup](../configuration/ssl-setup-with-certbot.md)** - Secure email transmission
 - **[DNS Configuration](../configuration/dns-setup.md)** - Email deliverability
 
 ### OAuth2 Setup
@@ -468,8 +468,8 @@ cat /etc/ssmtp-mailer/config.json
 - **[Office 365 Setup](../oauth2/office365-oauth2-setup.md)** - Office 365 OAuth2 configuration
 
 ### Architecture
-- **[Architecture Overview](../architecture/README.md)** - System design and components
-- **[Relay Setup](../architecture/relay-setup.md)** - Email relay configuration
+- **[Architecture Overview](../configuration/relay-architecture.md)** - System design and components
+- **[Relay Setup](../configuration/relay-setup-guide.md)** - Email relay configuration
 
 ## 🆘 Getting Help
 
@@ -490,4 +490,4 @@ cat /etc/ssmtp-mailer/config.json
 
 ---
 
-*ssmtp-mailer is now installed on your Linux system! Next, set up OAuth2 authentication and configure your email relay system.*
+*simple-smtp-mailer is now installed on your Linux system! Next, set up OAuth2 authentication and configure your email relay system.*

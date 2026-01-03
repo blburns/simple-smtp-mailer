@@ -1,6 +1,6 @@
-# SSL/TLS Setup with Certbot for ssmtp-mailer
+# SSL/TLS Setup with Certbot for simple-smtp-mailer
 
-This guide explains how to set up SSL/TLS certificates using Certbot (Let's Encrypt) for secure email sending with ssmtp-mailer.
+This guide explains how to set up SSL/TLS certificates using Certbot (Let's Encrypt) for secure email sending with simple-smtp-mailer.
 
 ## Table of Contents
 
@@ -8,16 +8,16 @@ This guide explains how to set up SSL/TLS certificates using Certbot (Let's Encr
 2. [Prerequisites](#prerequisites)
 3. [Installing Certbot](#installing-certbot)
 4. [Obtaining SSL Certificates](#obtaining-ssl-certificates)
-5. [Configuring ssmtp-mailer with SSL](#configuring-ssmtp-mailer-with-ssl)
+5. [Configuring simple-smtp-mailer with SSL](#configuring-simple-smtp-mailer-with-ssl)
 6. [Automating Certificate Renewal](#automating-certificate-renewal)
 7. [Troubleshooting](#troubleshooting)
 8. [Security Considerations](#security-considerations)
 
 ## Overview
 
-ssmtp-mailer supports SSL/TLS encryption for secure email transmission. When combined with Certbot and Let's Encrypt, you can obtain free, trusted SSL certificates that automatically renew, ensuring your email communications remain secure.
+simple-smtp-mailer supports SSL/TLS encryption for secure email transmission. When combined with Certbot and Let's Encrypt, you can obtain free, trusted SSL certificates that automatically renew, ensuring your email communications remain secure.
 
-**Benefits of using Certbot with ssmtp-mailer:**
+**Benefits of using Certbot with simple-smtp-mailer:**
 - Free SSL certificates from Let's Encrypt
 - Automatic certificate renewal
 - Trusted by all major email providers
@@ -31,7 +31,7 @@ Before proceeding, ensure you have:
 - A domain name pointing to your server
 - Root or sudo access to your server
 - Port 80 and 443 accessible for certificate validation
-- ssmtp-mailer installed and configured
+- simple-smtp-mailer installed and configured
 - Basic knowledge of Linux command line
 
 ## Installing Certbot
@@ -128,7 +128,7 @@ sudo certbot certonly --dns-cloudflare \
   -d mail.yourdomain.com
 ```
 
-## Configuring ssmtp-mailer with SSL
+## Configuring simple-smtp-mailer with SSL
 
 ### 1. Certificate Paths
 After obtaining certificates, note these paths:
@@ -141,11 +141,11 @@ After obtaining certificates, note these paths:
 └── chain.pem        # Intermediate certificates
 ```
 
-### 2. Update ssmtp-mailer Configuration
-Edit your ssmtp-mailer configuration file:
+### 2. Update simple-smtp-mailer Configuration
+Edit your simple-smtp-mailer configuration file:
 
 ```ini
-# /etc/ssmtp-mailer/ssmtp-mailer.conf
+# /etc/simple-smtp-mailer/simple-smtp-mailer.conf
 
 [smtp]
 host = mail.yourdomain.com
@@ -165,28 +165,28 @@ verify_peer_name = true
 
 ### 3. Set Proper Permissions
 ```bash
-# Create ssmtp-mailer group if it doesn't exist
-sudo groupadd ssmtp-mailer
+# Create simple-smtp-mailer group if it doesn't exist
+sudo groupadd simple-smtp-mailer
 
 # Add your user to the group
-sudo usermod -a -G ssmtp-mailer $USER
+sudo usermod -a -G simple-smtp-mailer $USER
 
 # Set proper permissions for certificate files
 sudo chmod 640 /etc/letsencrypt/live/mail.yourdomain.com/privkey.pem
-sudo chown root:ssmtp-mailer /etc/letsencrypt/live/mail.yourdomain.com/privkey.pem
+sudo chown root:simple-smtp-mailer /etc/letsencrypt/live/mail.yourdomain.com/privkey.pem
 
 # Allow group read access to certificate directory
 sudo chmod 750 /etc/letsencrypt/live/mail.yourdomain.com/
-sudo chown root:ssmtp-mailer /etc/letsencrypt/live/mail.yourdomain.com/
+sudo chown root:simple-smtp-mailer /etc/letsencrypt/live/mail.yourdomain.com/
 ```
 
 ### 4. Test SSL Configuration
 ```bash
 # Test SSL connection
-ssmtp-mailer test --config /etc/ssmtp-mailer/ssmtp-mailer.conf
+simple-smtp-mailer test --config /etc/simple-smtp-mailer/simple-smtp-mailer.conf
 
 # Test with verbose output
-ssmtp-mailer -V test --config /etc/ssmtp-mailer/ssmtp-mailer.conf
+simple-smtp-mailer -V test --config /etc/simple-smtp-mailer/simple-smtp-mailer.conf
 ```
 
 ## Automating Certificate Renewal
@@ -213,14 +213,14 @@ Add this content:
 # Renew SSL certificates
 certbot renew --quiet --no-self-upgrade
 
-# Reload ssmtp-mailer service if certificates were renewed
+# Reload simple-smtp-mailer service if certificates were renewed
 if [ $? -eq 0 ]; then
     # Check if certificates were actually renewed
     if [ -f /var/lib/letsencrypt/.renewal_attempted ]; then
-        echo "Certificates renewed, reloading ssmtp-mailer..."
-        sudo systemctl reload ssmtp-mailer
+        echo "Certificates renewed, reloading simple-smtp-mailer..."
+        sudo systemctl reload simple-smtp-mailer
         # Or restart if reload is not supported
-        # sudo systemctl restart ssmtp-mailer
+        # sudo systemctl restart simple-smtp-mailer
     fi
 fi
 ```
@@ -298,7 +298,7 @@ ls -la /etc/letsencrypt/live/mail.yourdomain.com/
 
 # Fix permissions if needed
 sudo chmod 640 /etc/letsencrypt/live/mail.yourdomain.com/privkey.pem
-sudo chown root:ssmtp-mailer /etc/letsencrypt/live/mail.yourdomain.com/privkey.pem
+sudo chown root:simple-smtp-mailer /etc/letsencrypt/live/mail.yourdomain.com/privkey.pem
 ```
 
 #### 2. Certificate Validation Failures
@@ -336,11 +336,11 @@ sudo certbot show --cert-name mail.yourdomain.com
 
 ### Debug Mode
 ```bash
-# Enable debug logging in ssmtp-mailer
-ssmtp-mailer -V test --config /etc/ssmtp-mailer/ssmtp-mailer.conf
+# Enable debug logging in simple-smtp-mailer
+simple-smtp-mailer -V test --config /etc/simple-smtp-mailer/simple-smtp-mailer.conf
 
 # Check system logs
-sudo journalctl -u ssmtp-mailer -f
+sudo journalctl -u simple-smtp-mailer -f
 
 # Check SSL/TLS handshake
 openssl s_client -connect mail.yourdomain.com:587 -starttls smtp -debug
@@ -361,7 +361,7 @@ openssl s_client -connect mail.yourdomain.com:587 -starttls smtp -debug
 - Use strong authentication methods
 
 ### 3. Best Practices
-- Regularly update Certbot and ssmtp-mailer
+- Regularly update Certbot and simple-smtp-mailer
 - Monitor certificate renewal logs
 - Have a backup plan for certificate failures
 - Test SSL configuration after any changes
@@ -422,13 +422,13 @@ ca_bundle = /opt/ssl/certs/chain.pem
 
 ## Conclusion
 
-Using Certbot with ssmtp-mailer provides a robust, secure, and cost-effective solution for SSL/TLS email encryption. The automatic renewal process ensures your certificates never expire, while the trusted Let's Encrypt CA ensures compatibility with all major email providers.
+Using Certbot with simple-smtp-mailer provides a robust, secure, and cost-effective solution for SSL/TLS email encryption. The automatic renewal process ensures your certificates never expire, while the trusted Let's Encrypt CA ensures compatibility with all major email providers.
 
 For additional support or questions, refer to:
 - [Certbot Documentation](https://certbot.eff.org/docs/)
 - [Let's Encrypt Documentation](https://letsencrypt.org/docs/)
-- [ssmtp-mailer Documentation](docs/)
-- [GitHub Issues](https://github.com/your-repo/ssmtp-mailer/issues)
+- [simple-smtp-mailer Documentation](docs/)
+- [GitHub Issues](https://github.com/your-repo/simple-smtp-mailer/issues)
 
 ---
 

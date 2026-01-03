@@ -1,6 +1,6 @@
 # Installation Guide
 
-Choose the right installation method for your platform and get ssmtp-mailer up and running quickly.
+Choose the right installation method for your platform and get simple-smtp-mailer up and running quickly.
 
 ## 🚀 Installation Methods
 
@@ -85,7 +85,7 @@ Choose the right installation method for your platform and get ssmtp-mailer up a
 
 ### During Installation
 - [ ] **Download** appropriate package or source code
-- [ ] **Install** ssmtp-mailer system-wide
+- [ ] **Install** simple-smtp-mailer system-wide
 - [ ] **Verify installation** with basic commands
 - [ ] **Set up OAuth2** authentication
 - [ ] **Configure basic settings** for your environment
@@ -127,7 +127,7 @@ Choose the right installation method for your platform and get ssmtp-mailer up a
 
 ### Daemon Mode (Recommended for Production)
 
-For production deployments, run ssmtp-mailer as a background daemon:
+For production deployments, run simple-smtp-mailer as a background daemon:
 
 ```bash
 # Start daemon
@@ -157,11 +157,11 @@ python3 tools/oauth2-helper/oauth2-helper.py office365
 ### Basic Configuration
 ```bash
 # Create configuration directory
-sudo mkdir -p /etc/ssmtp-mailer
-sudo chown $USER:$USER /etc/ssmtp-mailer
+sudo mkdir -p /etc/simple-smtp-mailer
+sudo chown $USER:$USER /etc/simple-smtp-mailer
 
 # Create basic configuration
-cat > /etc/ssmtp-mailer/config.json << 'EOF'
+cat > /etc/simple-smtp-mailer/config.json << 'EOF'
 {
   "smtp": {
     "host": "smtp.gmail.com",
@@ -182,15 +182,15 @@ EOF
 ### Testing Installation
 ```bash
 # Test configuration
-ssmtp-mailer test --config /etc/ssmtp-mailer/config.json
+simple-smtp-mailer test --config /etc/simple-smtp-mailer/config.json
 
 # Send test email
-ssmtp-mailer send \
-  --config /etc/ssmtp-mailer/config.json \
+simple-smtp-mailer send \
+  --config /etc/simple-smtp-mailer/config.json \
   --from "your-email@gmail.com" \
   --to "test@example.com" \
-  --subject "Test from ssmtp-mailer" \
-  --body "Hello from ssmtp-mailer!"
+  --subject "Test from simple-smtp-mailer" \
+  --body "Hello from simple-smtp-mailer!"
 ```
 
 ## 🚨 Common Installation Issues
@@ -202,8 +202,8 @@ sudo apt install -f  # Ubuntu/Debian
 sudo yum check  # CentOS/RHEL
 
 # Verify package integrity
-sha256sum ssmtp-mailer.deb
-rpm -K ssmtp-mailer.rpm
+sha256sum simple-smtp-mailer.deb
+rpm -K simple-smtp-mailer.rpm
 ```
 
 ### Build Failures
@@ -222,19 +222,19 @@ brew install cmake  # macOS
 ### Permission Issues
 ```bash
 # Fix ownership
-sudo chown -R $USER:$USER /etc/ssmtp-mailer
-sudo chown -R $USER:$USER /var/log/ssmtp-mailer
+sudo chown -R $USER:$USER /etc/simple-smtp-mailer
+sudo chown -R $USER:$USER /var/log/simple-smtp-mailer
 
 # Fix permissions
-chmod 600 /etc/ssmtp-mailer/*.json
-chmod 644 /var/log/ssmtp-mailer/*.log
+chmod 600 /etc/simple-smtp-mailer/*.json
+chmod 644 /var/log/simple-smtp-mailer/*.log
 ```
 
 ## 📚 Next Steps
 
 ### Configuration
-- **[Configuration Overview](../configuration/README.md)** - Understanding configuration options
-- **[SSL/TLS Setup](../configuration/ssl-setup.md)** - Secure email transmission
+- **[Configuration Overview](../configuration/dns-setup.md)** - Understanding configuration options
+- **[SSL/TLS Setup](../configuration/ssl-setup-with-certbot.md)** - Secure email transmission
 - **[DNS Configuration](../configuration/dns-setup.md)** - Email deliverability
 
 ### OAuth2 Setup
@@ -243,8 +243,8 @@ chmod 644 /var/log/ssmtp-mailer/*.log
 - **[Security Best Practices](../oauth2/oauth2-security.md)** - Security guidelines
 
 ### Architecture
-- **[Architecture Overview](../architecture/README.md)** - System design and components
-- **[Relay Setup](../architecture/relay-setup.md)** - Email relay configuration
+- **[Architecture Overview](../configuration/relay-architecture.md)** - System design and components
+- **[Relay Setup](../configuration/relay-setup-guide.md)** - Email relay configuration
 - **[System Design](../architecture/relay-architecture.md)** - Design principles
 
 ## 🆘 Getting Help
@@ -266,4 +266,4 @@ chmod 644 /var/log/ssmtp-mailer/*.log
 
 ---
 
-*Ready to install? Choose your platform from the guides below and get started with ssmtp-mailer!*
+*Ready to install? Choose your platform from the guides below and get started with simple-smtp-mailer!*

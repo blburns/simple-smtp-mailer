@@ -135,14 +135,14 @@ For each domain, generate an App Password:
 
 1. Go to [App Passwords](https://myaccount.google.com/apppasswords)
 2. Select "Mail" or "Other (Custom name)"
-3. Enter "ssmtp-mailer-domain1", "ssmtp-mailer-domain2", "ssmtp-mailer-domain3" as names
+3. Enter "simple-smtp-mailer-domain1", "simple-smtp-mailer-domain2", "simple-smtp-mailer-domain3" as names
 4. Copy the generated 16-character passwords
 5. Save these passwords securely
 
 **Required Gmail Accounts:**
-- `mail-relay@domain1.com` → App Password: `ssmtp-mailer-domain1`
-- `mail-relay@domain2.com` → App Password: `ssmtp-mailer-domain2`
-- `mail-relay@domain3.com` → App Password: `ssmtp-mailer-domain3`
+- `mail-relay@domain1.com` → App Password: `simple-smtp-mailer-domain1`
+- `mail-relay@domain2.com` → App Password: `simple-smtp-mailer-domain2`
+- `mail-relay@domain3.com` → App Password: `simple-smtp-mailer-domain3`
 
 ## Step 3: Install Mailer Application
 
@@ -150,8 +150,8 @@ For each domain, generate an App Password:
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-repo/ssmtp-mailer.git
-cd ssmtp-mailer
+git clone https://github.com/your-repo/simple-smtp-mailer.git
+cd simple-smtp-mailer
 
 # Build the application
 mkdir build && cd build
@@ -166,27 +166,27 @@ sudo make install
 
 ```bash
 # Create configuration directory
-sudo mkdir -p /etc/ssmtp-mailer/{domains,users,mappings}
+sudo mkdir -p /etc/simple-smtp-mailer/{domains,users,mappings}
 
 # Set permissions
-sudo chown -R $USER:$USER /etc/ssmtp-mailer
+sudo chown -R $USER:$USER /etc/simple-smtp-mailer
 ```
 
 ## Step 4: Configuration Files
 
 ### 4.1 Main Configuration
 
-Create `/etc/ssmtp-mailer/ssmtp-mailer.conf`:
+Create `/etc/simple-smtp-mailer/simple-smtp-mailer.conf`:
 
 ```ini
 [global]
 default_hostname = mailer.domain1.com
 default_from = noreply@mailer.domain1.com
-config_dir = /etc/ssmtp-mailer
-domains_dir = /etc/ssmtp-mailer/domains
-users_dir = /etc/ssmtp-mailer/users
-mappings_dir = /etc/ssmtp-mailer/mappings
-log_file = /var/log/ssmtp-mailer.log
+config_dir = /etc/simple-smtp-mailer
+domains_dir = /etc/simple-smtp-mailer/domains
+users_dir = /etc/simple-smtp-mailer/users
+mappings_dir = /etc/simple-smtp-mailer/mappings
+log_file = /var/log/simple-smtp-mailer.log
 log_level = INFO
 max_connections = 10
 connection_timeout = 30
@@ -200,7 +200,7 @@ rate_limit_per_minute = 100
 
 #### domain1.com Configuration
 
-Create `/etc/ssmtp-mailer/domains/domain1.com.conf`:
+Create `/etc/simple-smtp-mailer/domains/domain1.com.conf`:
 
 ```ini
 [domain:domain1.com]
@@ -215,7 +215,7 @@ use_ssl = false
 use_starttls = true
 ```
 
-Create `/etc/ssmtp-mailer/domains/mailer.domain1.com.conf`:
+Create `/etc/simple-smtp-mailer/domains/mailer.domain1.com.conf`:
 
 ```ini
 [domain:mailer.domain1.com]
@@ -230,7 +230,7 @@ use_starttls = false
 
 #### domain2.com Configuration
 
-Create `/etc/ssmtp-mailer/domains/domain2.com.conf`:
+Create `/etc/simple-smtp-mailer/domains/domain2.com.conf`:
 
 ```ini
 [domain:domain2.com]
@@ -245,7 +245,7 @@ use_ssl = false
 use_starttls = true
 ```
 
-Create `/etc/ssmtp-mailer/domains/mailer.domain2.com.conf`:
+Create `/etc/simple-smtp-mailer/domains/mailer.domain2.com.conf`:
 
 ```ini
 [domain:mailer.domain2.com]
@@ -260,7 +260,7 @@ use_starttls = false
 
 #### domain3.com Configuration
 
-Create `/etc/ssmtp-mailer/domains/domain3.com.conf`:
+Create `/etc/simple-smtp-mailer/domains/domain3.com.conf`:
 
 ```ini
 [domain:domain3.com]
@@ -275,7 +275,7 @@ use_ssl = false
 use_starttls = true
 ```
 
-Create `/etc/ssmtp-mailer/domains/mailer.domain3.com.conf`:
+Create `/etc/simple-smtp-mailer/domains/mailer.domain3.com.conf`:
 
 ```ini
 [domain:mailer.domain3.com]
@@ -292,7 +292,7 @@ use_starttls = false
 
 #### domain1.com Users
 
-Create `/etc/ssmtp-mailer/users/mail-relay@domain1.com.conf`:
+Create `/etc/simple-smtp-mailer/users/mail-relay@domain1.com.conf`:
 
 ```ini
 [user:mail-relay@domain1.com]
@@ -307,7 +307,7 @@ allowed_domains = domain1.com
 
 #### domain2.com Users
 
-Create `/etc/ssmtp-mailer/users/mail-relay@domain2.com.conf`:
+Create `/etc/simple-smtp-mailer/users/mail-relay@domain2.com.conf`:
 
 ```ini
 [user:mail-relay@domain2.com]
@@ -322,7 +322,7 @@ allowed_domains = domain2.com
 
 #### domain3.com Users
 
-Create `/etc/ssmtp-mailer/users/mail-relay@domain3.com.conf`:
+Create `/etc/simple-smtp-mailer/users/mail-relay@domain3.com.conf`:
 
 ```ini
 [user:mail-relay@domain3.com]
@@ -355,7 +355,7 @@ The mapping system works by defining patterns that automatically redirect emails
 
 #### domain1.com Mappings
 
-Create `/etc/ssmtp-mailer/mappings/domain1-mappings.conf`:
+Create `/etc/simple-smtp-mailer/mappings/domain1-mappings.conf`:
 
 ```ini
 [mapping:contact-general-domain1]
@@ -391,7 +391,7 @@ domain = domain1.com
 
 #### domain2.com Mappings
 
-Create `/etc/ssmtp-mailer/mappings/domain2-mappings.conf`:
+Create `/etc/simple-smtp-mailer/mappings/domain2-mappings.conf`:
 
 ```ini
 [mapping:contact-general-domain2]
@@ -427,7 +427,7 @@ domain = domain2.com
 
 #### domain3.com Mappings
 
-Create `/etc/ssmtp-mailer/mappings/domain3-mappings.conf`:
+Create `/etc/simple-smtp-mailer/mappings/domain3-mappings.conf`:
 
 ```ini
 [mapping:contact-general-domain3]
@@ -502,7 +502,7 @@ domain = domain1.com
 
 ```bash
 # Test the configuration
-ssmtp-mailer config
+simple-smtp-mailer config
 
 # Expected output:
 # Configuration Status:
@@ -517,9 +517,9 @@ ssmtp-mailer config
 
 ```bash
 # Test connection to Gmail for each domain
-ssmtp-mailer test --domain domain1.com
-ssmtp-mailer test --domain domain2.com
-ssmtp-mailer test --domain domain3.com
+simple-smtp-mailer test --domain domain1.com
+simple-smtp-mailer test --domain domain2.com
+simple-smtp-mailer test --domain domain3.com
 
 # Expected output for each:
 # Testing SMTP connection for domain1.com...
@@ -532,7 +532,7 @@ ssmtp-mailer test --domain domain3.com
 
 ```bash
 # Send a test email through domain1.com relay
-ssmtp-mailer send \
+simple-smtp-mailer send \
   --from contact-general@mailer.domain1.com \
   --to test@example.com \
   --subject "Test Email from domain1.com Relay" \
@@ -548,7 +548,7 @@ ssmtp-mailer send \
 
 ```bash
 # Send a test email through domain2.com relay
-ssmtp-mailer send \
+simple-smtp-mailer send \
   --from contact-support@mailer.domain2.com \
   --to test@example.com \
   --subject "Test Email from domain2.com Relay" \
@@ -559,7 +559,7 @@ ssmtp-mailer send \
 
 ```bash
 # Send a test email through domain3.com relay
-ssmtp-mailer send \
+simple-smtp-mailer send \
   --from contact-sales@mailer.domain3.com \
   --to test@example.com \
   --subject "Test Email from domain3.com Relay" \
@@ -570,18 +570,18 @@ ssmtp-mailer send \
 
 ### 6.1 Systemd Service
 
-Create `/etc/systemd/system/ssmtp-mailer.service`:
+Create `/etc/systemd/system/simple-smtp-mailer.service`:
 
 ```ini
 [Unit]
-Description=ssmtp-mailer Multi-Domain Relay Service
+Description=simple-smtp-mailer Multi-Domain Relay Service
 After=network.target
 
 [Service]
 Type=simple
-User=ssmtp-mailer
-Group=ssmtp-mailer
-ExecStart=/usr/local/bin/ssmtp-mailer
+User=simple-smtp-mailer
+Group=simple-smtp-mailer
+ExecStart=/usr/local/bin/simple-smtp-mailer
 Restart=always
 RestartSec=10
 
@@ -593,34 +593,34 @@ WantedBy=multi-user.target
 
 ```bash
 # Create user
-sudo useradd -r -s /bin/false ssmtp-mailer
+sudo useradd -r -s /bin/false simple-smtp-mailer
 
 # Set ownership
-sudo chown -R ssmtp-mailer:ssmtp-mailer /etc/ssmtp-mailer
+sudo chown -R simple-smtp-mailer:simple-smtp-mailer /etc/simple-smtp-mailer
 
 # Enable and start service
-sudo systemctl enable ssmtp-mailer
-sudo systemctl start ssmtp-mailer
+sudo systemctl enable simple-smtp-mailer
+sudo systemctl start simple-smtp-mailer
 
 # Check status
-sudo systemctl status ssmtp-mailer
+sudo systemctl status simple-smtp-mailer
 ```
 
 ### 6.3 Log Rotation
 
-Create `/etc/logrotate.d/ssmtp-mailer`:
+Create `/etc/logrotate.d/simple-smtp-mailer`:
 
 ```
-/var/log/ssmtp-mailer.log {
+/var/log/simple-smtp-mailer.log {
     daily
     missingok
     rotate 52
     compress
     delaycompress
     notifempty
-    create 644 ssmtp-mailer ssmtp-mailer
+    create 644 simple-smtp-mailer simple-smtp-mailer
     postrotate
-        systemctl reload ssmtp-mailer
+        systemctl reload simple-smtp-mailer
     endscript
 }
 ```
@@ -631,40 +631,40 @@ Create `/etc/logrotate.d/ssmtp-mailer`:
 
 ```bash
 # View real-time logs
-sudo tail -f /var/log/ssmtp-mailer.log
+sudo tail -f /var/log/simple-smtp-mailer.log
 
 # Check for errors
-sudo grep ERROR /var/log/ssmtp-mailer.log
+sudo grep ERROR /var/log/simple-smtp-mailer.log
 
 # Check domain-specific logs
-sudo grep "domain1.com" /var/log/ssmtp-mailer.log
-sudo grep "domain2.com" /var/log/ssmtp-mailer.log
-sudo grep "domain3.com" /var/log/ssmtp-mailer.log
+sudo grep "domain1.com" /var/log/simple-smtp-mailer.log
+sudo grep "domain2.com" /var/log/simple-smtp-mailer.log
+sudo grep "domain3.com" /var/log/simple-smtp-mailer.log
 ```
 
 ### 7.2 Monitor Service
 
 ```bash
 # Check service status
-sudo systemctl status ssmtp-mailer
+sudo systemctl status simple-smtp-mailer
 
 # Check service logs
-sudo journalctl -u ssmtp-mailer -f
+sudo journalctl -u simple-smtp-mailer -f
 ```
 
 ### 7.3 Monitor Relay Activity
 
 ```bash
 # Check successful relays
-sudo grep "Relay successful" /var/log/ssmtp-mailer.log
+sudo grep "Relay successful" /var/log/simple-smtp-mailer.log
 
 # Check failed relays
-sudo grep "Relay failed" /var/log/ssmtp-mailer.log
+sudo grep "Relay failed" /var/log/simple-smtp-mailer.log
 
 # Check domain statistics
-ssmtp-mailer stats --domain domain1.com
-ssmtp-mailer stats --domain domain2.com
-ssmtp-mailer stats --domain domain3.com
+simple-smtp-mailer stats --domain domain1.com
+simple-smtp-mailer stats --domain domain2.com
+simple-smtp-mailer stats --domain domain3.com
 ```
 
 ## Troubleshooting
@@ -709,16 +709,16 @@ nslookup smtp.gmail.com
 telnet smtp.gmail.com 587
 
 # Check configuration
-ssmtp-mailer config
+simple-smtp-mailer config
 
 # Test connections for each domain
-ssmtp-mailer test --domain domain1.com
-ssmtp-mailer test --domain domain2.com
-ssmtp-mailer test --domain domain3.com
+simple-smtp-mailer test --domain domain1.com
+simple-smtp-mailer test --domain domain2.com
+simple-smtp-mailer test --domain domain3.com
 
 # Verify mappings
-ssmtp-mailer mappings --list
-ssmtp-mailer mappings --test contact-general@mailer.domain1.com
+simple-smtp-mailer mappings --list
+simple-smtp-mailer mappings --test contact-general@mailer.domain1.com
 ```
 
 ## Security Considerations
@@ -782,7 +782,7 @@ ssmtp-mailer mappings --test contact-general@mailer.domain1.com
 
 For issues:
 
-1. Check logs: `/var/log/ssmtp-mailer.log`
+1. Check logs: `/var/log/simple-smtp-mailer.log`
 2. Verify DNS configuration for all domains
 3. Test SMTP connections manually for each domain
 4. Check Gmail account status for all relay accounts

@@ -1,6 +1,6 @@
 # Quick Setup: CentOS Custom Repository for EPEL 9 Packages
 
-This guide provides a quick way to set up custom YUM repositories on CentOS to access EPEL 9 packages needed for building ssmtp-mailer.
+This guide provides a quick way to set up custom YUM repositories on CentOS to access EPEL 9 packages needed for building simple-smtp-mailer.
 
 ## 🚀 **Quick Setup (Automated)**
 

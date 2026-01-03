@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide covers setting up OAuth2 authentication for Gmail and Google Workspace with ssmtp-mailer. Since Google has phased out App Passwords for many accounts, OAuth2 is now the recommended authentication method.
+This guide covers setting up OAuth2 authentication for Gmail and Google Workspace with simple-smtp-mailer. Since Google has phased out App Passwords for many accounts, OAuth2 is now the recommended authentication method.
 
 ## 🔐 Authentication Methods
 
@@ -101,7 +101,7 @@ python3 tools/oauth2-helper/python/gmail-oauth2-helper.py
    - `refresh_token` (long-lived, for renewing access)
    - `expires_in` (seconds until access token expires)
 
-### Step 3: Using Tokens in ssmtp-mailer
+### Step 3: Using Tokens in simple-smtp-mailer
 
 #### 3.1 Configuration
 ```json
@@ -229,7 +229,7 @@ curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
 openssl s_client -connect smtp.gmail.com:587 -starttls smtp
 
 # Test with your mailer application
-ssmtp-mailer test
+simple-smtp-mailer test
 ```
 
 ### 3. Monitor Usage
@@ -313,7 +313,7 @@ ssmtp-mailer test
 ### Community Resources
 - [Stack Overflow](https://stackoverflow.com/questions/tagged/oauth2+google)
 - [Google Cloud Community](https://cloud.google.com/community)
-- [GitHub Issues](https://github.com/blburns/ssmtp-mailer/issues)
+- [GitHub Issues](https://github.com/blburns/simple-smtp-mailer/issues)
 
 ## 📋 Summary
 

@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide provides comprehensive security best practices for implementing and managing OAuth2 authentication in ssmtp-mailer. Following these practices ensures your OAuth2 implementation remains secure against common threats and vulnerabilities.
+This guide provides comprehensive security best practices for implementing and managing OAuth2 authentication in simple-smtp-mailer. Following these practices ensures your OAuth2 implementation remains secure against common threats and vulnerabilities.
 
 ## 🚨 Security Threats and Risks
 
@@ -110,13 +110,13 @@ chown $USER:$USER config/secrets.json
 #### Access Control
 ```bash
 # Restrict access to credential files
-sudo chown ssmtp-mailer:ssmtp-mailer /etc/ssmtp-mailer/oauth2/
-sudo chmod 700 /etc/ssmtp-mailer/oauth2/
-sudo chmod 600 /etc/ssmtp-mailer/oauth2/*.json
+sudo chown simple-smtp-mailer:simple-smtp-mailer /etc/simple-smtp-mailer/oauth2/
+sudo chmod 700 /etc/simple-smtp-mailer/oauth2/
+sudo chmod 600 /etc/simple-smtp-mailer/oauth2/*.json
 
 # Use dedicated service account
-sudo useradd -r -s /bin/false ssmtp-mailer
-sudo chown ssmtp-mailer:ssmtp-mailer /etc/ssmtp-mailer/
+sudo useradd -r -s /bin/false simple-smtp-mailer
+sudo chown simple-smtp-mailer:simple-smtp-mailer /etc/simple-smtp-mailer/
 ```
 
 ### 3. Redirect URI Security
@@ -236,10 +236,10 @@ selected_scopes = scopes[user_preference]
 chmod 600 oauth2_tokens.json
 
 # Directory permissions: 700 (owner read/write/execute only)
-chmod 700 /etc/ssmtp-mailer/oauth2/
+chmod 700 /etc/simple-smtp-mailer/oauth2/
 
 # Ownership: dedicated service account
-sudo chown ssmtp-mailer:ssmtp-mailer /etc/ssmtp-mailer/oauth2/
+sudo chown simple-smtp-mailer:simple-smtp-mailer /etc/simple-smtp-mailer/oauth2/
 ```
 
 #### Token Encryption
@@ -398,7 +398,7 @@ fi
 #### Audit Trail
 ```bash
 # Enable system auditing
-sudo auditctl -w /etc/ssmtp-mailer/oauth2/ -p wa -k oauth2-access
+sudo auditctl -w /etc/simple-smtp-mailer/oauth2/ -p wa -k oauth2-access
 sudo auditctl -w /var/log/oauth2.log -p wa -k oauth2-logs
 
 # Review audit logs
@@ -471,7 +471,7 @@ echo "Updating configuration..."
 
 # 4. Restart services
 echo "Restarting services..."
-sudo systemctl restart ssmtp-mailer
+sudo systemctl restart simple-smtp-mailer
 
 echo "Emergency rotation complete!"
 ```

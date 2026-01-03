@@ -131,7 +131,7 @@ smtp.domain1.com.     IN A      173.194.76.109
 
 ## Configuration Files
 
-### 1. Main Configuration (`ssmtp-mailer.conf`)
+### 1. Main Configuration (`simple-smtp-mailer.conf`)
 
 ```ini
 [global]
@@ -142,14 +142,14 @@ default_hostname = mailer.domain1.com
 default_from = noreply@mailer.domain1.com
 
 # Configuration directory paths
-config_dir = /etc/ssmtp-mailer
-domains_dir = /etc/ssmtp-mailer/domains
-users_dir = /etc/ssmtp-mailer/users
-mappings_dir = /etc/ssmtp-mailer/mappings
-ssl_dir = /etc/ssmtp-mailer/ssl
+config_dir = /etc/simple-smtp-mailer
+domains_dir = /etc/simple-smtp-mailer/domains
+users_dir = /etc/simple-smtp-mailer/users
+mappings_dir = /etc/simple-smtp-mailer/mappings
+ssl_dir = /etc/simple-smtp-mailer/ssl
 
 # Logging configuration
-log_file = /var/log/ssmtp-mailer.log
+log_file = /var/log/simple-smtp-mailer.log
 log_level = INFO
 
 # Connection settings
@@ -247,7 +247,7 @@ allowed_domains = domain1.com
 ### 2. Generate App Password
 1. Go to [App Passwords](https://myaccount.google.com/apppasswords)
 2. Select "Mail" or "Other (Custom name)"
-3. Enter "ssmtp-mailer" as the name
+3. Enter "simple-smtp-mailer" as the name
 4. Copy the generated 16-character password
 5. Use this password in your configuration
 
@@ -287,10 +287,10 @@ telnet mailer.domain1.com 25
 ### 3. Test Email Relay
 ```bash
 # Test with the mailer application
-ssmtp-mailer test
+simple-smtp-mailer test
 
 # Send a test email
-ssmtp-mailer send \
+simple-smtp-mailer send \
   --from contact-general@mailer.domain1.com \
   --to test@example.com \
   --subject "Test Email" \
@@ -328,7 +328,7 @@ ufw allow from YOUR_TRUSTED_IPS to any port 25
 ## Monitoring & Logging
 
 ### 1. Log Files
-- `/var/log/ssmtp-mailer.log` - Application logs
+- `/var/log/simple-smtp-mailer.log` - Application logs
 - `/var/log/mail.log` - System mail logs
 - `/var/log/auth.log` - Authentication logs
 
@@ -371,13 +371,13 @@ ufw allow from YOUR_TRUSTED_IPS to any port 25
 ### Debug Commands
 ```bash
 # Check mailer status
-ssmtp-mailer config
+simple-smtp-mailer config
 
 # Test SMTP connection
-ssmtp-mailer test
+simple-smtp-mailer test
 
 # View logs
-tail -f /var/log/ssmtp-mailer.log
+tail -f /var/log/simple-smtp-mailer.log
 
 # Check DNS
 dig mailer.domain1.com
@@ -409,10 +409,10 @@ telnet smtp.gmail.com 587
 ### 1. Configuration Backup
 ```bash
 # Backup configuration
-tar -czf ssmtp-mailer-config-$(date +%Y%m%d).tar.gz /etc/ssmtp-mailer/
+tar -czf simple-smtp-mailer-config-$(date +%Y%m%d).tar.gz /etc/simple-smtp-mailer/
 
 # Backup logs
-tar -czf ssmtp-mailer-logs-$(date +%Y%m%d).tar.gz /var/log/ssmtp-mailer/
+tar -czf simple-smtp-mailer-logs-$(date +%Y%m%d).tar.gz /var/log/simple-smtp-mailer/
 ```
 
 ### 2. Recovery Procedures
