@@ -222,7 +222,7 @@ Special thanks to the open source community for the excellent tools and librarie
 - **Documentation**: [docs/](docs/) directory
 - **Issues**: [GitHub Issues](https://github.com/blburns/simple-smtp-mailer/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/blburns/simple-smtp-mailer/discussions)
-- **Email**: support@blburns.com
+- **Email**: support@example.com
 
 ## 📄 License
 

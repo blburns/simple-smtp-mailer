@@ -113,7 +113,7 @@ systemctl daemon-reload || true
 %license %{_datadir}/doc/%{name}/LICENSE
 
 %changelog
-* Wed Jan 01 2025 blburns <support@blburns.com> - 0.2.0-1
+* Wed Jan 01 2025 blburns <support@example.com> - 0.2.0-1
 - Initial package release
 - High-performance SMTP mailer with OAuth2 support
 - Queue management and multi-provider API support

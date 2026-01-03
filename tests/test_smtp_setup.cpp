@@ -70,7 +70,7 @@ public:
         std::cout << "Testing different SMTP configurations to find one that works..." << std::endl;
         std::cout << std::endl;
         
-        Email test_email("contact-general@mailer.domain2.com", "brandon@domain1.com", 
+        Email test_email("contact-general@mailer.domain2.com", "user@domain1.com", 
                         "Test Email from simple-smtp-mailer", 
                         "This is a test email to verify SMTP delivery is working!");
         

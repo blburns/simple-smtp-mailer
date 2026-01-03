@@ -317,7 +317,7 @@ if(ENABLE_PACKAGING)
     set(CPACK_PACKAGE_VENDOR "blburns")
     set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "High-performance SMTP mailer with queue management and OAuth2 support")
     set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
-    set(CPACK_PACKAGE_CONTACT "support@blburns.com")
+    set(CPACK_PACKAGE_CONTACT "support@example.com")
     set(CPACK_PACKAGE_HOMEPAGE_URL "https://github.com/blburns/simple-smtp-mailer")
 
     # Package files - set per platform to avoid conflicts
@@ -395,7 +395,7 @@ if(ENABLE_PACKAGING)
         endif()
 
         # DEB package settings
-        set(CPACK_DEBIAN_PACKAGE_MAINTAINER "blburns <support@blburns.com>")
+        set(CPACK_DEBIAN_PACKAGE_MAINTAINER "blburns <support@example.com>")
     set(CPACK_DEBIAN_PACKAGE_SECTION "mail")
     set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
         set(CPACK_DEBIAN_PACKAGE_DEPENDS "libssl3, libjsoncpp25, libcurl4")
