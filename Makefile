@@ -1,6 +1,6 @@
 # Makefile for simple-smtp-mailer
 # High-performance SMTP mailer with queue management and OAuth2 support
-# Copyright 2024 blburns <support@example.com>
+# Copyright 2024 blburns <support@blburns.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
