@@ -25,7 +25,7 @@ domain = domain1.com
 # Support Contact
 [mapping:contact-support]
 from_pattern = contact-support@mailer.domain1.com
-to_pattern = contact-support@blburns.com
+to_pattern = contact-support@domain1.com
 smtp_account = mail-relay@domain1.com
 domain = domain1.com
 
