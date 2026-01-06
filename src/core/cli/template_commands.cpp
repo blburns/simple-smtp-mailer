@@ -1,4 +1,5 @@
 #include "simple-smtp-mailer/cli_commands.hpp"
+#include "simple-smtp-mailer/config_utils.hpp"
 #include "../logging/logger.hpp"
 #include <iostream>
 #include <fstream>
@@ -366,6 +367,80 @@ CLIResult TemplateCommands::listAddressTemplates(const std::vector<std::string>&
             return CLIResult::error_result("Failed to list address templates: " + std::string(e.what()));
         }
     }
+
+CLIResult TemplateCommands::removeTemplate(const std::vector<std::string>& args) {
+    if (args.empty()) {
+        return CLIResult::error_result("Usage: template remove <name>");
+    }
+    
+    std::string name = args[0];
+    std::string config_dir = ConfigUtils::getConfigDirectory();
+    std::string templates_dir = config_dir + "/templates";
+    std::string config_file = templates_dir + "/" + name + ".conf";
+    
+    try {
+        if (!std::filesystem::exists(config_file)) {
+            return CLIResult::error_result("Template not found: " + name);
+        }
+        
+        if (!std::filesystem::remove(config_file)) {
+            return CLIResult::error_result("Failed to remove template: " + name);
+        }
+        
+        return CLIResult::success_result("Template '" + name + "' removed successfully");
+        
+    } catch (const std::exception& e) {
+        return CLIResult::error_result("Failed to remove template: " + std::string(e.what()));
+    }
+}
+
+CLIResult TemplateCommands::removeAddressTemplate(const std::vector<std::string>& args) {
+    if (args.empty()) {
+        return CLIResult::error_result("Usage: template address remove <pattern>");
+    }
+    
+    std::string pattern = args[0];
+    std::string config_dir = ConfigUtils::getConfigDirectory();
+    std::string templates_dir = config_dir + "/address-templates";
+    
+    // Find template file by pattern
+    try {
+        if (!std::filesystem::exists(templates_dir)) {
+            return CLIResult::error_result("Address template not found: " + pattern);
+        }
+        
+        bool found = false;
+        std::string config_file;
+        
+        for (const auto& entry : std::filesystem::directory_iterator(templates_dir)) {
+            if (entry.is_regular_file() && entry.path().extension() == ".conf") {
+                std::ifstream file(entry.path());
+                std::string line;
+                while (std::getline(file, line)) {
+                    if (line.find("pattern = " + pattern) != std::string::npos) {
+                        config_file = entry.path().string();
+                        found = true;
+                        break;
+                    }
+                }
+                if (found) break;
+            }
+        }
+        
+        if (!found) {
+            return CLIResult::error_result("Address template not found: " + pattern);
+        }
+        
+        if (!std::filesystem::remove(config_file)) {
+            return CLIResult::error_result("Failed to remove address template: " + pattern);
+        }
+        
+        return CLIResult::success_result("Address template '" + pattern + "' removed successfully");
+        
+    } catch (const std::exception& e) {
+        return CLIResult::error_result("Failed to remove address template: " + std::string(e.what()));
+    }
+}
 
 } // namespace ssmtp_mailer
 

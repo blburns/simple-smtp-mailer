@@ -224,6 +224,27 @@ void CLIManager::registerConfigCommands() {
         [](const std::vector<std::string>& args) -> CLIResult { return ConfigCommands::showDomain(args); }
     );
     
+    commands_["config-domain-remove"] = CLICommand(
+        "config-domain-remove",
+        "Remove a domain configuration",
+        "config domain remove <domain>",
+        [](const std::vector<std::string>& args) -> CLIResult { return ConfigCommands::removeDomain(args); }
+    );
+    
+    commands_["config-domain-enable"] = CLICommand(
+        "config-domain-enable",
+        "Enable a domain configuration",
+        "config domain enable <domain>",
+        [](const std::vector<std::string>& args) -> CLIResult { return ConfigCommands::enableDomain(args); }
+    );
+    
+    commands_["config-domain-disable"] = CLICommand(
+        "config-domain-disable",
+        "Disable a domain configuration",
+        "config domain disable <domain>",
+        [](const std::vector<std::string>& args) -> CLIResult { return ConfigCommands::disableDomain(args); }
+    );
+    
     // User management commands
     commands_["config-user-add"] = CLICommand(
         "config-user-add",
@@ -237,6 +258,34 @@ void CLIManager::registerConfigCommands() {
         "List all configured users",
         "config user list [--domain <domain>]",
         [](const std::vector<std::string>& args) -> CLIResult { return ConfigCommands::listUsers(args); }
+    );
+    
+    commands_["config-user-show"] = CLICommand(
+        "config-user-show",
+        "Show user configuration details",
+        "config user show <email>",
+        [](const std::vector<std::string>& args) -> CLIResult { return ConfigCommands::showUser(args); }
+    );
+    
+    commands_["config-user-remove"] = CLICommand(
+        "config-user-remove",
+        "Remove a user configuration",
+        "config user remove <email>",
+        [](const std::vector<std::string>& args) -> CLIResult { return ConfigCommands::removeUser(args); }
+    );
+    
+    commands_["config-user-enable"] = CLICommand(
+        "config-user-enable",
+        "Enable a user configuration",
+        "config user enable <email>",
+        [](const std::vector<std::string>& args) -> CLIResult { return ConfigCommands::enableUser(args); }
+    );
+    
+    commands_["config-user-disable"] = CLICommand(
+        "config-user-disable",
+        "Disable a user configuration",
+        "config user disable <email>",
+        [](const std::vector<std::string>& args) -> CLIResult { return ConfigCommands::disableUser(args); }
     );
     
     // Global configuration commands
@@ -307,6 +356,13 @@ void CLIManager::registerTemplateCommands() {
         [](const std::vector<std::string>& args) -> CLIResult { return TemplateCommands::showTemplate(args); }
     );
     
+    commands_["template-remove"] = CLICommand(
+        "template-remove",
+        "Remove an email template",
+        "template remove <name>",
+        [](const std::vector<std::string>& args) -> CLIResult { return TemplateCommands::removeTemplate(args); }
+    );
+    
     commands_["template-test"] = CLICommand(
         "template-test",
         "Test a template with sample data",
@@ -327,26 +383,49 @@ void CLIManager::registerTemplateCommands() {
         "template address list",
         [](const std::vector<std::string>& args) -> CLIResult { return TemplateCommands::listAddressTemplates(args); }
     );
+    
+    commands_["template-address-remove"] = CLICommand(
+        "template-address-remove",
+        "Remove an address template",
+        "template address remove <pattern>",
+        [](const std::vector<std::string>& args) -> CLIResult { return TemplateCommands::removeAddressTemplate(args); }
+    );
 }
 
 void CLIManager::registerAPICommands() {
     commands_["api-provider-add"] = CLICommand(
         "api-provider-add",
         "Add a new API provider configuration",
-        "api provider add <provider> --api-key <key> --sender <email>",
-        [](const std::vector<std::string>& args) -> CLIResult {
-            return CLIResult::success_result("API provider management not yet implemented");
-        }
+        "api provider add <provider> --api-key <key> --sender <email> [options]",
+        [](const std::vector<std::string>& args) -> CLIResult { return APICommands::addProvider(args); }
     );
     
     commands_["api-provider-list"] = CLICommand(
         "api-provider-list",
         "List all configured API providers",
         "api provider list",
-        [](const std::vector<std::string>& args) -> CLIResult {
-            std::cout << "API provider management not yet implemented\n";
-            return CLIResult::success_result();
-        }
+        [](const std::vector<std::string>& args) -> CLIResult { return APICommands::listProviders(args); }
+    );
+    
+    commands_["api-provider-show"] = CLICommand(
+        "api-provider-show",
+        "Show API provider configuration details",
+        "api provider show <provider>",
+        [](const std::vector<std::string>& args) -> CLIResult { return APICommands::showProvider(args); }
+    );
+    
+    commands_["api-provider-remove"] = CLICommand(
+        "api-provider-remove",
+        "Remove an API provider configuration",
+        "api provider remove <provider>",
+        [](const std::vector<std::string>& args) -> CLIResult { return APICommands::removeProvider(args); }
+    );
+    
+    commands_["api-provider-test"] = CLICommand(
+        "api-provider-test",
+        "Test API provider connection",
+        "api provider test <provider>",
+        [](const std::vector<std::string>& args) -> CLIResult { return APICommands::testProvider(args); }
     );
 }
 

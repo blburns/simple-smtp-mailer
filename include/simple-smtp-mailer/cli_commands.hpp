@@ -12,8 +12,15 @@ public:
     static CLIResult addDomain(const std::vector<std::string>& args);
     static CLIResult listDomains(const std::vector<std::string>& args);
     static CLIResult showDomain(const std::vector<std::string>& args);
+    static CLIResult removeDomain(const std::vector<std::string>& args);
+    static CLIResult enableDomain(const std::vector<std::string>& args);
+    static CLIResult disableDomain(const std::vector<std::string>& args);
     static CLIResult addUser(const std::vector<std::string>& args);
     static CLIResult listUsers(const std::vector<std::string>& args);
+    static CLIResult showUser(const std::vector<std::string>& args);
+    static CLIResult removeUser(const std::vector<std::string>& args);
+    static CLIResult enableUser(const std::vector<std::string>& args);
+    static CLIResult disableUser(const std::vector<std::string>& args);
     static CLIResult showGlobalConfig(const std::vector<std::string>& args);
 };
 
@@ -37,9 +44,11 @@ public:
     static CLIResult createTemplate(const std::vector<std::string>& args);
     static CLIResult listTemplates(const std::vector<std::string>& args);
     static CLIResult showTemplate(const std::vector<std::string>& args);
+    static CLIResult removeTemplate(const std::vector<std::string>& args);
     static CLIResult testTemplate(const std::vector<std::string>& args);
     static CLIResult createAddressTemplate(const std::vector<std::string>& args);
     static CLIResult listAddressTemplates(const std::vector<std::string>& args);
+    static CLIResult removeAddressTemplate(const std::vector<std::string>& args);
 };
 
 /**
@@ -51,6 +60,18 @@ public:
     static CLIResult testConnections(const std::vector<std::string>& args);
     static CLIResult backupConfig(const std::vector<std::string>& args);
     static CLIResult restoreConfig(const std::vector<std::string>& args);
+};
+
+/**
+ * @brief API provider command implementations
+ */
+class APICommands {
+public:
+    static CLIResult addProvider(const std::vector<std::string>& args);
+    static CLIResult listProviders(const std::vector<std::string>& args);
+    static CLIResult showProvider(const std::vector<std::string>& args);
+    static CLIResult removeProvider(const std::vector<std::string>& args);
+    static CLIResult testProvider(const std::vector<std::string>& args);
 };
 
 /**

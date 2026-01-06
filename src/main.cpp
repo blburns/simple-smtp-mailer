@@ -232,7 +232,7 @@ int main(int argc, char* argv[]) {
         args.push_back(argv[i]);
     }
     
-    // Parse global options
+    // Parse global options and build command args (non-option arguments)
     std::string config_file;
     std::string pid_file;
     bool verbose = false;
@@ -240,6 +240,8 @@ int main(int argc, char* argv[]) {
     bool stop_daemon = false;
     bool reload_daemon = false;
     bool status_daemon = false;
+    
+    std::vector<std::string> command_args;
     
     for (size_t i = 0; i < args.size(); ++i) {
         if (args[i] == "--help" || args[i] == "-h") {
@@ -272,6 +274,9 @@ int main(int argc, char* argv[]) {
             reload_daemon = true;
         } else if (args[i] == "--status") {
             status_daemon = true;
+        } else {
+            // Not a global option, add to command args
+            command_args.push_back(args[i]);
         }
     }
     
@@ -330,10 +335,114 @@ int main(int argc, char* argv[]) {
         return 0;
     }
     
-    std::string command = args[0];
+    // Check if we have a command
+    if (command_args.empty()) {
+        std::cerr << "Error: No command specified" << std::endl;
+        printUsage();
+        return 1;
+    }
+    
+    std::string command = command_args[0];
     
     try {
-        // Initialize mailer
+        // For CLI commands, we don't need to initialize the mailer
+        if (command == "cli") {
+            // Initialize CLI manager
+            ssmtp_mailer::CLIManager cli_manager;
+            if (!cli_manager.initialize()) {
+                std::cerr << "Error: Failed to initialize CLI manager" << std::endl;
+                return 1;
+            }
+            
+            // Parse CLI command - support both space-separated and hyphen-separated formats
+            if (command_args.size() < 2) {
+                cli_manager.printHelp();
+                return 0;
+            }
+            
+            // Build command string from remaining args (support nested commands like "config domain add")
+            std::string cli_command;
+            std::vector<std::string> cli_args;
+            
+            // Check if it's a hyphenated command (e.g., "config-domain-add")
+            if (command_args.size() >= 2 && command_args[1].find('-') != std::string::npos) {
+                // Hyphenated format: "cli config-domain-add domain --options"
+                cli_command = command_args[1];
+                cli_args = std::vector<std::string>(command_args.begin() + 2, command_args.end());
+            } else {
+                // Space-separated format: "cli config domain add domain --options"
+                // Try to find the command by checking registered commands
+                // We'll try progressively longer command combinations
+                
+                size_t best_match_end = 1;
+                std::string best_match;
+                
+                // Try commands of increasing length (1, 2, 3, 4 parts)
+                for (size_t len = 1; len <= 4 && (1 + len) <= command_args.size(); ++len) {
+                    std::vector<std::string> cmd_parts(command_args.begin() + 1, command_args.begin() + 1 + len);
+                    std::string test_cmd = cmd_parts[0];
+                    for (size_t i = 1; i < cmd_parts.size(); ++i) {
+                        test_cmd += "-" + cmd_parts[i];
+                    }
+                    
+                    // Check if this command exists
+                    if (cli_manager.commandExists(test_cmd)) {
+                        best_match = test_cmd;
+                        best_match_end = 1 + len;
+                        break;
+                    }
+                }
+                
+                if (best_match.empty()) {
+                    // No exact match found, use heuristic: stop at first option or likely positional arg
+                    size_t cmd_end = 1;
+                    for (size_t i = 1; i < command_args.size(); ++i) {
+                        if (command_args[i].substr(0, 2) == "--") {
+                            cmd_end = i;
+                            break;
+                        }
+                        // If it looks like a domain/email (contains @ or .), it's likely an argument
+                        if (i >= 2 && (command_args[i].find('@') != std::string::npos || 
+                                      (command_args[i].find('.') != std::string::npos && command_args[i].length() > 2))) {
+                            cmd_end = i;
+                            break;
+                        }
+                        cmd_end = i + 1;
+                    }
+                    
+                    std::vector<std::string> cmd_parts(command_args.begin() + 1, command_args.begin() + cmd_end);
+                    if (cmd_parts.empty()) {
+                        cli_manager.printHelp();
+                        return 0;
+                    }
+                    
+                    best_match = cmd_parts[0];
+                    for (size_t i = 1; i < cmd_parts.size(); ++i) {
+                        best_match += "-" + cmd_parts[i];
+                    }
+                    best_match_end = cmd_end;
+                }
+                
+                cli_command = best_match;
+                cli_args = std::vector<std::string>(command_args.begin() + best_match_end, command_args.end());
+            }
+            
+            // Execute CLI command
+            auto result = cli_manager.executeCommand(cli_command, cli_args);
+            
+            if (!result.success) {
+                std::cerr << "Error: " << result.message << std::endl;
+                return result.exit_code;
+            }
+            
+            if (!result.message.empty()) {
+                std::cout << result.message << std::endl;
+            }
+            
+            return 0;
+        }
+        
+        // Initialize mailer for other commands
         ssmtp_mailer::Mailer mailer(config_file);
         
         if (!mailer.isConfigured()) {
@@ -346,7 +455,7 @@ int main(int argc, char* argv[]) {
         
         if (command == "send") {
             // Parse send command arguments
-            std::vector<std::string> send_args(args.begin() + 1, args.end());
+            std::vector<std::string> send_args(command_args.begin() + 1, command_args.end());
             std::string from, to, subject, body, html_body;
             
             if (!parseSendCommand(send_args, from, to, subject, body, html_body)) {
@@ -404,7 +513,7 @@ int main(int argc, char* argv[]) {
             
         } else if (command == "send-api") {
             // Parse send-api command arguments
-            std::vector<std::string> send_args(args.begin() + 1, args.end());
+            std::vector<std::string> send_args(command_args.begin() + 1, command_args.end());
             std::string provider, from, to, subject, body, html_body;
             
             if (!parseSendAPICommand(send_args, provider, from, to, subject, body, html_body)) {
@@ -440,16 +549,16 @@ int main(int argc, char* argv[]) {
         } else if (command == "test-api") {
             logger.info("Testing API connection");
             
-            if (args.size() < 2) {
+            if (command_args.size() < 2) {
                 std::cerr << "Error: test-api requires --provider argument" << std::endl;
                 std::cerr << "Usage: test-api --provider PROVIDER" << std::endl;
                 return 1;
             }
             
             std::string provider;
-            for (size_t i = 1; i < args.size(); ++i) {
-                if (args[i] == "--provider" && i + 1 < args.size()) {
-                    provider = args[++i];
+            for (size_t i = 1; i < command_args.size(); ++i) {
+                if (command_args[i] == "--provider" && i + 1 < command_args.size()) {
+                    provider = command_args[++i];
                     break;
                 }
             }
@@ -476,13 +585,13 @@ int main(int argc, char* argv[]) {
         } else if (command == "queue") {
             logger.info("Queue management command");
             
-            if (args.size() < 2) {
+            if (command_args.size() < 2) {
                 std::cerr << "Error: Queue command requires subcommand" << std::endl;
                 std::cerr << "Usage: queue [start|stop|status|add|list|failed]" << std::endl;
                 return 1;
             }
             
-            std::string subcommand = args[1];
+            std::string subcommand = command_args[1];
             
             if (subcommand == "start") {
                 mailer.startQueue();
@@ -503,13 +612,13 @@ int main(int argc, char* argv[]) {
                 return 0;
                 
             } else if (subcommand == "add") {
-                if (args.size() < 6) {
+                if (command_args.size() < 6) {
                     std::cerr << "Error: Queue add requires --from, --to, --subject, --body" << std::endl;
                     std::cerr << "Usage: queue add --from EMAIL --to EMAIL --subject SUBJECT --body BODY" << std::endl;
                     return 1;
                 }
                 
-                std::vector<std::string> queue_args(args.begin() + 2, args.end());
+                std::vector<std::string> queue_args(command_args.begin() + 2, command_args.end());
                 std::string from, to, subject, body, html_body;
                 
                 if (!parseSendCommand(queue_args, from, to, subject, body, html_body)) {
@@ -548,37 +657,6 @@ int main(int argc, char* argv[]) {
                 std::cerr << "Usage: queue [start|stop|status|add|list|failed]" << std::endl;
                 return 1;
             }
-            
-        } else if (command == "cli") {
-            // Initialize CLI manager
-            ssmtp_mailer::CLIManager cli_manager;
-            if (!cli_manager.initialize()) {
-                std::cerr << "Error: Failed to initialize CLI manager" << std::endl;
-                return 1;
-            }
-            
-            // Parse CLI command
-            if (args.size() < 2) {
-                cli_manager.printHelp();
-                return 0;
-            }
-            
-            std::string cli_command = args[1];
-            std::vector<std::string> cli_args(args.begin() + 2, args.end());
-            
-            // Execute CLI command
-            auto result = cli_manager.executeCommand(cli_command, cli_args);
-            
-            if (!result.success) {
-                std::cerr << "Error: " << result.message << std::endl;
-                return result.exit_code;
-            }
-            
-            if (!result.message.empty()) {
-                std::cout << result.message << std::endl;
-            }
-            
-            return 0;
             
         } else {
             std::cerr << "Error: Unknown command: " << command << std::endl;

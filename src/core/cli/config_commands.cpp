@@ -379,6 +379,261 @@ CLIResult ConfigCommands::showGlobalConfig(const std::vector<std::string>& args)
     }
 }
 
+CLIResult ConfigCommands::removeDomain(const std::vector<std::string>& args) {
+    if (args.empty()) {
+        return CLIResult::error_result("Usage: config domain remove <domain>");
+    }
+    
+    std::string domain = args[0];
+    std::string config_file = ConfigUtils::getDomainsDirectory() + "/" + domain + ".conf";
+    
+    try {
+        if (!std::filesystem::exists(config_file)) {
+            return CLIResult::error_result("Domain configuration not found: " + domain);
+        }
+        
+        if (!std::filesystem::remove(config_file)) {
+            return CLIResult::error_result("Failed to remove domain configuration: " + domain);
+        }
+        
+        return CLIResult::success_result("Domain '" + domain + "' configuration removed successfully");
+        
+    } catch (const std::exception& e) {
+        return CLIResult::error_result("Failed to remove domain: " + std::string(e.what()));
+    }
+}
+
+CLIResult ConfigCommands::enableDomain(const std::vector<std::string>& args) {
+    if (args.empty()) {
+        return CLIResult::error_result("Usage: config domain enable <domain>");
+    }
+    
+    std::string domain = args[0];
+    std::string config_file = ConfigUtils::getDomainsDirectory() + "/" + domain + ".conf";
+    
+    try {
+        if (!std::filesystem::exists(config_file)) {
+            return CLIResult::error_result("Domain configuration not found: " + domain);
+        }
+        
+        // Read file, update enabled flag, write back
+        std::ifstream in_file(config_file);
+        std::vector<std::string> lines;
+        std::string line;
+        
+        while (std::getline(in_file, line)) {
+            if (line.find("enabled = ") != std::string::npos) {
+                lines.push_back("enabled = true\n");
+            } else {
+                lines.push_back(line + "\n");
+            }
+        }
+        in_file.close();
+        
+        std::ofstream out_file(config_file);
+        for (const auto& l : lines) {
+            out_file << l;
+        }
+        out_file.close();
+        
+        return CLIResult::success_result("Domain '" + domain + "' enabled successfully");
+        
+    } catch (const std::exception& e) {
+        return CLIResult::error_result("Failed to enable domain: " + std::string(e.what()));
+    }
+}
+
+CLIResult ConfigCommands::disableDomain(const std::vector<std::string>& args) {
+    if (args.empty()) {
+        return CLIResult::error_result("Usage: config domain disable <domain>");
+    }
+    
+    std::string domain = args[0];
+    std::string config_file = ConfigUtils::getDomainsDirectory() + "/" + domain + ".conf";
+    
+    try {
+        if (!std::filesystem::exists(config_file)) {
+            return CLIResult::error_result("Domain configuration not found: " + domain);
+        }
+        
+        // Read file, update enabled flag, write back
+        std::ifstream in_file(config_file);
+        std::vector<std::string> lines;
+        std::string line;
+        
+        while (std::getline(in_file, line)) {
+            if (line.find("enabled = ") != std::string::npos) {
+                lines.push_back("enabled = false\n");
+            } else {
+                lines.push_back(line + "\n");
+            }
+        }
+        in_file.close();
+        
+        std::ofstream out_file(config_file);
+        for (const auto& l : lines) {
+            out_file << l;
+        }
+        out_file.close();
+        
+        return CLIResult::success_result("Domain '" + domain + "' disabled successfully");
+        
+    } catch (const std::exception& e) {
+        return CLIResult::error_result("Failed to disable domain: " + std::string(e.what()));
+    }
+}
+
+CLIResult ConfigCommands::showUser(const std::vector<std::string>& args) {
+    if (args.empty()) {
+        return CLIResult::error_result("Usage: config user show <email>");
+    }
+    
+    std::string email = args[0];
+    std::string config_file = ConfigUtils::getUsersDirectory() + "/" + email + ".conf";
+    
+    try {
+        if (!std::filesystem::exists(config_file)) {
+            return CLIResult::error_result("User configuration not found: " + email);
+        }
+        
+        std::ifstream file(config_file);
+        if (!file.is_open()) {
+            return CLIResult::error_result("Failed to read user configuration file");
+        }
+        
+        std::cout << "User Configuration: " << email << "\n";
+        std::cout << "===========================\n";
+        
+        std::string line;
+        while (std::getline(file, line)) {
+            if (line.empty() || line[0] == '#') continue;
+            
+            size_t pos = line.find('=');
+            if (pos != std::string::npos) {
+                std::string key = line.substr(0, pos);
+                std::string value = line.substr(pos + 1);
+                
+                // Trim whitespace
+                key.erase(0, key.find_first_not_of(" \t"));
+                key.erase(key.find_last_not_of(" \t") + 1);
+                value.erase(0, value.find_first_not_of(" \t"));
+                value.erase(value.find_last_not_of(" \t") + 1);
+                
+                std::cout << "  " << key << ": " << value << "\n";
+            }
+        }
+        
+        return CLIResult::success_result();
+        
+    } catch (const std::exception& e) {
+        return CLIResult::error_result("Failed to show user configuration: " + std::string(e.what()));
+    }
+}
+
+CLIResult ConfigCommands::removeUser(const std::vector<std::string>& args) {
+    if (args.empty()) {
+        return CLIResult::error_result("Usage: config user remove <email>");
+    }
+    
+    std::string email = args[0];
+    std::string config_file = ConfigUtils::getUsersDirectory() + "/" + email + ".conf";
+    
+    try {
+        if (!std::filesystem::exists(config_file)) {
+            return CLIResult::error_result("User configuration not found: " + email);
+        }
+        
+        if (!std::filesystem::remove(config_file)) {
+            return CLIResult::error_result("Failed to remove user configuration: " + email);
+        }
+        
+        return CLIResult::success_result("User '" + email + "' configuration removed successfully");
+        
+    } catch (const std::exception& e) {
+        return CLIResult::error_result("Failed to remove user: " + std::string(e.what()));
+    }
+}
+
+CLIResult ConfigCommands::enableUser(const std::vector<std::string>& args) {
+    if (args.empty()) {
+        return CLIResult::error_result("Usage: config user enable <email>");
+    }
+    
+    std::string email = args[0];
+    std::string config_file = ConfigUtils::getUsersDirectory() + "/" + email + ".conf";
+    
+    try {
+        if (!std::filesystem::exists(config_file)) {
+            return CLIResult::error_result("User configuration not found: " + email);
+        }
+        
+        // Read file, update enabled flag, write back
+        std::ifstream in_file(config_file);
+        std::vector<std::string> lines;
+        std::string line;
+        
+        while (std::getline(in_file, line)) {
+            if (line.find("enabled = ") != std::string::npos) {
+                lines.push_back("enabled = true\n");
+            } else {
+                lines.push_back(line + "\n");
+            }
+        }
+        in_file.close();
+        
+        std::ofstream out_file(config_file);
+        for (const auto& l : lines) {
+            out_file << l;
+        }
+        out_file.close();
+        
+        return CLIResult::success_result("User '" + email + "' enabled successfully");
+        
+    } catch (const std::exception& e) {
+        return CLIResult::error_result("Failed to enable user: " + std::string(e.what()));
+    }
+}
+
+CLIResult ConfigCommands::disableUser(const std::vector<std::string>& args) {
+    if (args.empty()) {
+        return CLIResult::error_result("Usage: config user disable <email>");
+    }
+    
+    std::string email = args[0];
+    std::string config_file = ConfigUtils::getUsersDirectory() + "/" + email + ".conf";
+    
+    try {
+        if (!std::filesystem::exists(config_file)) {
+            return CLIResult::error_result("User configuration not found: " + email);
+        }
+        
+        // Read file, update enabled flag, write back
+        std::ifstream in_file(config_file);
+        std::vector<std::string> lines;
+        std::string line;
+        
+        while (std::getline(in_file, line)) {
+            if (line.find("enabled = ") != std::string::npos) {
+                lines.push_back("enabled = false\n");
+            } else {
+                lines.push_back(line + "\n");
+            }
+        }
+        in_file.close();
+        
+        std::ofstream out_file(config_file);
+        for (const auto& l : lines) {
+            out_file << l;
+        }
+        out_file.close();
+        
+        return CLIResult::success_result("User '" + email + "' disabled successfully");
+        
+    } catch (const std::exception& e) {
+        return CLIResult::error_result("Failed to disable user: " + std::string(e.what()));
+    }
+}
+
 } // namespace ssmtp_mailer
 
 #pragma GCC diagnostic pop

@@ -92,6 +92,21 @@ simple-smtp-mailer cli config-domain-list
 simple-smtp-mailer cli config-domain-show <domain>
 ```
 
+**Remove Domain**
+```bash
+simple-smtp-mailer cli config-domain-remove <domain>
+```
+
+**Enable Domain**
+```bash
+simple-smtp-mailer cli config-domain-enable <domain>
+```
+
+**Disable Domain**
+```bash
+simple-smtp-mailer cli config-domain-disable <domain>
+```
+
 #### User Management
 
 **Add User**
@@ -110,6 +125,26 @@ Options:
 **List Users**
 ```bash
 simple-smtp-mailer cli config-user-list [--domain <domain>]
+```
+
+**Show User**
+```bash
+simple-smtp-mailer cli config-user-show <email>
+```
+
+**Remove User**
+```bash
+simple-smtp-mailer cli config-user-remove <email>
+```
+
+**Enable User**
+```bash
+simple-smtp-mailer cli config-user-enable <email>
+```
+
+**Disable User**
+```bash
+simple-smtp-mailer cli config-user-disable <email>
 ```
 
 #### Global Configuration
@@ -169,6 +204,11 @@ simple-smtp-mailer cli template-list
 simple-smtp-mailer cli template-show <name>
 ```
 
+**Remove Template**
+```bash
+simple-smtp-mailer cli template-remove <name>
+```
+
 **Test Template**
 ```bash
 simple-smtp-mailer cli template-test <name> --to <email> [--from <email>]
@@ -191,6 +231,64 @@ simple-smtp-mailer cli template-address-create contact-{type}@example.com \
 **List Address Templates**
 ```bash
 simple-smtp-mailer cli template-address-list
+```
+
+**Remove Address Template**
+```bash
+simple-smtp-mailer cli template-address-remove <pattern>
+```
+
+### API Provider Management Commands
+
+#### API Provider Configuration
+
+**Add API Provider**
+```bash
+simple-smtp-mailer cli api-provider-add <provider> --api-key <key> --sender <email> [options]
+```
+
+Options:
+- `--api-key <key>` - API key for authentication (required)
+- `--api-secret <secret>` - API secret (for providers that require it)
+- `--sender <email>` - Verified sender email address (required)
+- `--sender-name <name>` - Sender display name
+- `--base-url <url>` - Base URL for API calls
+- `--endpoint <endpoint>` - API endpoint path
+- `--region <region>` - Region (for AWS SES, Mailgun)
+- `--domain <domain>` - Domain (for Mailgun)
+- `--timeout <seconds>` - Request timeout (default: 30)
+- `--no-verify-ssl` - Disable SSL certificate verification
+- `--enable-tracking` - Enable email tracking
+
+Supported providers: `sendgrid`, `mailgun`, `amazon-ses`, `ses`, `postmark`, `sparkpost`, `mailjet`
+
+Example:
+```bash
+simple-smtp-mailer cli api-provider-add sendgrid \
+  --api-key SG.your_api_key_here \
+  --sender sender@yourdomain.com \
+  --sender-name "Your Company" \
+  --enable-tracking
+```
+
+**List API Providers**
+```bash
+simple-smtp-mailer cli api-provider-list
+```
+
+**Show API Provider**
+```bash
+simple-smtp-mailer cli api-provider-show <provider>
+```
+
+**Remove API Provider**
+```bash
+simple-smtp-mailer cli api-provider-remove <provider>
+```
+
+**Test API Provider**
+```bash
+simple-smtp-mailer cli api-provider-test <provider>
 ```
 
 ### Validation Commands
@@ -255,6 +353,7 @@ The CLI creates and manages configuration files in the following structure:
 │   └── example.com.conf
 ├── service-accounts/          # Service account files
 │   └── example.com.json
+├── api-config.conf            # API provider configurations
 └── mappings/                  # Address mappings
     └── relay-mappings.conf
 ```
@@ -297,7 +396,15 @@ simple-smtp-mailer cli template-address-create contact-{type}@example.com \
 # 6. Validate configuration
 simple-smtp-mailer cli validate-config --verbose
 
-# 7. Test connections
+# 7. Add API provider
+simple-smtp-mailer cli api-provider-add sendgrid \
+  --api-key your_sendgrid_api_key \
+  --sender sender@example.com
+
+# 8. Validate configuration
+simple-smtp-mailer cli validate-config --verbose
+
+# 9. Test connections
 simple-smtp-mailer cli test-connections
 ```
 
@@ -324,6 +431,50 @@ simple-smtp-mailer cli auth-service-account-add \
 
 # 2. Test service account
 simple-smtp-mailer cli auth-service-account-test --domain example.com
+```
+
+### API Provider Setup Example
+
+```bash
+# 1. Add SendGrid provider
+simple-smtp-mailer cli api-provider-add sendgrid \
+  --api-key SG.your_api_key_here \
+  --sender sender@yourdomain.com \
+  --sender-name "Your Company" \
+  --enable-tracking
+
+# 2. List all API providers
+simple-smtp-mailer cli api-provider-list
+
+# 3. Show provider details
+simple-smtp-mailer cli api-provider-show sendgrid
+
+# 4. Test provider connection
+simple-smtp-mailer cli api-provider-test sendgrid
+
+# 5. Remove provider (if needed)
+simple-smtp-mailer cli api-provider-remove sendgrid
+```
+
+### Domain and User Management Example
+
+```bash
+# Enable/disable domains
+simple-smtp-mailer cli config-domain-enable example.com
+simple-smtp-mailer cli config-domain-disable example.com
+
+# Remove domain
+simple-smtp-mailer cli config-domain-remove example.com
+
+# Enable/disable users
+simple-smtp-mailer cli config-user-enable user@example.com
+simple-smtp-mailer cli config-user-disable user@example.com
+
+# Show user details
+simple-smtp-mailer cli config-user-show user@example.com
+
+# Remove user
+simple-smtp-mailer cli config-user-remove user@example.com
 ```
 
 ## Troubleshooting

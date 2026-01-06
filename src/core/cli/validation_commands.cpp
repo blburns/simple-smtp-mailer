@@ -1,4 +1,5 @@
 #include "simple-smtp-mailer/cli_commands.hpp"
+#include "simple-smtp-mailer/config_utils.hpp"
 #include "../config/config_manager.hpp"
 #include "../logging/logger.hpp"
 #include <iostream>
@@ -17,6 +18,55 @@
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 
 namespace ssmtp_mailer {
+
+// Forward declarations for helper functions
+namespace {
+    void validateGlobalConfig(std::vector<std::string>& errors, 
+                                   std::vector<std::string>& warnings, 
+                                   bool verbose);
+    void validateDomainConfigs(std::vector<std::string>& errors, 
+                                    std::vector<std::string>& warnings, 
+                                    bool verbose);
+    void validateDomainConfig(const std::string& config_file, 
+                                   const std::string& domain,
+                                   std::vector<std::string>& errors, 
+                                   std::vector<std::string>& warnings, 
+                                   bool verbose);
+    void validateUserConfigs(std::vector<std::string>& errors, 
+                                  std::vector<std::string>& warnings, 
+                                  bool verbose);
+    void validateUserConfig(const std::string& config_file, 
+                                 const std::string& user,
+                                 std::vector<std::string>& errors, 
+                                 std::vector<std::string>& warnings, 
+                                 bool verbose);
+    void validateOAuth2Configs(std::vector<std::string>& errors, 
+                                    std::vector<std::string>& warnings, 
+                                    bool verbose);
+    void validateOAuth2Config(const std::string& config_file, 
+                                   const std::string& domain,
+                                   std::vector<std::string>& errors, 
+                                   std::vector<std::string>& warnings, 
+                                   bool verbose);
+    void validateServiceAccountConfigs(std::vector<std::string>& errors, 
+                                            std::vector<std::string>& warnings, 
+                                            bool verbose);
+    void validateServiceAccountConfig(const std::string& config_file, 
+                                           const std::string& domain,
+                                           std::vector<std::string>& errors, 
+                                           std::vector<std::string>& warnings, 
+                                           bool verbose);
+    void validateTemplates(std::vector<std::string>& errors, 
+                                std::vector<std::string>& warnings, 
+                                bool verbose);
+    void validateTemplate(const std::string& config_file, 
+                               const std::string& template_name,
+                               std::vector<std::string>& errors, 
+                               std::vector<std::string>& warnings, 
+                               bool verbose);
+    void testSMTPConnections(const std::string& domain_filter);
+    void testAPIConnections(const std::string& domain_filter);
+}
 
 // Validation command implementations
 
@@ -37,18 +87,48 @@ CLIResult ValidationCommands::validateConfig(const std::vector<std::string>& arg
         std::vector<std::string> warnings;
         
         try {
-            // Validate global configuration
-            // TODO: Implement validation helper functions
-            std::cout << "  Global configuration: OK\n";
-            std::cout << "  Domain configurations: OK\n";
-            std::cout << "  User configurations: OK\n";
-            std::cout << "  OAuth2 configurations: OK\n";
-            std::cout << "  Service account configurations: OK\n";
-            std::cout << "  Templates: OK\n";
-            
-            // Print results
             std::cout << "Configuration Validation Results\n";
             std::cout << "===============================\n\n";
+            
+            // Validate global configuration
+            if (verbose) {
+                std::cout << "Validating global configuration...\n";
+            }
+            validateGlobalConfig(errors, warnings, verbose);
+            
+            // Validate domain configurations
+            if (verbose) {
+                std::cout << "Validating domain configurations...\n";
+            }
+            validateDomainConfigs(errors, warnings, verbose);
+            
+            // Validate user configurations
+            if (verbose) {
+                std::cout << "Validating user configurations...\n";
+            }
+            validateUserConfigs(errors, warnings, verbose);
+            
+            // Validate OAuth2 configurations
+            if (verbose) {
+                std::cout << "Validating OAuth2 configurations...\n";
+            }
+            validateOAuth2Configs(errors, warnings, verbose);
+            
+            // Validate service account configurations
+            if (verbose) {
+                std::cout << "Validating service account configurations...\n";
+            }
+            validateServiceAccountConfigs(errors, warnings, verbose);
+            
+            // Validate templates
+            if (verbose) {
+                std::cout << "Validating templates...\n";
+            }
+            validateTemplates(errors, warnings, verbose);
+            
+            if (verbose) {
+                std::cout << "\n";
+            }
             
             if (warnings.empty() && errors.empty()) {
                 std::cout << "✓ All configurations are valid!\n";
@@ -103,13 +183,11 @@ CLIResult ValidationCommands::testConnections(const std::vector<std::string>& ar
         
         try {
             if (test_smtp) {
-                std::cout << "Testing SMTP connections...\n";
-                std::cout << "  SMTP connection tests not yet implemented\n";
+                testSMTPConnections(domain_filter);
             }
             
             if (test_api) {
-                std::cout << "Testing API connections...\n";
-                std::cout << "  API connection tests not yet implemented\n";
+                testAPIConnections(domain_filter);
             }
             
             return CLIResult::success_result();
@@ -139,7 +217,12 @@ CLIResult ValidationCommands::backupConfig(const std::vector<std::string>& args)
         }
         
         try {
-            std::string config_dir = "/etc/simple-smtp-mailer";
+            std::string config_dir = ConfigUtils::getConfigDirectory();
+            
+            if (!std::filesystem::exists(config_dir)) {
+                return CLIResult::error_result("Configuration directory not found: " + config_dir);
+            }
+            
             std::string backup_command = "tar -czf " + backup_file + " -C " + config_dir + " .";
             
             int result = std::system(backup_command.c_str());
@@ -178,7 +261,12 @@ CLIResult ValidationCommands::restoreConfig(const std::vector<std::string>& args
         }
         
         try {
-            std::string config_dir = "/etc/simple-smtp-mailer";
+            std::string config_dir = ConfigUtils::getConfigDirectory();
+            
+            // Ensure config directory exists
+            if (!ConfigUtils::ensureConfigDirectory(config_dir)) {
+                return CLIResult::error_result("Failed to create configuration directory: " + config_dir);
+            }
             
             // Create backup of current config before restore
             auto now = std::time(nullptr);
@@ -213,44 +301,58 @@ namespace {
     void validateGlobalConfig(std::vector<std::string>& errors, 
                                    std::vector<std::string>& warnings, 
                                    bool verbose) {
-        std::string config_file = "/etc/simple-smtp-mailer/simple-smtp-mailer.conf";
+        std::string config_dir = ConfigUtils::getConfigDirectory();
+        std::string config_file = config_dir + "/simple-smtp-mailer.conf";
         
         if (!std::filesystem::exists(config_file)) {
-            errors.push_back("Global configuration file not found: " + config_file);
+            warnings.push_back("Global configuration file not found: " + config_file + " (using defaults)");
             return;
         }
         
-        if (verbose) {
-            std::cout << "Validating global configuration...\n";
-        }
-        
-        // TODO: Implement detailed global config validation
-        // For now, just check if file exists and is readable
         std::ifstream file(config_file);
         if (!file.is_open()) {
             errors.push_back("Cannot read global configuration file: " + config_file);
+            return;
+        }
+        
+        // Basic validation - check for required sections
+        std::string line;
+        bool has_global_section = false;
+        while (std::getline(file, line)) {
+            if (line.find("[global]") != std::string::npos) {
+                has_global_section = true;
+                break;
+            }
+        }
+        
+        if (!has_global_section) {
+            warnings.push_back("Global configuration missing [global] section");
         }
     }
     
     void validateDomainConfigs(std::vector<std::string>& errors, 
                                     std::vector<std::string>& warnings, 
                                     bool verbose) {
-        std::string domains_dir = "/etc/simple-smtp-mailer/domains";
+        std::string domains_dir = ConfigUtils::getDomainsDirectory();
         
         if (!std::filesystem::exists(domains_dir)) {
-            warnings.push_back("Domains directory not found: " + domains_dir);
+            if (verbose) {
+                warnings.push_back("Domains directory not found: " + domains_dir);
+            }
             return;
         }
         
-        if (verbose) {
-            std::cout << "Validating domain configurations...\n";
-        }
-        
+        int domain_count = 0;
         for (const auto& entry : std::filesystem::directory_iterator(domains_dir)) {
             if (entry.is_regular_file() && entry.path().extension() == ".conf") {
                 std::string domain = entry.path().stem().string();
-                // TODO: Implement domain config validation
+                validateDomainConfig(entry.path().string(), domain, errors, warnings, verbose);
+                domain_count++;
             }
+        }
+        
+        if (domain_count == 0 && verbose) {
+            warnings.push_back("No domain configurations found");
         }
     }
     
@@ -294,22 +396,26 @@ namespace {
     void validateUserConfigs(std::vector<std::string>& errors, 
                                   std::vector<std::string>& warnings, 
                                   bool verbose) {
-        std::string users_dir = "/etc/simple-smtp-mailer/users";
+        std::string users_dir = ConfigUtils::getUsersDirectory();
         
         if (!std::filesystem::exists(users_dir)) {
-            warnings.push_back("Users directory not found: " + users_dir);
+            if (verbose) {
+                warnings.push_back("Users directory not found: " + users_dir);
+            }
             return;
         }
         
-        if (verbose) {
-            std::cout << "Validating user configurations...\n";
-        }
-        
+        int user_count = 0;
         for (const auto& entry : std::filesystem::directory_iterator(users_dir)) {
             if (entry.is_regular_file() && entry.path().extension() == ".conf") {
                 std::string user = entry.path().stem().string();
-                // TODO: Implement user config validation
+                validateUserConfig(entry.path().string(), user, errors, warnings, verbose);
+                user_count++;
             }
+        }
+        
+        if (user_count == 0 && verbose) {
+            warnings.push_back("No user configurations found");
         }
     }
     
@@ -342,23 +448,20 @@ namespace {
     void validateOAuth2Configs(std::vector<std::string>& errors, 
                                     std::vector<std::string>& warnings, 
                                     bool verbose) {
-        std::string oauth2_dir = "/etc/simple-smtp-mailer/oauth2";
+        std::string config_dir = ConfigUtils::getConfigDirectory();
+        std::string oauth2_dir = config_dir + "/oauth2";
         
         if (!std::filesystem::exists(oauth2_dir)) {
             if (verbose) {
-                std::cout << "No OAuth2 configurations found.\n";
+                warnings.push_back("No OAuth2 configurations found");
             }
             return;
-        }
-        
-        if (verbose) {
-            std::cout << "Validating OAuth2 configurations...\n";
         }
         
         for (const auto& entry : std::filesystem::directory_iterator(oauth2_dir)) {
             if (entry.is_regular_file() && entry.path().extension() == ".conf") {
                 std::string domain = entry.path().stem().string();
-                // TODO: Implement OAuth2 config validation
+                validateOAuth2Config(entry.path().string(), domain, errors, warnings, verbose);
             }
         }
     }
@@ -397,23 +500,20 @@ namespace {
     void validateServiceAccountConfigs(std::vector<std::string>& errors, 
                                             std::vector<std::string>& warnings, 
                                             bool verbose) {
-        std::string service_account_dir = "/etc/simple-smtp-mailer/service-accounts";
+        std::string config_dir = ConfigUtils::getConfigDirectory();
+        std::string service_account_dir = config_dir + "/service-accounts";
         
         if (!std::filesystem::exists(service_account_dir)) {
             if (verbose) {
-                std::cout << "No service account configurations found.\n";
+                warnings.push_back("No service account configurations found");
             }
             return;
-        }
-        
-        if (verbose) {
-            std::cout << "Validating service account configurations...\n";
         }
         
         for (const auto& entry : std::filesystem::directory_iterator(service_account_dir)) {
             if (entry.is_regular_file() && entry.path().extension() == ".json") {
                 std::string domain = entry.path().stem().string();
-                // TODO: Implement service account config validation
+                validateServiceAccountConfig(entry.path().string(), domain, errors, warnings, verbose);
             }
         }
     }
@@ -444,23 +544,20 @@ namespace {
     void validateTemplates(std::vector<std::string>& errors, 
                                 std::vector<std::string>& warnings, 
                                 bool verbose) {
-        std::string templates_dir = "/etc/simple-smtp-mailer/templates";
+        std::string config_dir = ConfigUtils::getConfigDirectory();
+        std::string templates_dir = config_dir + "/templates";
         
         if (!std::filesystem::exists(templates_dir)) {
             if (verbose) {
-                std::cout << "No templates found.\n";
+                warnings.push_back("No templates found");
             }
             return;
-        }
-        
-        if (verbose) {
-            std::cout << "Validating templates...\n";
         }
         
         for (const auto& entry : std::filesystem::directory_iterator(templates_dir)) {
             if (entry.is_regular_file() && entry.path().extension() == ".conf") {
                 std::string template_name = entry.path().stem().string();
-                // TODO: Implement template validation
+                validateTemplate(entry.path().string(), template_name, errors, warnings, verbose);
             }
         }
     }
@@ -500,18 +597,151 @@ namespace {
         std::cout << "Testing SMTP Connections:\n";
         std::cout << "-------------------------\n";
         
-        // TODO: Implement actual SMTP connection testing
-        std::cout << "  example.com - OK (smtp.gmail.com:587)\n";
-        std::cout << "  test.com - FAILED (Connection timeout)\n";
+        std::string domains_dir = ConfigUtils::getDomainsDirectory();
+        
+        if (!std::filesystem::exists(domains_dir)) {
+            std::cout << "  No domains configured\n";
+            return;
+        }
+        
+        int tested = 0;
+        int passed = 0;
+        
+        for (const auto& entry : std::filesystem::directory_iterator(domains_dir)) {
+            if (entry.is_regular_file() && entry.path().extension() == ".conf") {
+                std::string domain = entry.path().stem().string();
+                
+                if (!domain_filter.empty() && domain != domain_filter) {
+                    continue;
+                }
+                
+                tested++;
+                
+                // Read domain config to get SMTP server
+                std::ifstream file(entry.path());
+                std::string line;
+                std::string smtp_server;
+                std::string smtp_port;
+                bool enabled = true;
+                
+                while (std::getline(file, line)) {
+                    if (line.find("enabled = ") != std::string::npos) {
+                        std::string val = line.substr(line.find("=") + 1);
+                        val.erase(0, val.find_first_not_of(" \t"));
+                        val.erase(val.find_last_not_of(" \t") + 1);
+                        enabled = (val == "true");
+                    } else if (line.find("smtp_server = ") != std::string::npos) {
+                        smtp_server = line.substr(line.find("=") + 1);
+                        smtp_server.erase(0, smtp_server.find_first_not_of(" \t"));
+                        smtp_server.erase(smtp_server.find_last_not_of(" \t") + 1);
+                    } else if (line.find("smtp_port = ") != std::string::npos) {
+                        smtp_port = line.substr(line.find("=") + 1);
+                        smtp_port.erase(0, smtp_port.find_first_not_of(" \t"));
+                        smtp_port.erase(smtp_port.find_last_not_of(" \t") + 1);
+                    }
+                }
+                
+                if (!enabled) {
+                    std::cout << "  " << domain << " - SKIPPED (disabled)\n";
+                    continue;
+                }
+                
+                if (smtp_server.empty()) {
+                    std::cout << "  " << domain << " - FAILED (no SMTP server configured)\n";
+                    continue;
+                }
+                
+                // Note: Actual connection testing would require SMTP client implementation
+                // For now, we just validate configuration
+                std::cout << "  " << domain << " - CONFIGURED (" << smtp_server;
+                if (!smtp_port.empty()) {
+                    std::cout << ":" << smtp_port;
+                }
+                std::cout << ")\n";
+                std::cout << "    Note: Actual connection test requires network access\n";
+                passed++;
+            }
+        }
+        
+        if (tested == 0) {
+            std::cout << "  No domains to test";
+            if (!domain_filter.empty()) {
+                std::cout << " (filter: " << domain_filter << ")";
+            }
+            std::cout << "\n";
+        } else {
+            std::cout << "\n  Tested: " << tested << ", Configured: " << passed << "\n";
+        }
     }
     
     void testAPIConnections(const std::string& domain_filter) {
         std::cout << "\nTesting API Connections:\n";
         std::cout << "------------------------\n";
         
-        // TODO: Implement actual API connection testing
-        std::cout << "  sendgrid - OK\n";
-        std::cout << "  mailgun - FAILED (Invalid API key)\n";
+        std::string config_dir = ConfigUtils::getConfigDirectory();
+        std::string api_config_file = config_dir + "/api-config.conf";
+        
+        if (!std::filesystem::exists(api_config_file)) {
+            std::cout << "  No API providers configured\n";
+            return;
+        }
+        
+        std::ifstream file(api_config_file);
+        std::string line;
+        std::string current_provider;
+        bool in_section = false;
+        int tested = 0;
+        int passed = 0;
+        
+        while (std::getline(file, line)) {
+            if (line.find("[api:") == 0) {
+                if (in_section && !current_provider.empty()) {
+                    tested++;
+                    std::cout << "  " << current_provider << " - CONFIGURED\n";
+                    std::cout << "    Note: Actual connection test requires network access and valid credentials\n";
+                    passed++;
+                }
+                
+                size_t start = line.find(":") + 1;
+                size_t end = line.find("]");
+                if (end != std::string::npos) {
+                    current_provider = line.substr(start, end - start);
+                    in_section = true;
+                }
+            } else if (in_section && line.find("enabled = ") != std::string::npos) {
+                std::string enabled = line.substr(line.find("=") + 1);
+                enabled.erase(0, enabled.find_first_not_of(" \t"));
+                enabled.erase(enabled.find_last_not_of(" \t") + 1);
+                if (enabled != "true") {
+                    in_section = false;
+                    current_provider.clear();
+                }
+            } else if (in_section && (line.empty() || (line[0] == '[' && line.find("]") != std::string::npos))) {
+                if (line[0] == '[') {
+                    if (!current_provider.empty()) {
+                        tested++;
+                        std::cout << "  " << current_provider << " - CONFIGURED\n";
+                        std::cout << "    Note: Actual connection test requires network access and valid credentials\n";
+                        passed++;
+                    }
+                    in_section = false;
+                    current_provider.clear();
+                }
+            }
+        }
+        
+        if (in_section && !current_provider.empty()) {
+            tested++;
+            std::cout << "  " << current_provider << " - CONFIGURED\n";
+            std::cout << "    Note: Actual connection test requires network access and valid credentials\n";
+            passed++;
+        }
+        
+        if (tested == 0) {
+            std::cout << "  No API providers to test\n";
+        } else {
+            std::cout << "\n  Tested: " << tested << ", Configured: " << passed << "\n";
+        }
     }
 }
 
